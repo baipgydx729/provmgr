@@ -1,0 +1,60 @@
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dd, ul, ol, pre, fieldset, legend, button, input, textarea, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+hr {
+    border-style: solid;
+    border-width: 1px 0 0 0;
+}
+
+body, button, input, textarea, select {
+    color: #302F35;
+    font: 14px/1.5 microsoft yahei, arial, verdana, helvetica, sans-serif;
+}
+
+i, address, cite, dfn, em, var {
+    font-style: normal;
+}
+
+tt, code, kbd, samp {
+    font-family: microsoft yahei;;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:focus {
+    outline: none;
+}
+
+fieldset, img {
+    border: none;
+}
+
+img {
+    vertical-align: middle;
+}
+
+button, input, textarea, select {
+    font-size: 100%;
+    outline: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+body {
+    min-width: 1280px;
+}

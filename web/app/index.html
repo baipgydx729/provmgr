@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>钱袋宝备付金银行报表管理系统</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        <div class="container">
+            @@include('./template/header.inc')
+            <div class="content">
+                @@include('./template/left-menu.inc')
+                <div ms-controller="main" class="main-content" ms-html="@template"></div>
+            </div>
+            @@include('./template/footer.inc')
+        </div>
+        <div id="modal"></div>
+    </body>
+</html>
