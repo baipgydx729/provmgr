@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>钱袋宝备付金银行报表管理系统</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" href="/favicon.ico"><link href="/css/app.1.0.0.css?42767dd52c1b19b58c44" rel="stylesheet"></head>
+    <body>
+        <div class="container">
+            <div class="header">
+	<div class="header-left">
+		<a href="#!/">
+			<img class="logo" src="/image/logo-cd230fef12d4ac22d738d08e5bc56071.png">
+			钱袋宝备付金银行报表管理系统
+		</a>
+	</div>
+</div>
+            <div class="content">
+                <div class="left-menu" ms-controller="left-menu-controller">
+	<ul>
+		<li ms-for="(index, menu) in @menuList" ms-attr="{'class': menu.active ? 'active' : ''}">
+			<a ms-if="index==0" href="#!/" ms-click="@toggle(index)">{{menu.label}}</a>
+			<a ms-if="index!=0" ms-click="@toggle(index)">{{menu.label}}</a>
+			<ul class="sub-menu" ms-visible="menu.toggle && menu.subMenuList!=undefined && menu.subMenuList.length>0">
+				<li ms-for='(subIndex, subMenu) in menu.subMenuList' ms-attr="{'class': subMenu.active ? 'active' : ''}">
+					<a ms-click="@active(index, subIndex)" ms-attr="{'href': '#!/'+index+'/'+subIndex}">{{subMenu.label}}</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+                <div ms-controller="main" class="main-content" ms-html="@template"></div>
+            </div>
+            <div class="footer">
+	<div class="footer-content">
+		<span>
+			©2008-2016&nbsp;&nbsp;北京钱袋宝支付技术有限公司
+		</span>
+	</div>
+</div>
+        </div>
+        <div id="modal"></div>
+    <script type="text/javascript" src="/js/app.1.0.0.js?42767dd52c1b19b58c44"></script></body>
+</html>
