@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -96,6 +97,7 @@ public class Table1_6Util {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<DataTable1_6> dataList) {
+        Collections.sort(dataList);
         int size = dataList.size();
         for (int i = 0; i < size; i++) {
             DataTable1_6 dataTable1_6 = dataList.get(i);

@@ -3,7 +3,7 @@ package com.qdb.report.pbc.bean;
 /**
  * @author mashengli
  */
-public class DataTable1_1 implements Comparable<DataTable1_1>{
+public class DataTable1_1 implements Comparable<DataTable1_1> {
     private String natuDate;
     private Double A01;
     private Double A02;
@@ -225,5 +225,5 @@ public class DataTable1_1 implements Comparable<DataTable1_1>{
             return this.natuDate.compareTo(o.getNatuDate());
         }
     }
-    
+
 }

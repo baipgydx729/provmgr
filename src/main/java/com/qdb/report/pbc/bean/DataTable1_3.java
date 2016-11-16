@@ -1,24 +1,21 @@
 package com.qdb.report.pbc.bean;
 
-import java.util.Date;
-
 /**
  * @author mashengli
  */
-public class DataTable1_3 {
-    private Date date;
+public class DataTable1_3 implements Comparable<DataTable1_3> {
+    private String natuDate;
     private String bankName;
-    private String accountName;
-    private String account;
-    private String dataCode;
-    private Double number;
+    private String name;
+    private String AD;
+    private Double C01;
 
-    public Date getDate() {
-        return date;
+    public String getNatuDate() {
+        return natuDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setNatuDate(String natuDate) {
+        this.natuDate = natuDate;
     }
 
     public String getBankName() {
@@ -29,35 +26,41 @@ public class DataTable1_3 {
         this.bankName = bankName;
     }
 
-    public String getAccountName() {
-        return accountName;
+    public String getName() {
+        return name;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getAccount() {
-        return account;
+    public String getAD() {
+        return AD;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setAD(String AD) {
+        this.AD = AD;
     }
 
-    public String getDataCode() {
-        return dataCode;
+    public Double getC01() {
+        return C01;
     }
 
-    public void setDataCode(String dataCode) {
-        this.dataCode = dataCode;
+    public void setC01(Double c01) {
+        C01 = c01;
     }
 
-    public Double getNumber() {
-        return number;
-    }
-
-    public void setNumber(Double number) {
-        this.number = number;
+    /**
+     * 按照日期从小到大顺序比较两个数据组
+     */
+    @Override
+    public int compareTo(DataTable1_3 o) {
+        if (o == null || o.getNatuDate() == null) {
+            return 1;
+        } else if (this.getNatuDate() == null) {
+            return -1;
+        } else {
+            return this.natuDate.compareTo(o.getNatuDate());
+        }
     }
 }
