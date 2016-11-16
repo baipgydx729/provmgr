@@ -4,6 +4,7 @@ package com.qdb.report.pbc.bean;
  * @author mashengli
  */
 public class DataTable1_2 {
+    private String natuDate;
     private Double B01;
     private Double B02;
     private Double B03;
@@ -13,6 +14,14 @@ public class DataTable1_2 {
     private Double B07;
     private Double B08;
     private Double B09;
+
+    public String getNatuDate() {
+        return natuDate;
+    }
+
+    public void setNatuDate(String natuDate) {
+        this.natuDate = natuDate;
+    }
 
     public Double getB01() {
         return B01;

@@ -4,10 +4,19 @@ package com.qdb.report.pbc.bean;
  * @author mashengli
  */
 public class DataTable1_4 {
+    private String natuDate;
     private Double D01;
     private Double D02;
     private Double D03;
     private Double D04;
+
+    public String getNatuDate() {
+        return natuDate;
+    }
+
+    public void setNatuDate(String natuDate) {
+        this.natuDate = natuDate;
+    }
 
     public Double getD01() {
         return D01;

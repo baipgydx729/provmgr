@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
@@ -24,14 +24,24 @@ public class Table1_1Util {
     private static Logger log = LoggerFactory.getLogger(Table1_1Util.class);
 
     /**
-     * 数据起始行数下标（下标从0开始）
+     * 数据区域起始行数下标（下标从0开始）
      */
     private static int DATA_START_ROW_NUM = 10;
 
     /**
-     * 表格总列数（数据第一列为日期标签，剩余列为数据）
+     * 数据区域结束行数下标（下标从0开始）
      */
-    private static int TOTAL_COLUMNS = 23;
+    private static int DATA_END_ROW_NUM = 41;
+
+    /**
+     * 数据区域起始列数下标（下标从0开始）
+     */
+    private static int DATA_START_COLUMN_NUM = 1;
+
+    /**
+     * 数据区域结束列数下标（下标从0开始）
+     */
+    private static int DATA_END_COLUMN_NUM = 22;
 
     /**
      * 按照表一模板填写表一内容
@@ -87,13 +97,19 @@ public class Table1_1Util {
      */
     private static void writeData(HSSFSheet sheet, List<DataTable1_1> dataList) {
         int size = dataList.size();
+        DataTable1_1 total = new DataTable1_1();
         for (int i = 0; i < size; i++) {
-            HSSFRow row = sheet.createRow(i + DATA_START_ROW_NUM);
             DataTable1_1 dataTable1_1 = dataList.get(i);
-            for (int j = 1; j <= TOTAL_COLUMNS; j++) {
+            total = addData(total, dataTable1_1);
+            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                 Double value = getDoubleDataByColumnIndex(dataTable1_1, j);
-                row.createCell(j).setCellValue(null != value ? value : 0);
+                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
             }
+        }
+        //合计行
+        for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+            Double value = getDoubleDataByColumnIndex(total, j);
+            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
         }
     }
 
@@ -110,8 +126,8 @@ public class Table1_1Util {
         //填充交易时期、填报日期、填表人及审核人
         sheet.getRow(1).createCell(1).setCellValue(tranPeriod);
         sheet.getRow(2).createCell(1).setCellValue(reportDate);
-        sheet.getRow(40).createCell(1).setCellValue(writeUserName);
-        sheet.getRow(41).createCell(1).setCellValue(checkUserName);
+        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(writeUserName);
+        sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(checkUserName);
     }
 
     /**
@@ -168,7 +184,63 @@ public class Table1_1Util {
             case 22:
                 return dataTable1_1.getA14();
             default:
-                return 0.0;
+                return (double) 0;
         }
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    private static DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setA01((null != data1.getA01() ? data1.getA01() : 0) + (null != data2.getA01() ? data2.getA01() : 0));
+        data1.setA02((null != data1.getA02() ? data1.getA02() : 0) + (null != data2.getA02() ? data2.getA02() : 0));
+        data1.setA03((null != data1.getA03() ? data1.getA03() : 0) + (null != data2.getA03() ? data2.getA03() : 0));
+        data1.setA0301((null != data1.getA0301() ? data1.getA0301() : 0) + (null != data2.getA0301() ? data2.getA0301() : 0));
+        data1.setA0302((null != data1.getA0302() ? data1.getA0302() : 0) + (null != data2.getA0302() ? data2.getA0302() : 0));
+        data1.setA04((null != data1.getA04() ? data1.getA04() : 0) + (null != data2.getA04() ? data2.getA04() : 0));
+        data1.setA05((null != data1.getA05() ? data1.getA05() : 0) + (null != data2.getA05() ? data2.getA05() : 0));
+        data1.setA06((null != data1.getA06() ? data1.getA06() : 0) + (null != data2.getA06() ? data2.getA06() : 0));
+        data1.setA0601((null != data1.getA0601() ? data1.getA0601() : 0) + (null != data2.getA0601() ? data2.getA0601() : 0));
+        data1.setA0602((null != data1.getA0602() ? data1.getA0602() : 0) + (null != data2.getA0602() ? data2.getA0602() : 0));
+        data1.setA07((null != data1.getA07() ? data1.getA07() : 0) + (null != data2.getA07() ? data2.getA07() : 0));
+        data1.setA08((null != data1.getA08() ? data1.getA08() : 0) + (null != data2.getA08() ? data2.getA08() : 0));
+        data1.setA09((null != data1.getA09() ? data1.getA09() : 0) + (null != data2.getA09() ? data2.getA09() : 0));
+        data1.setA0901((null != data1.getA0901() ? data1.getA0901() : 0) + (null != data2.getA0901() ? data2.getA0901() : 0));
+        data1.setA0902((null != data1.getA0902() ? data1.getA0902() : 0) + (null != data2.getA0902() ? data2.getA0902() : 0));
+        data1.setA10((null != data1.getA10() ? data1.getA10() : 0) + (null != data2.getA10() ? data2.getA10() : 0));
+        data1.setA11((null != data1.getA11() ? data1.getA11() : 0) + (null != data2.getA11() ? data2.getA11() : 0));
+        data1.setA12((null != data1.getA12() ? data1.getA12() : 0) + (null != data2.getA12() ? data2.getA12() : 0));
+        data1.setA13((null != data1.getA13() ? data1.getA13() : 0) + (null != data2.getA13() ? data2.getA13() : 0));
+        data1.setA1301((null != data1.getA1301() ? data1.getA1301() : 0) + (null != data2.getA1301() ? data2.getA1301() : 0));
+        data1.setA1302((null != data1.getA1302() ? data1.getA1302() : 0) + (null != data2.getA1302() ? data2.getA1302() : 0));
+        data1.setA14((null != data1.getA14() ? data1.getA14() : 0) + (null != data2.getA14() ? data2.getA14() : 0));
+        return data1;
+    }
+
+    public static void main(String[] args) {
+        List<DataTable1_1> dataList = new ArrayList<>();
+
+        for (int i = 0; i <= 30; i++) {
+            DataTable1_1 dataTable1_1 = new DataTable1_1();
+            dataTable1_1.setA01(i + 0.1);
+            dataTable1_1.setA02(i + 0.1);
+            dataList.add(dataTable1_1);
+        }
+        try {
+            File file = createExcelFile("d:/template_1_1.xls", "table_1_1.xls", "201610", "20161116", "许丽丽", "刘仁超", dataList);
+            System.out.println(file.getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

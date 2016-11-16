@@ -3,7 +3,8 @@ package com.qdb.report.pbc.bean;
 /**
  * @author mashengli
  */
-public class DataTable1_1 {
+public class DataTable1_1 implements Comparable<DataTable1_1>{
+    private String natuDate;
     private Double A01;
     private Double A02;
     private Double A03;
@@ -26,6 +27,14 @@ public class DataTable1_1 {
     private Double A1301;
     private Double A1302;
     private Double A14;
+
+    public String getNatuDate() {
+        return natuDate;
+    }
+
+    public void setNatuDate(String natuDate) {
+        this.natuDate = natuDate;
+    }
 
     public Double getA01() {
         return A01;
@@ -202,4 +211,19 @@ public class DataTable1_1 {
     public void setA14(Double a14) {
         A14 = a14;
     }
+
+    /**
+     * 按照日期从小到大顺序比较两个数据组
+     */
+    @Override
+    public int compareTo(DataTable1_1 o) {
+        if (o == null || o.getNatuDate() == null) {
+            return 1;
+        } else if (this.getNatuDate() == null) {
+            return -1;
+        } else {
+            return this.natuDate.compareTo(o.getNatuDate());
+        }
+    }
+    
 }

@@ -37,6 +37,11 @@ public class Table1_3Util {
      */
     private static int DATA_START_ROW_NUM = 5;
 
+    /**
+     * 数据起始列数下标（下标从0开始）
+     */
+    private static int DATA_START_COLUMN_NUM = 4;
+
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     /**
@@ -121,7 +126,7 @@ public class Table1_3Util {
             int column = 0;
             HSSFRow row = sheet.createRow(rowNum++);
             for (Object obj : rowData.values()) {
-                if (column <= 3) {
+                if (column < DATA_START_COLUMN_NUM) {
                     row.createCell(column++).setCellValue((String)obj);
                 } else {
                     row.createCell(column++).setCellValue((double)obj);
@@ -230,7 +235,7 @@ public class Table1_3Util {
             dataList.add(data1);
         }
         try {
-            File file = createExcelFile("d:/table1_3.xls", "测试.xls", "201610", "2016-11-15", "许丽丽", "刘仁超", dataList);
+            File file = createExcelFile("d:/template_1_3.xls", "table_1_3.xls", "201610", "20161115", "许丽丽", "刘仁超", dataList);
             System.out.println(file);
         } catch (Exception e) {
             e.printStackTrace();
