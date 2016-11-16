@@ -20077,21 +20077,21 @@
 	            var index = tmpArray[1];
 	            var subIndex = tmpArray[2];
 	
-	            for (var i = this.menuList.length - 1; i >= 0; i--) {
+	            for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
 	                if (i!=index) {
-	                    this.menuList[i].toggle = false;
+	                    leftMenuVm.menuList[i].toggle = false;
 	                } else {
-	                    this.menuList[i].toggle = true;
+	                    leftMenuVm.menuList[i].toggle = true;
 	                }
 	                
-	                this.menuList[i].active = false;
+	                leftMenuVm.menuList[i].active = false;
 	
-	                if (this.menuList[i].subMenuList!=undefined) {
-	                    for (var j = this.menuList[i].subMenuList.length - 1; j >= 0; j--) {
+	                if (leftMenuVm.menuList[i].subMenuList!=undefined) {
+	                    for (var j = leftMenuVm.menuList[i].subMenuList.length - 1; j >= 0; j--) {
 	                        if (i==index && j==subIndex) {
-	                            this.menuList[i].subMenuList[j].active=true;
+	                            leftMenuVm.menuList[i].subMenuList[j].active=true;
 	                        } else {
-	                            this.menuList[i].subMenuList[j].active=false;
+	                            leftMenuVm.menuList[i].subMenuList[j].active=false;
 	                        }
 	                    }
 	                }
@@ -20099,32 +20099,32 @@
 	        }
 	    },
 	    toggle: function(index){
-	    	for (var i = this.menuList.length - 1; i >= 0; i--) {
+	    	for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
 	    		if (i!=index) {
-	    			this.menuList[i].active = false;
-	    			this.menuList[i].toggle = false;
+	    			leftMenuVm.menuList[i].active = false;
+	    			leftMenuVm.menuList[i].toggle = false;
 	    		} else {
-	    			this.menuList[i].active = true;
-	    			this.menuList[i].toggle = true;
+	    			leftMenuVm.menuList[i].active = true;
+	    			leftMenuVm.menuList[i].toggle = true;
 	    		}
 	
-	    		if (this.menuList[i].subMenuList!=undefined) {
-	    			for (var j = this.menuList[i].subMenuList.length - 1; j >= 0; j--) {
-	    				this.menuList[i].subMenuList[j].active=false;
+	    		if (leftMenuVm.menuList[i].subMenuList!=undefined) {
+	    			for (var j = leftMenuVm.menuList[i].subMenuList.length - 1; j >= 0; j--) {
+	    				leftMenuVm.menuList[i].subMenuList[j].active=false;
 	    			}
 	    		}
 	    	}
 	    },
 	    active: function(index, subIndex){
-	    	for (var i = this.menuList.length - 1; i >= 0; i--) {
-	    		this.menuList[i].active = false;
+	    	for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
+	    		leftMenuVm.menuList[i].active = false;
 	
-	    		if (this.menuList[i].subMenuList!=undefined) {
-	    			for (var j = this.menuList[i].subMenuList.length - 1; j >= 0; j--) {
+	    		if (leftMenuVm.menuList[i].subMenuList!=undefined) {
+	    			for (var j = leftMenuVm.menuList[i].subMenuList.length - 1; j >= 0; j--) {
 	    				if (i==index && j==subIndex) {
-	    					this.menuList[i].subMenuList[j].active=true;
+	    					leftMenuVm.menuList[i].subMenuList[j].active=true;
 	    				} else {
-	    					this.menuList[i].subMenuList[j].active=false;
+	    					leftMenuVm.menuList[i].subMenuList[j].active=false;
 	    				}
 	    			}
 	    		}
@@ -20189,7 +20189,7 @@
 						months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 						topOffset: 6,
 						onMonthSelect: function(m, y) {
-							console.log('Month: ' + m + ', year: ' + y);
+							
 						}
 					});
 				});
@@ -20197,7 +20197,6 @@
 			});
 	
 			avalon.router.add("/:index/:subIndex", function (index, subIndex) {
-				console.log("test");
 				if(avalon.vmodels['main']!=undefined){
 					delete avalon.vmodels['main'];
 				}
@@ -20219,7 +20218,7 @@
 						months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 						topOffset: 6,
 						onMonthSelect: function(m, y) {
-							console.log('Month: ' + m + ', year: ' + y);
+							
 						}
 					});
 				});

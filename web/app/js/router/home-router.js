@@ -26,7 +26,7 @@ module.exports = {
 					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 					topOffset: 6,
 					onMonthSelect: function(m, y) {
-						console.log('Month: ' + m + ', year: ' + y);
+						
 					}
 				});
 			});
@@ -34,7 +34,6 @@ module.exports = {
 		});
 
 		avalon.router.add("/:index/:subIndex", function (index, subIndex) {
-			console.log("test");
 			if(avalon.vmodels['main']!=undefined){
 				delete avalon.vmodels['main'];
 			}
@@ -56,7 +55,7 @@ module.exports = {
 					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 					topOffset: 6,
 					onMonthSelect: function(m, y) {
-						console.log('Month: ' + m + ', year: ' + y);
+						
 					}
 				});
 			});
