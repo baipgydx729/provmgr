@@ -11,3 +11,4 @@ web/dist
 web/generate
 web/node_modules
 web/npm-debug.log
+web/server.json
