@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -165,44 +164,29 @@ public class Table1_3Util {
     private static Map<String, LinkedHashMap> convertData(List<DataTable1_3> dataList) {
         Map<String, LinkedHashMap> resultMap = new HashMap<>();
         //按照日期进行排序
-        Collections.sort(dataList, new Comparator<DataTable1_3>() {
-            @Override
-            public int compare(DataTable1_3 o1, DataTable1_3 o2) {
-                if (o1 == null || o1.getDate() == null) {
-                    return -1;
-                } else if(o2 == null || o2.getDate() == null) {
-                    return 1;
-                } else {
-                    if (o1.getDate().before(o2.getDate())) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
-                }
-            }
-        });
+        Collections.sort(dataList);
         //合计数据，计算各个账户同一天累加的数据,只填数据
         LinkedHashMap<String, Double> totalMap = new LinkedHashMap<>();
 
         for (DataTable1_3 data : dataList) {
-            if (totalMap.containsKey(sdf.format(data.getDate()))) {
-                Double newValue = totalMap.get(sdf.format(data.getDate())) + (null != data.getNumber() ? data.getNumber() : 0);
-                totalMap.put(sdf.format(data.getDate()), newValue);
+            if (totalMap.containsKey(data.getNatuDate())) {
+                Double newValue = totalMap.get(data.getNatuDate()) + (null != data.getC01() ? data.getC01() : 0);
+                totalMap.put(data.getNatuDate(), newValue);
             } else {
-                totalMap.put(sdf.format(data.getDate()), (null != data.getNumber() ? data.getNumber() : 0));
+                totalMap.put(data.getNatuDate(), (null != data.getC01() ? data.getC01() : 0));
             }
             //按照账户进行分组，将同一账户的不同日期进行行列转换，并按照日期顺序进行赋值
-            if (resultMap.containsKey(data.getAccount())) {
-                LinkedHashMap<String, Object> row = resultMap.get(data.getAccount());
-                row.put(sdf.format(data.getDate()), data.getNumber());
+            if (resultMap.containsKey(data.getAD())) {
+                LinkedHashMap<String, Object> row = resultMap.get(data.getAD());
+                row.put(data.getNatuDate(), data.getC01());
             } else {
                 LinkedHashMap<String, Object> row = new LinkedHashMap<>();
                 row.put("bankName", data.getBankName());
-                row.put("accountName", data.getAccountName());
-                row.put("account", data.getAccount());
-                row.put("dataCode", data.getDataCode());
-                row.put(sdf.format(data.getDate()), (null != data.getNumber() ? data.getNumber() : 0));
-                resultMap.put(data.getAccount(), row);
+                row.put("name", data.getName());
+                row.put("AD", data.getAD());
+                row.put("C01", "C01");
+                row.put(data.getNatuDate(), (null != data.getC01() ? data.getC01() : 0));
+                resultMap.put(data.getName(), row);
             }
         }
         resultMap.put("total", totalMap);
@@ -210,28 +194,25 @@ public class Table1_3Util {
     }
 
     public static void main(String[] args) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<DataTable1_3> dataList = new ArrayList<>();
 
         for (int i = 1; i<= 31; i++) {
             DataTable1_3 data1 = new DataTable1_3();
-            data1.setAccount("321080100100292783");
-            data1.setAccountName("账户1");
+            data1.setAD("321080100100292783");
+            data1.setName("账户1");
             data1.setBankName("银行1");
-            data1.setDataCode("C01");
-            data1.setDate(sdf.parse("2016-10-0" + i));
-            data1.setNumber(i + 0.1);
+            data1.setNatuDate("2016-10-0" + i);
+            data1.setC01(i + 0.1);
             dataList.add(data1);
         }
 
         for (int i = 1; i<= 31; i++) {
             DataTable1_3 data1 = new DataTable1_3();
-            data1.setAccount("110061137018010014366");
-            data1.setAccountName("账户2");
+            data1.setAD("110061137018010014366");
+            data1.setName("账户2");
             data1.setBankName("银行2");
-            data1.setDataCode("C01");
-            data1.setDate(sdf.parse("2016-10-0" + i));
-            data1.setNumber(i + 0.2);
+            data1.setNatuDate("2016-10-0" + i);
+            data1.setC01(i + 0.2);
             dataList.add(data1);
         }
         try {
