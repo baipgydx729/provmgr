@@ -864,6 +864,13 @@ html, body {
           .content .main-content .main-content-body .report-head .report-head-item input {
             width: 300px;
             height: 30px; }
+          .content .main-content .main-content-body .report-head .report-head-item #monthpicker {
+            display: inline-block;
+            width: 300px;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #A9A9A9;
+            color: #302F35; }
       .content .main-content .main-content-body .report-body {
         margin-top: 20px;
         margin-bottom: 20px; }
