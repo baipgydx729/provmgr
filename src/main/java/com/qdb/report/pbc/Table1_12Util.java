@@ -15,34 +15,34 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.report.pbc.bean.DataTable1_10;
+import com.qdb.report.pbc.bean.DataTable1_12;
 
 /**
  * @author mashengli
  */
-public class Table1_10Util {
+public class Table1_12Util {
 
-    private static Logger log = LoggerFactory.getLogger(Table1_10Util.class);
+    private static Logger log = LoggerFactory.getLogger(Table1_12Util.class);
 
     /**
-     * 数据区域起始行数下标（下标从0开始）
+     * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 8;
+    private static int DATA_START_ROW_NUM = 4;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 38;
+    private static int DATA_END_ROW_NUM = 23;
 
     /**
-     * 数据区域起始列数下标（下标从0开始）
+     * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    private static int DATA_START_COLUMN_NUM = 2;
 
     /**
-     * 数据区域结束列数下标（下标从0开始）
+     * 数据区域结束数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 24;
+    private static int DATA_END_COLUMN_NUM = 32;
 
     /**
      * 按照表一模板填写表一内容
@@ -58,7 +58,7 @@ public class Table1_10Util {
      * @throws Exception
      */
     public static File createExcelFile(String templateFile, String targetFileName, String tranPeriod, String reportDate,
-                                       String writeUserName, String checkUserName, List<DataTable1_10> dataList) throws Exception {
+                                       String writeUserName, String checkUserName, List<DataTable1_12> dataList) throws Exception {
         File tempFile = FileUtil.getTempExcelFile(targetFileName);
         InputStream is = null;
         OutputStream os = null;
@@ -96,14 +96,14 @@ public class Table1_10Util {
      * @param sheet    表格
      * @param dataList 数据列表
      */
-    private static void writeData(HSSFSheet sheet, List<DataTable1_10> dataList) {
+    private static void writeData(HSSFSheet sheet, List<DataTable1_12> dataList) {
         Collections.sort(dataList);
         int size = dataList.size();
         for (int i = 0; i < size; i++) {
-            DataTable1_10 dataTable1_10 = dataList.get(i);
-            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                Double value = getDoubleDataByColumnIndex(dataTable1_10, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+            DataTable1_12 dataTable1_12 = dataList.get(i);
+            for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
+                Double value = getDoubleDataByRowIndex(dataTable1_12, j);
+                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value : 0);
             }
         }
     }
@@ -128,76 +128,71 @@ public class Table1_10Util {
     /**
      * 获取数据
      *
-     * @param dataTable1_10 数据
+     * @param dataTable1_12 数据
      * @param index        下标
      * @return
      */
-    public static Double getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
+    public static Double getDoubleDataByRowIndex(DataTable1_12 dataTable1_12, int index) {
         switch (index) {
-            case 1:
-                return dataTable1_10.getK01();
-            case 2:
-                return dataTable1_10.getK02();
-            case 3:
-                return dataTable1_10.getK03();
             case 4:
-                return dataTable1_10.getK04();
+                return dataTable1_12.getM1();
             case 5:
-                return dataTable1_10.getK05();
+                return dataTable1_12.getM2();
             case 6:
-                return dataTable1_10.getK06();
+                return dataTable1_12.getM3();
             case 7:
-                return dataTable1_10.getK07();
+                return dataTable1_12.getM4();
             case 8:
-                return dataTable1_10.getK08();
+                return dataTable1_12.getM5();
             case 9:
-                return dataTable1_10.getK09();
+                return dataTable1_12.getM6();
             case 10:
-                return dataTable1_10.getK10();
+                return (double) 0;
             case 11:
-                return dataTable1_10.getK11();
+                return dataTable1_12.getM7();
             case 12:
-                return dataTable1_10.getK12();
+                return dataTable1_12.getM8();
             case 13:
-                return dataTable1_10.getK13();
+                return dataTable1_12.getM9();
             case 14:
-                return dataTable1_10.getK14();
+                return dataTable1_12.getM10();
             case 15:
-                return dataTable1_10.getK15();
+                return dataTable1_12.getM11();
             case 16:
-                return dataTable1_10.getK16();
+                return dataTable1_12.getZ2();
             case 17:
-                return dataTable1_10.getK17();
+                return dataTable1_12.getZ201();
             case 18:
-                return dataTable1_10.getK18();
+                return dataTable1_12.getZ202();
             case 19:
-                return dataTable1_10.getK19();
+                return (double) 0;
             case 20:
-                return dataTable1_10.getK20();
+                return (double) 0;
             case 21:
-                return dataTable1_10.getK21();
+                return dataTable1_12.getM12();
             case 22:
-                return dataTable1_10.getK22();
+                return dataTable1_12.getM13();
             case 23:
-                return dataTable1_10.getK23();
-            case 24:
-                return dataTable1_10.getK24();
+                return dataTable1_12.getM14();
             default:
                 return (double) 0;
         }
     }
 
     public static void main(String[] args) {
-        List<DataTable1_10> dataList = new ArrayList<>();
+        List<DataTable1_12> dataList = new ArrayList<>();
 
         for (int i = 0; i <= 30; i++) {
-            DataTable1_10 dataTable1_10 = new DataTable1_10();
-            dataTable1_10.setK01(i + 0.1);
-            dataTable1_10.setK02(i + 0.2);
-            dataList.add(dataTable1_10);
+            DataTable1_12 dataTable1_12 = new DataTable1_12();
+            dataTable1_12.setM1(i + 0.1);
+            dataTable1_12.setM2(i + 0.2);
+            dataTable1_12.setM4(i + 0.3);
+            dataTable1_12.setZ2(i + 0.4);
+            dataTable1_12.setM14(i + 0.4);
+            dataList.add(dataTable1_12);
         }
         try {
-            File file = createExcelFile("d:/template_1_10.xls", "table_1_10.xls", "201610", "20161116", "许丽丽", "刘仁超", dataList);
+            File file = createExcelFile("d:/template_1_12.xls", "table_1_12.xls", "201610", "20161116", "许丽丽", "刘仁超", dataList);
             System.out.println(file.getPath());
         } catch (Exception e) {
             e.printStackTrace();

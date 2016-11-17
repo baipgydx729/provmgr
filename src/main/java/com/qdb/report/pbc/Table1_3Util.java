@@ -147,12 +147,12 @@ public class Table1_3Util {
 
         HSSFRow secondLastRow = sheet.createRow(DATA_START_ROW_NUM + countAccount + 1);
         secondLastRow.createCell(0).setCellValue("填表人（填写在本行B列）");
-        secondLastRow.getCell(0).setCellStyle(sheet.getRow(1).getCell(0).getCellStyle());
+        secondLastRow.getCell(0).setCellStyle(sheet.getRow(0).getCell(0).getCellStyle());
         secondLastRow.createCell(1).setCellValue(writeUserName);
 
         HSSFRow lastRow = sheet.createRow(DATA_START_ROW_NUM + countAccount + 2);
         lastRow.createCell(0).setCellValue("复核人（填写在本行B列）");
-        lastRow.getCell(0).setCellStyle(sheet.getRow(1).getCell(0).getCellStyle());
+        lastRow.getCell(0).setCellStyle(sheet.getRow(0).getCell(0).getCellStyle());
         lastRow.createCell(1).setCellValue(checkUserName);
     }
 
