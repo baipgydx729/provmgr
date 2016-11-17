@@ -9,7 +9,6 @@
     <name>Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
-
     <!-- 属性配置 -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,7 +27,7 @@
     <distributionManagement>
         <repository>
             <id>qdbnexus</id>
-            <url>http://192.168.208.211:8081/nexus/content/repositories/releases</url>
+            <url>http://110.249.154.230:8008/nexus/content/repositories/releases</url>
         </repository>
     </distributionManagement>
     <dependencies>
@@ -42,7 +41,6 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
@@ -65,7 +63,11 @@
             <artifactId>sqljdbc4</artifactId>
             <version>4.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.39</version>
+        </dependency>
 
         <!-- 数据库连接池 -->
         <dependency>
