@@ -121,6 +121,7 @@ public class Table1_1Util {
      *
      * @param sheet         表格
      * @param tranPeriod    交易时期
+     * @param companyName 支付机构名称
      * @param reportDate    填表日期
      * @param writeUserName 填表人
      * @param checkUserName 复核人

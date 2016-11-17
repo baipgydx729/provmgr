@@ -48,6 +48,7 @@ public class Table1_2Util {
      * 按照表二模板填写表二内容
      * @param templateFile 模板文件全路径
      * @param targetFileName 目标文件名
+     * @param companyName 支付机构名称
      * @param tranPeriod 交易时期
      * @param reportDate 填报日期
      * @param writeUserName 填表人
@@ -56,7 +57,7 @@ public class Table1_2Util {
      * @return 生成的文件
      * @throws Exception
      */
-    public static File createExcelFile(String templateFile, String targetFileName, String tranPeriod, String reportDate,
+    public static File createExcelFile(String templateFile, String targetFileName, String companyName, String tranPeriod, String reportDate,
                                      String writeUserName, String checkUserName, List<DataTable1_2> dataList) throws Exception {
         File tempFile = FileUtil.getTempExcelFile(targetFileName);
         InputStream is = null;
@@ -74,7 +75,7 @@ public class Table1_2Util {
             POIUtil.copySheet(sheetIn, sheetOut, workbookIn, workbookOut);
 
             //填写预设内容
-            writePresetContent(sheetOut, tranPeriod, reportDate, writeUserName, checkUserName);
+            writePresetContent(sheetOut, companyName, tranPeriod, reportDate, writeUserName, checkUserName);
             //填写数据
             writeData(sheetOut, dataList);
 
@@ -117,12 +118,14 @@ public class Table1_2Util {
     /**
      * 写预设的内容
      * @param sheet 表格
+     * @param companyName 支付机构名称
      * @param tranPeriod 交易时期
      * @param reportData 填报日期
      * @param writeUserName 填表人
      * @param checkUserName 复核人
      */
-    private static void writePresetContent(HSSFSheet sheet, String tranPeriod, String reportData, String writeUserName, String checkUserName) {
+    private static void writePresetContent(HSSFSheet sheet, String companyName, String tranPeriod, String reportData, String writeUserName, String checkUserName) {
+        sheet.getRow(0).createCell(0).setCellValue(companyName);
         sheet.getRow(1).createCell(1).setCellValue(tranPeriod);
         sheet.getRow(2).createCell(1).setCellValue(reportData);
         sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(writeUserName);
@@ -195,7 +198,7 @@ public class Table1_2Util {
             dataList.add(dataTable1_2);
         }
         try {
-            File file = createExcelFile("d:/template_1_2.xls", "table_1_2.xls", "201610", "20161116", "许丽丽", "刘仁超", dataList);
+            File file = createExcelFile("d:/template_1_2.xls", "table_1_2.xls", "[BJ0000004]北京钱袋宝支付技术有限公司", "201610", "20161116", "许丽丽", "刘仁超", dataList);
             System.out.println(file.getPath());
         } catch (Exception e) {
             e.printStackTrace();
