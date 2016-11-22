@@ -24,9 +24,9 @@
 
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		destroy-method="close">
-		<property name="driverClassName">
-			<value>com.microsoft.sqlserver.jdbc.SQLServerDriver</value>
-		</property>
+        <property name="driverClassName">
+            <value>${db.driverClass}</value>
+        </property>
 		<!-- <property name="defaultAutoCommit">
 			<value>false</value>
 		</property> -->

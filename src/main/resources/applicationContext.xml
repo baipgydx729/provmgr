@@ -39,6 +39,6 @@
 	<import resource="classpath:rabbit.xml" />
 
 	<!-- 加载暴露dubbo服务配置文件-->
-	<import resource="classpath:dubbo.xml" />
+	<!--<import resource="classpath:dubbo.xml" />-->
 
 </beans>

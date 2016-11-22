@@ -9,7 +9,6 @@
     <name>Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
-
     <!-- 属性配置 -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,8 +17,8 @@
         <slf4j.version>1.7.2</slf4j.version>
         <jetty.version>9.0.0.RC2</jetty.version>
         <druid.version>1.0.9</druid.version>
-        <jdbc.version>4.0</jdbc.version>
-        <fastjson.version>1.1.41</fastjson.version>
+        <sqqlserver.jdbc.version>4.0</sqqlserver.jdbc.version>
+        <fastjson.version>1.2.12</fastjson.version>
         <spring.amqp>1.5.0.RELEASE</spring.amqp>
         <servlet-api.version>3.0.1</servlet-api.version>
         <spring.baseline.version>4.2.1.RELEASE</spring.baseline.version>
@@ -28,7 +27,7 @@
     <distributionManagement>
         <repository>
             <id>qdbnexus</id>
-            <url>http://192.168.208.211:8081/nexus/content/repositories/releases</url>
+            <url>http://110.249.154.230:8008/nexus/content/repositories/releases</url>
         </repository>
     </distributionManagement>
     <dependencies>
@@ -42,7 +41,6 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
@@ -63,9 +61,8 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
-            <version>4.0</version>
+            <version>${sqqlserver.jdbc.version}</version>
         </dependency>
-
 
         <!-- 数据库连接池 -->
         <dependency>
@@ -132,12 +129,22 @@
             <type>jar</type>
         </dependency>
 
-        <!-- 日志组建 slf4j+logback
+        <!-- 日志组建 slf4j+logback-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>-->
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
 
         <!--提供了一个桥接common-logging转slf4j -->
         <dependency>
@@ -152,11 +159,11 @@
             <version>${logback.version}</version>
         </dependency>
         <!-- log4j转slf4j -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.13</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.slf4j</groupId>-->
+            <!--<artifactId>log4j-over-slf4j</artifactId>-->
+            <!--<version>1.7.13</version>-->
+        <!--</dependency>-->
 
         <!-- dubbo begin -->
         <dependency>

@@ -15,26 +15,26 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.report.pbc.bean.DataTable1_2;
+import com.qdb.report.pbc.bean.DataTable1_13;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
 /**
  * @author mashengli
  */
-public class Table1_2Util {
+public class Table1_13Util {
 
-    private static Logger log = LoggerFactory.getLogger(Table1_2Util.class);
+    private static Logger log = LoggerFactory.getLogger(Table1_13Util.class);
 
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 8;
+    private static int DATA_START_ROW_NUM = 6;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 39;
+    private static int DATA_END_ROW_NUM = 36;
 
     /**
      * 数据区域起始列数下标（下标从0开始）
@@ -44,7 +44,7 @@ public class Table1_2Util {
     /**
      * 数据区域结束列数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 9;
+    private static int DATA_END_COLUMN_NUM = 6;
 
     /**
      * 按照表二模板填写表二内容
@@ -60,7 +60,7 @@ public class Table1_2Util {
      * @throws Exception
      */
     public static File createExcelFile(String templateFile, String targetFileName, String companyName, String tranPeriod, String reportDate,
-                                     String writeUserName, String checkUserName, List<DataTable1_2> dataList) throws Exception {
+                                       String writeUserName, String checkUserName, List<DataTable1_13> dataList) throws Exception {
         File tempFile = FileUtil.getTempExcelFile(targetFileName);
         InputStream is = null;
         OutputStream os = null;
@@ -98,22 +98,15 @@ public class Table1_2Util {
      * @param sheet 表格
      * @param dataList 数据
      */
-    private static void  writeData(HSSFSheet sheet, List<DataTable1_2> dataList) {
+    private static void  writeData(HSSFSheet sheet, List<DataTable1_13> dataList) {
         Collections.sort(dataList);
         int size = dataList.size();
-        DataTable1_2 total = new DataTable1_2();
         for (int i = 0; i < size; i++) {
-            DataTable1_2 dataTable1_2 = dataList.get(i);
-            total = addData(total, dataTable1_2);
+            DataTable1_13 dataTable1_13 = dataList.get(i);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                Double value = getDoubleDataByColumnIndex(dataTable1_2, j);
+                Double value = getDoubleDataByColumnIndex(dataTable1_13, j);
                 sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
             }
-        }
-        //合计行
-        for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            Double value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
         }
     }
 
@@ -127,7 +120,7 @@ public class Table1_2Util {
      * @param checkUserName 复核人
      */
     private static void writePresetContent(HSSFSheet sheet, String companyName, String tranPeriod, String reportData, String writeUserName, String checkUserName) {
-        sheet.getRow(0).createCell(0).setCellValue(companyName);
+        sheet.getRow(0).createCell(1).setCellValue(companyName);
         sheet.getRow(1).createCell(1).setCellValue(tranPeriod);
         sheet.getRow(2).createCell(1).setCellValue(reportData);
         sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(writeUserName);
@@ -136,71 +129,40 @@ public class Table1_2Util {
 
     /**
      * 获取数据
-     * @param dataTable1_2 数据
+     * @param dataTable1_13 数据
      * @param index 下标
      * @return
      */
-    public static Double getDoubleDataByColumnIndex(DataTable1_2 dataTable1_2, int index) {
+    public static Double getDoubleDataByColumnIndex(DataTable1_13 dataTable1_13, int index) {
         switch (index) {
             case 1:
-                return dataTable1_2.getB01();
+                return dataTable1_13.getN01();
             case 2:
-                return dataTable1_2.getB02();
+                return dataTable1_13.getN02();
             case 3:
-                return dataTable1_2.getB03();
+                return dataTable1_13.getN03();
             case 4:
-                return dataTable1_2.getB04();
+                return dataTable1_13.getN04();
             case 5:
-                return dataTable1_2.getB05();
+                return dataTable1_13.getN05();
             case 6:
-                return dataTable1_2.getB06();
-            case 7:
-                return dataTable1_2.getB07();
-            case 8:
-                return dataTable1_2.getB08();
-            case 9:
-                return dataTable1_2.getB09();
+                return dataTable1_13.getN06();
             default:
                 return (double) 0;
         }
     }
 
-    /**
-     * 做加法
-     * @param data1
-     * @param data2
-     * @return
-     */
-    private static DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
-        if (data1 == null) {
-            return data2;
-        }
-        if (data2 == null) {
-            return data1;
-        }
-        data1.setB01((null != data1.getB01() ? data1.getB01() : 0) + (null != data2.getB01() ? data2.getB01() : 0));
-        data1.setB02((null != data1.getB02() ? data1.getB02() : 0) + (null != data2.getB02() ? data2.getB02() : 0));
-        data1.setB03((null != data1.getB03() ? data1.getB03() : 0) + (null != data2.getB03() ? data2.getB03() : 0));
-        data1.setB04((null != data1.getB04() ? data1.getB04() : 0) + (null != data2.getB04() ? data2.getB04() : 0));
-        data1.setB05((null != data1.getB05() ? data1.getB05() : 0) + (null != data2.getB05() ? data2.getB05() : 0));
-        data1.setB06((null != data1.getB06() ? data1.getB06() : 0) + (null != data2.getB06() ? data2.getB06() : 0));
-        data1.setB07((null != data1.getB07() ? data1.getB07() : 0) + (null != data2.getB07() ? data2.getB07() : 0));
-        data1.setB08((null != data1.getB08() ? data1.getB08() : 0) + (null != data2.getB08() ? data2.getB08() : 0));
-        data1.setB09((null != data1.getB09() ? data1.getB09() : 0) + (null != data2.getB09() ? data2.getB09() : 0));
-        return data1;
-    }
-
     public static void main(String[] args) {
-        List<DataTable1_2> dataList = new ArrayList<>();
+        List<DataTable1_13> dataList = new ArrayList<>();
 
         for (int i = 0; i <= 30; i++) {
-            DataTable1_2 dataTable1_2 = new DataTable1_2();
-            dataTable1_2.setB01(i + 0.1);
-            dataTable1_2.setB02(i + 0.2);
-            dataList.add(dataTable1_2);
+            DataTable1_13 dataTable1_13 = new DataTable1_13();
+            dataTable1_13.setN01(i + 0.1);
+            dataTable1_13.setN03(i + 0.2);
+            dataList.add(dataTable1_13);
         }
         try {
-            File file = createExcelFile("d:/template_1_2.xls", "table_1_2.xls", "[BJ0000004]北京钱袋宝支付技术有限公司", "201610", "20161116", "许丽丽", "刘仁超", dataList);
+            File file = createExcelFile("d:/template_1_13.xls", "table_1_13.xls", "钱袋宝", "201610", "20161116", "许丽丽", "刘仁超", dataList);
             System.out.println(file.getPath());
         } catch (Exception e) {
             e.printStackTrace();

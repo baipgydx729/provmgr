@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.qdb.report.pbc.bean.DataTable1_1;
+import com.qdb.util.FileUtil;
+import com.qdb.util.POIUtil;
 
 /**
  * @author mashengli
@@ -49,6 +51,7 @@ public class Table1_1Util {
      *
      * @param templateFile   模板文件全路径
      * @param targetFileName 目标文件名
+     * @param companyName 支付机构名称
      * @param tranPeriod     交易时期
      * @param reportDate     填报日期
      * @param writeUserName  填表人
@@ -57,7 +60,7 @@ public class Table1_1Util {
      * @return 生成的文件
      * @throws Exception
      */
-    public static File createExcelFile(String templateFile, String targetFileName, String tranPeriod, String reportDate,
+    public static File createExcelFile(String templateFile, String targetFileName, String companyName, String tranPeriod, String reportDate,
                                        String writeUserName, String checkUserName, List<DataTable1_1> dataList) throws Exception {
         File tempFile = FileUtil.getTempExcelFile(targetFileName);
         InputStream is = null;
@@ -74,7 +77,7 @@ public class Table1_1Util {
             //拷贝模板
             POIUtil.copySheet(sheetIn, sheetOut, workbookIn, workbookOut);
             //填写预设单元格的内容
-            writePresetContent(sheetOut, tranPeriod, reportDate, writeUserName, checkUserName);
+            writePresetContent(sheetOut, companyName, tranPeriod, reportDate, writeUserName, checkUserName);
             //填写数据
             writeData(sheetOut, dataList);
 
@@ -120,12 +123,14 @@ public class Table1_1Util {
      *
      * @param sheet         表格
      * @param tranPeriod    交易时期
+     * @param companyName 支付机构名称
      * @param reportDate    填表日期
      * @param writeUserName 填表人
      * @param checkUserName 复核人
      */
-    private static void writePresetContent(HSSFSheet sheet, String tranPeriod, String reportDate, String writeUserName, String checkUserName) {
+    private static void writePresetContent(HSSFSheet sheet, String companyName, String tranPeriod, String reportDate, String writeUserName, String checkUserName) {
         //填充交易时期、填报日期、填表人及审核人
+        sheet.getRow(0).createCell(1).setCellValue(companyName);
         sheet.getRow(1).createCell(1).setCellValue(tranPeriod);
         sheet.getRow(2).createCell(1).setCellValue(reportDate);
         sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(writeUserName);
@@ -238,7 +243,7 @@ public class Table1_1Util {
             dataList.add(dataTable1_1);
         }
         try {
-            File file = createExcelFile("d:/template_1_1.xls", "table_1_1.xls", "201610", "20161116", "许丽丽", "刘仁超", dataList);
+            File file = createExcelFile("d:/template_1_1.xls", "table_1_1.xls", "[BJ0000004]北京钱袋宝支付技术有限公司", "201610", "20161116", "许丽丽", "刘仁超", dataList);
             System.out.println(file.getPath());
         } catch (Exception e) {
             e.printStackTrace();
