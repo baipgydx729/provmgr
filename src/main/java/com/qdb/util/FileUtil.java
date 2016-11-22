@@ -1,4 +1,4 @@
-package com.qdb.report.pbc;
+package com.qdb.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +14,7 @@ public class FileUtil {
      * @return 文件
      */
     public static File getTempExcelFile(String fileName) {
-//        File file = new File(System.getProperty("java.io.tmpdir") + File.separator + fileName);
-        File file = new File("d:/" + File.separator + fileName);
+        File file = new File(System.getProperty("java.io.tmpdir") + File.separator + fileName);
         try {
             file.deleteOnExit();
         } catch (Exception ignored) {}

@@ -1,4 +1,4 @@
-package com.qdb.report.pbc;
+package com.qdb.util;
 
 import java.util.HashMap;
 import java.util.Map;

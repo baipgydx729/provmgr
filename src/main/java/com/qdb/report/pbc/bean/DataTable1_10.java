@@ -30,6 +30,12 @@ public class DataTable1_10 implements Comparable<DataTable1_10> {
     private Double K23;
     private Double K24;
 
+    //
+    private String bankName;
+    private String AD;
+    private Integer ADID;
+    private String name;
+
     public String getNatuDate() {
         return natuDate;
     }
@@ -228,6 +234,38 @@ public class DataTable1_10 implements Comparable<DataTable1_10> {
 
     public void setK24(Double k24) {
         K24 = k24;
+    }
+
+    public String getBankName() {
+        return bankName;
+    }
+
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public String getAD() {
+        return AD;
+    }
+
+    public void setAD(String AD) {
+        this.AD = AD;
+    }
+
+    public Integer getADID() {
+        return ADID;
+    }
+
+    public void setADID(Integer ADID) {
+        this.ADID = ADID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
