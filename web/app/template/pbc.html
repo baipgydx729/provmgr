@@ -1,77 +1,86 @@
-<script src="../js/pbc/pbc.js"></script>
 <div>
 	<div class="main-content-head"><h4>中国人民银行</h4></div>
 
 	<div class="main-content-body">
 		<div class="report-head">
 			<div class="report-head-item">
-				<label>银行名称</label>
-				<select>
-					<option value ="1">建设银行</option>
-					<option value="2">招商银行</option>
-					<option value="3">中国工商银行</option>
+				<label>选择月份</label>
+				<a href="#monthpicker" id="monthpicker"></a>
+				<button ms-click="@submit()">报送</button>
+				<button ms-click="@downloadAll()">下载全部</button>
+			</div>
+
+			<div class="report-head-item">
+				<label>选择银行</label>
+				<select name="bank" ms-on-change="@selectBank()">
+					<option ms-for="(index, bank) in @data.bankList"
+							ms-attr="{'value': bank.value}"
+							ms-if="@data.selectedBankIndex==index" selected>
+						{{bank.label}}
+					</option>
+					<option ms-for="(index, bank) in @data.bankList"
+							ms-attr="{'value': bank.value}"
+							ms-if="@data.selectedBankIndex!=index">
+						{{bank.label}}
+					</option>
 				</select>
 			</div>
 
 			<div class="report-head-item">
-				<label>日期</label>
-				<a href="#monthpicker" id="monthpicker"></a>
+				<label>选择账户</label>
+				<select name="account" ms-on-change="@selectAccount()">
+					<option ms-for="(index, account) in @data.accountList"
+							ms-attr="{'value': account.accountNo}"
+							ms-if="@data.selectedAccountIndex==index" selected>
+						{{account.accountName}}
+					</option>
+					<option ms-for="(index, account) in @data.accountList"
+							ms-attr="{'value': account.accountNo}"
+							ms-if="@data.selectedAccountIndex!=index">
+						{{account.accountName}}
+					</option>
+				</select>
 			</div>
 		</div>
 
 		<div class="report-body">
+			<div class="operation">
+				<div><button ms-click="@batchGenerate()">批量生成</button></div>
+				<div class="right">
+					<input type="text" placeholder="可按报表类型检索" id="filter">
+					<button class="search-button" ms-click="@filter()"></button>
+				</div>
+			</div>
 			<table>
 				<thead>
-					<tr>
-						<th>报表类型</th>
-						<th>报表名称</th>
-						<th>状态</th>
-						<th>操作</th>
-					</tr>
+				<tr>
+					<th>
+						<input name="check-all" type="checkbox" ms-click="@checkAll()"/>&nbsp;&nbsp;全选
+					</th>
+					<th>报表类型</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>表 1-1</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-2</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-3</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-4</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-5</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-6</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-7</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
+				<tr ms-for="(index, report) in @data.reportList">
+					<td>
+						<input type="checkbox"
+							   name="check-one"
+							   ms-click="@checkOne()"/>
+					</td>
+					<td>{{report.name}}</td>
+					<td ms-if="report.status==1">
+						<img class="icon" src="../image/round_check_fill.png">已生成
+					</td>
+					<td ms-if="report.status==0">
+						<img class="icon" src="../image/round_close_fill.png">未生成
+					</td>
+					<td>
+						<button ms-if="report.status==0">生成</button>
+						<button ms-if="report.status==1">下载</button>
+					</td>
+				</tr>
 				</tbody>
 			</table>
 		</div>
