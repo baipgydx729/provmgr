@@ -1,4 +1,4 @@
-package com.qdb.report.pbc.bean;
+package com.qdb.dao.model;
 
 /**
  * @author mashengli
@@ -8,7 +8,7 @@ public class DataTable1_3 implements Comparable<DataTable1_3> {
     private String bankName;
     private String name;
     private String AD;
-    private Double C01;
+    private Double c01;
 
     public String getNatuDate() {
         return natuDate;
@@ -43,11 +43,11 @@ public class DataTable1_3 implements Comparable<DataTable1_3> {
     }
 
     public Double getC01() {
-        return C01;
+        return c01;
     }
 
     public void setC01(Double c01) {
-        C01 = c01;
+        this.c01 = c01;
     }
 
     /**

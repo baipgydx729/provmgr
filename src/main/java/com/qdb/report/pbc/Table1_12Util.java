@@ -15,7 +15,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.report.pbc.bean.DataTable1_12;
+import com.qdb.dao.model.DataTable1_12;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 

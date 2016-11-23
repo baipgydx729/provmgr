@@ -1,16 +1,16 @@
-package com.qdb.report.pbc.bean;
+package com.qdb.dao.model;
 
 /**
  * @author mashengli
  */
 public class DataTable1_5 implements Comparable<DataTable1_5> {
     private String natuDate;
-    private Double E01;
-    private Double E02;
-    private Double E03;
-    private Double E04;
-    private Double E05;
-    private Double E06;
+    private Double e01;
+    private Double e02;
+    private Double e03;
+    private Double e04;
+    private Double e05;
+    private Double e06;
 
     //
     private String bankName;
@@ -27,51 +27,51 @@ public class DataTable1_5 implements Comparable<DataTable1_5> {
     }
 
     public Double getE01() {
-        return E01;
+        return e01;
     }
 
     public void setE01(Double e01) {
-        E01 = e01;
+        this.e01 = e01;
     }
 
     public Double getE02() {
-        return E02;
+        return e02;
     }
 
     public void setE02(Double e02) {
-        E02 = e02;
+        this.e02 = e02;
     }
 
     public Double getE03() {
-        return E03;
+        return e03;
     }
 
     public void setE03(Double e03) {
-        E03 = e03;
+        this.e03 = e03;
     }
 
     public Double getE04() {
-        return E04;
+        return e04;
     }
 
     public void setE04(Double e04) {
-        E04 = e04;
+        this.e04 = e04;
     }
 
     public Double getE05() {
-        return E05;
+        return e05;
     }
 
     public void setE05(Double e05) {
-        E05 = e05;
+        this.e05 = e05;
     }
 
     public Double getE06() {
-        return E06;
+        return e06;
     }
 
     public void setE06(Double e06) {
-        E06 = e06;
+        this.e06 = e06;
     }
 
     public String getBankName() {
