@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.model.DataTable1_1;
+import com.qdb.dao.entity.DataTable1_1;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -107,14 +108,14 @@ public class Table1_1Util {
             DataTable1_1 dataTable1_1 = dataList.get(i);
             total = addData(total, dataTable1_1);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                Double value = getDoubleDataByColumnIndex(dataTable1_1, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
+                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
         //合计行
         for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            Double value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+            BigDecimal value = getDoubleDataByColumnIndex(total, j);
+            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
         }
     }
 
@@ -144,7 +145,7 @@ public class Table1_1Util {
      * @param index        下标
      * @return
      */
-    public static Double getDoubleDataByColumnIndex(DataTable1_1 dataTable1_1, int index) {
+    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_1 dataTable1_1, int index) {
         switch (index) {
             case 1:
                 return dataTable1_1.getA01();
@@ -191,7 +192,7 @@ public class Table1_1Util {
             case 22:
                 return dataTable1_1.getA14();
             default:
-                return (double) 0;
+                return new BigDecimal("0");
         }
     }
 
@@ -208,28 +209,48 @@ public class Table1_1Util {
         if (data2 == null) {
             return data1;
         }
-        data1.setA01((null != data1.getA01() ? data1.getA01() : 0) + (null != data2.getA01() ? data2.getA01() : 0));
-        data1.setA02((null != data1.getA02() ? data1.getA02() : 0) + (null != data2.getA02() ? data2.getA02() : 0));
-        data1.setA03((null != data1.getA03() ? data1.getA03() : 0) + (null != data2.getA03() ? data2.getA03() : 0));
-        data1.setA0301((null != data1.getA0301() ? data1.getA0301() : 0) + (null != data2.getA0301() ? data2.getA0301() : 0));
-        data1.setA0302((null != data1.getA0302() ? data1.getA0302() : 0) + (null != data2.getA0302() ? data2.getA0302() : 0));
-        data1.setA04((null != data1.getA04() ? data1.getA04() : 0) + (null != data2.getA04() ? data2.getA04() : 0));
-        data1.setA05((null != data1.getA05() ? data1.getA05() : 0) + (null != data2.getA05() ? data2.getA05() : 0));
-        data1.setA06((null != data1.getA06() ? data1.getA06() : 0) + (null != data2.getA06() ? data2.getA06() : 0));
-        data1.setA0601((null != data1.getA0601() ? data1.getA0601() : 0) + (null != data2.getA0601() ? data2.getA0601() : 0));
-        data1.setA0602((null != data1.getA0602() ? data1.getA0602() : 0) + (null != data2.getA0602() ? data2.getA0602() : 0));
-        data1.setA07((null != data1.getA07() ? data1.getA07() : 0) + (null != data2.getA07() ? data2.getA07() : 0));
-        data1.setA08((null != data1.getA08() ? data1.getA08() : 0) + (null != data2.getA08() ? data2.getA08() : 0));
-        data1.setA09((null != data1.getA09() ? data1.getA09() : 0) + (null != data2.getA09() ? data2.getA09() : 0));
-        data1.setA0901((null != data1.getA0901() ? data1.getA0901() : 0) + (null != data2.getA0901() ? data2.getA0901() : 0));
-        data1.setA0902((null != data1.getA0902() ? data1.getA0902() : 0) + (null != data2.getA0902() ? data2.getA0902() : 0));
-        data1.setA10((null != data1.getA10() ? data1.getA10() : 0) + (null != data2.getA10() ? data2.getA10() : 0));
-        data1.setA11((null != data1.getA11() ? data1.getA11() : 0) + (null != data2.getA11() ? data2.getA11() : 0));
-        data1.setA12((null != data1.getA12() ? data1.getA12() : 0) + (null != data2.getA12() ? data2.getA12() : 0));
-        data1.setA13((null != data1.getA13() ? data1.getA13() : 0) + (null != data2.getA13() ? data2.getA13() : 0));
-        data1.setA1301((null != data1.getA1301() ? data1.getA1301() : 0) + (null != data2.getA1301() ? data2.getA1301() : 0));
-        data1.setA1302((null != data1.getA1302() ? data1.getA1302() : 0) + (null != data2.getA1302() ? data2.getA1302() : 0));
-        data1.setA14((null != data1.getA14() ? data1.getA14() : 0) + (null != data2.getA14() ? data2.getA14() : 0));
+        data1.setA01(DecimalTool.add(data1.getA01(), data2.getA01()));
+        data1.setA02(DecimalTool.add(data1.getA02(), data2.getA02()));
+        data1.setA03(DecimalTool.add(data1.getA03(), data2.getA03()));
+        data1.setA0301(DecimalTool.add(data1.getA0301(), data2.getA0301()));
+        data1.setA0302(DecimalTool.add(data1.getA0302(), data2.getA0302()));
+        data1.setA04(DecimalTool.add(data1.getA04(), data2.getA04()));
+        data1.setA05(DecimalTool.add(data1.getA05(), data2.getA05()));
+        data1.setA06(DecimalTool.add(data1.getA06(), data2.getA06()));
+        data1.setA0601(DecimalTool.add(data1.getA0601(), data2.getA0601()));
+        data1.setA0602(DecimalTool.add(data1.getA0602(), data2.getA0602()));
+        data1.setA07(DecimalTool.add(data1.getA07(), data2.getA07()));
+        data1.setA08(DecimalTool.add(data1.getA08(), data2.getA08()));
+        data1.setA09(DecimalTool.add(data1.getA09(), data2.getA09()));
+        data1.setA0901(DecimalTool.add(data1.getA0901(), data2.getA0901()));
+        data1.setA0902(DecimalTool.add(data1.getA0902(), data2.getA0902()));
+        data1.setA10(DecimalTool.add(data1.getA10(), data2.getA10()));
+        data1.setA11(DecimalTool.add(data1.getA11(), data2.getA11()));
+        data1.setA12(DecimalTool.add(data1.getA12(), data2.getA12()));
+        data1.setA13(DecimalTool.add(data1.getA13(), data2.getA13()));
+        data1.setA1301(DecimalTool.add(data1.getA1301(), data2.getA1301()));
+        data1.setA1302(DecimalTool.add(data1.getA1302(), data2.getA1302()));
+        data1.setA14(DecimalTool.add(data1.getA14(), data2.getA14()));
+//        data1.setA03((null != data1.getA03() ? data1.getA03() : 0) + (null != data2.getA03() ? data2.getA03() : 0));
+//        data1.setA0301((null != data1.getA0301() ? data1.getA0301() : 0) + (null != data2.getA0301() ? data2.getA0301() : 0));
+//        data1.setA0302((null != data1.getA0302() ? data1.getA0302() : 0) + (null != data2.getA0302() ? data2.getA0302() : 0));
+//        data1.setA04((null != data1.getA04() ? data1.getA04() : 0) + (null != data2.getA04() ? data2.getA04() : 0));
+//        data1.setA05((null != data1.getA05() ? data1.getA05() : 0) + (null != data2.getA05() ? data2.getA05() : 0));
+//        data1.setA06((null != data1.getA06() ? data1.getA06() : 0) + (null != data2.getA06() ? data2.getA06() : 0));
+//        data1.setA0601((null != data1.getA0601() ? data1.getA0601() : 0) + (null != data2.getA0601() ? data2.getA0601() : 0));
+//        data1.setA0602((null != data1.getA0602() ? data1.getA0602() : 0) + (null != data2.getA0602() ? data2.getA0602() : 0));
+//        data1.setA07((null != data1.getA07() ? data1.getA07() : 0) + (null != data2.getA07() ? data2.getA07() : 0));
+//        data1.setA08((null != data1.getA08() ? data1.getA08() : 0) + (null != data2.getA08() ? data2.getA08() : 0));
+//        data1.setA09((null != data1.getA09() ? data1.getA09() : 0) + (null != data2.getA09() ? data2.getA09() : 0));
+//        data1.setA0901((null != data1.getA0901() ? data1.getA0901() : 0) + (null != data2.getA0901() ? data2.getA0901() : 0));
+//        data1.setA0902((null != data1.getA0902() ? data1.getA0902() : 0) + (null != data2.getA0902() ? data2.getA0902() : 0));
+//        data1.setA10((null != data1.getA10() ? data1.getA10() : 0) + (null != data2.getA10() ? data2.getA10() : 0));
+//        data1.setA11((null != data1.getA11() ? data1.getA11() : 0) + (null != data2.getA11() ? data2.getA11() : 0));
+//        data1.setA12((null != data1.getA12() ? data1.getA12() : 0) + (null != data2.getA12() ? data2.getA12() : 0));
+//        data1.setA13((null != data1.getA13() ? data1.getA13() : 0) + (null != data2.getA13() ? data2.getA13() : 0));
+//        data1.setA1301((null != data1.getA1301() ? data1.getA1301() : 0) + (null != data2.getA1301() ? data2.getA1301() : 0));
+//        data1.setA1302((null != data1.getA1302() ? data1.getA1302() : 0) + (null != data2.getA1302() ? data2.getA1302() : 0));
+//        data1.setA14((null != data1.getA14() ? data1.getA14() : 0) + (null != data2.getA14() ? data2.getA14() : 0));
         return data1;
     }
 
@@ -238,8 +259,8 @@ public class Table1_1Util {
 
         for (int i = 0; i <= 30; i++) {
             DataTable1_1 dataTable1_1 = new DataTable1_1();
-            dataTable1_1.setA01(i + 0.1);
-            dataTable1_1.setA02(i + 0.1);
+            dataTable1_1.setA01(new BigDecimal(i + 0.1));
+            dataTable1_1.setA02(new BigDecimal(i + 0.1));
             dataList.add(dataTable1_1);
         }
         try {

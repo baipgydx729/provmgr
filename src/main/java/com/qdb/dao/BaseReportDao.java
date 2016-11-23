@@ -11,17 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.alibaba.dubbo.common.utils.StringUtils;
-import com.qdb.dao.model.DataTable1_1;
-import com.qdb.dao.model.DataTable1_10;
-import com.qdb.dao.model.DataTable1_11;
-import com.qdb.dao.model.DataTable1_12;
-import com.qdb.dao.model.DataTable1_13;
-import com.qdb.dao.model.DataTable1_2;
-import com.qdb.dao.model.DataTable1_3;
-import com.qdb.dao.model.DataTable1_4;
-import com.qdb.dao.model.DataTable1_5;
-import com.qdb.dao.model.DataTable1_6;
-import com.qdb.dao.model.DataTable1_9;
 import com.qdb.util.MapUtil;
 
 /**
@@ -35,18 +24,18 @@ public class BaseReportDao {
     @Autowired
     private DBUtil dbUtil;
 
-    public <T> List<T> queryForList(TableModeEnum tableMode, String startDate, String endDate, Class<T> clazz) {
+    public <T> List<T> queryForList(TableModeEnum tableMode, String startDate, String endDate) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
             log.info("起始日期不能为空");
             return Collections.EMPTY_LIST;
         }
         Object[] params = new Object[]{startDate, endDate};
         StringBuilder SQL = new StringBuilder();
-        SQL.append(ReportSQLConstant.SQL_SELECT).append(getColumnsByTableMode(tableMode))
-                .append(ReportSQLConstant.SQL_FROM).append(getTableNameByTableMode(tableMode))
+        SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
+                .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
                 .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
         try {
-            return MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), clazz);
+            return MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), tableMode.getEntityClass());
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -55,7 +44,7 @@ public class BaseReportDao {
         return null;
     }
 
-    public <T> List<T> queryForList(TableModeEnum tableMode, String startDate, String endDate, List<Integer> ADIDs, Class<T> clazz) {
+    public <T> List<T> queryForList(TableModeEnum tableMode, String startDate, String endDate, List<Integer> ADIDs) {
         if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
             log.info("起始日期不能为空");
             return Collections.EMPTY_LIST;
@@ -63,8 +52,8 @@ public class BaseReportDao {
         List<T> result = new ArrayList<>();
         Object[] params = null;
         StringBuilder SQL = new StringBuilder();
-        SQL.append(ReportSQLConstant.SQL_SELECT).append(getColumnsByTableMode(tableMode))
-                .append(ReportSQLConstant.SQL_FROM).append(getTableNameByTableMode(tableMode))
+        SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
+                .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
                 .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
         if (CollectionUtils.isNotEmpty(ADIDs)) {
             int size = ADIDs.size();
@@ -84,7 +73,7 @@ public class BaseReportDao {
         params[0] = startDate;
         params[1] = endDate;
         try {
-            result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), clazz);
+            result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), tableMode.getEntityClass());
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -93,115 +82,115 @@ public class BaseReportDao {
         return result;
     }
 
-    public Class getClassByTableMode(TableModeEnum tableMode) {
-        if (TableModeEnum.Table1_1.equals(tableMode)) {
-            return DataTable1_1.class;
-        }
-        if (TableModeEnum.Table1_2.equals(tableMode)) {
-            return DataTable1_2.class;
-        }
-        if (TableModeEnum.Table1_3.equals(tableMode)) {
-            return DataTable1_3.class;
-        }
-        if (TableModeEnum.Table1_4.equals(tableMode)) {
-            return DataTable1_4.class;
-        }
-        if (TableModeEnum.Table1_5.equals(tableMode)) {
-            return DataTable1_5.class;
-        }
-        if (TableModeEnum.Table1_6.equals(tableMode)) {
-            return DataTable1_6.class;
-        }
-        if (TableModeEnum.Table1_9.equals(tableMode)) {
-            return DataTable1_9.class;
-        }
-        if (TableModeEnum.Table1_10.equals(tableMode)) {
-            return DataTable1_10.class;
-        }
-        if (TableModeEnum.Table1_11.equals(tableMode)) {
-            return DataTable1_11.class;
-        }
-        if (TableModeEnum.Table1_12.equals(tableMode)) {
-            return DataTable1_12.class;
-        }
-        if (TableModeEnum.Table1_13.equals(tableMode)) {
-            return DataTable1_13.class;
-        }
-        return null;
-    }
-
-    public String getColumnsByTableMode(TableModeEnum tableMode) {
-        if (TableModeEnum.Table1_1.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_1_COLUMNS;
-        }
-        if (TableModeEnum.Table1_2.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_2_COLUMNS;
-        }
-        if (TableModeEnum.Table1_3.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_3_COLUMNS;
-        }
-        if (TableModeEnum.Table1_4.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_4_COLUMNS;
-        }
-        if (TableModeEnum.Table1_5.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_5_COLUMNS;
-        }
-        if (TableModeEnum.Table1_6.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_6_COLUMNS;
-        }
-        if (TableModeEnum.Table1_9.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_9_COLUMNS;
-        }
-        if (TableModeEnum.Table1_10.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_10_COMUMNS;
-        }
-        if (TableModeEnum.Table1_11.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_11_COLUMNS;
-        }
-        if (TableModeEnum.Table1_12.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_12_COLUMNS;
-        }
-        if (TableModeEnum.Table1_13.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_13_COLUMNS;
-        }
-        return "";
-    }
-
-    public String getTableNameByTableMode(TableModeEnum tableMode) {
-        if (TableModeEnum.Table1_1.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_1_NAME;
-        }
-        if (TableModeEnum.Table1_2.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_2_NAME;
-        }
-        if (TableModeEnum.Table1_3.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_3_NAME;
-        }
-        if (TableModeEnum.Table1_4.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_4_NAME;
-        }
-        if (TableModeEnum.Table1_5.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_5_NAME;
-        }
-        if (TableModeEnum.Table1_6.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_6_NAME;
-        }
-        if (TableModeEnum.Table1_9.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_9_NAME;
-        }
-        if (TableModeEnum.Table1_10.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_10_NAME;
-        }
-        if (TableModeEnum.Table1_11.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_11_NAME;
-        }
-        if (TableModeEnum.Table1_12.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_12_NAME;
-        }
-        if (TableModeEnum.Table1_13.equals(tableMode)) {
-            return ReportSQLConstant.TABLE1_13_NAME;
-        }
-        return "";
-    }
+//    public Class getClassByTableMode(TableModeEnum tableMode) {
+//        if (TableModeEnum.Table1_1.equals(tableMode)) {
+//            return DataTable1_1.class;
+//        }
+//        if (TableModeEnum.Table1_2.equals(tableMode)) {
+//            return DataTable1_2.class;
+//        }
+//        if (TableModeEnum.Table1_3.equals(tableMode)) {
+//            return DataTable1_3.class;
+//        }
+//        if (TableModeEnum.Table1_4.equals(tableMode)) {
+//            return DataTable1_4.class;
+//        }
+//        if (TableModeEnum.Table1_5.equals(tableMode)) {
+//            return DataTable1_5.class;
+//        }
+//        if (TableModeEnum.Table1_6.equals(tableMode)) {
+//            return DataTable1_6.class;
+//        }
+//        if (TableModeEnum.Table1_9.equals(tableMode)) {
+//            return DataTable1_9.class;
+//        }
+//        if (TableModeEnum.Table1_10.equals(tableMode)) {
+//            return DataTable1_10.class;
+//        }
+//        if (TableModeEnum.Table1_11.equals(tableMode)) {
+//            return DataTable1_11.class;
+//        }
+//        if (TableModeEnum.Table1_12.equals(tableMode)) {
+//            return DataTable1_12.class;
+//        }
+//        if (TableModeEnum.Table1_13.equals(tableMode)) {
+//            return DataTable1_13.class;
+//        }
+//        return null;
+//    }
+//
+//    public String getColumnsByTableMode(TableModeEnum tableMode) {
+//        if (TableModeEnum.Table1_1.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_1_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_2.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_2_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_3.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_3_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_4.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_4_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_5.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_5_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_6.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_6_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_9.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_9_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_10.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_10_COMUMNS;
+//        }
+//        if (TableModeEnum.Table1_11.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_11_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_12.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_12_COLUMNS;
+//        }
+//        if (TableModeEnum.Table1_13.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_13_COLUMNS;
+//        }
+//        return "";
+//    }
+//
+//    public String getTableNameByTableMode(TableModeEnum tableMode) {
+//        if (TableModeEnum.Table1_1.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_1_NAME;
+//        }
+//        if (TableModeEnum.Table1_2.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_2_NAME;
+//        }
+//        if (TableModeEnum.Table1_3.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_3_NAME;
+//        }
+//        if (TableModeEnum.Table1_4.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_4_NAME;
+//        }
+//        if (TableModeEnum.Table1_5.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_5_NAME;
+//        }
+//        if (TableModeEnum.Table1_6.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_6_NAME;
+//        }
+//        if (TableModeEnum.Table1_9.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_9_NAME;
+//        }
+//        if (TableModeEnum.Table1_10.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_10_NAME;
+//        }
+//        if (TableModeEnum.Table1_11.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_11_NAME;
+//        }
+//        if (TableModeEnum.Table1_12.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_12_NAME;
+//        }
+//        if (TableModeEnum.Table1_13.equals(tableMode)) {
+//            return ReportSQLConstant.TABLE1_13_NAME;
+//        }
+//        return "";
+//    }
 
 }
