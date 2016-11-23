@@ -728,7 +728,8 @@ html, body {
     .jquery-modal.blocker .modal a.close-modal {
       top: 0;
       right: 0;
-      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAAXNSR0IArs4c6QAAAyJJREFUSA2llk1IVFEUx30zYMoYOFIaFkbUxqBFlEHWJqgWQo0L5wMGY1qLq5auctG6RatWggR+gF8Vfe9aFQiCSxtpUxKkZI1N2mi///Pd58zzvWc6F87cc8/5n/O/597z3hurJmQkk8lay7KubW1tJYB1oLeiH0H/jv6VeZb1VCwWezc0NFQMSVVj+TkhiGLPIfeR48he4xvEg42NjY8ZG37gXUTZbPbE+vr6JOCLfgFhNsjmke7R0dFPXlwFEZVcAPAMOeYF7mO9DDYxPj7+vjzGJXIq+YizGhI7N1WtcHeXIFswZBEpuhPnuKomUT5I4pDN9Pf3H9JawyZiziH7vhNiAgdk7UtLS30GYDktvIij1RjNHI1GO7C3IU+QOmM3M7veQO6wnsM/j5iNG4ju6yRH+CsCUM/JLhIhS6VSKx00gdoNruI5cUiS+EfQ9Xx5SZSiCV+XlAgAPYxBYySVSl0fGxt7RUACscmYVYlIpjmRq2xoKiiBya9ddASBsNcDnBEZSV87ZKvYUyLBfgX9BdKABA07v47O99jKomwydn5DZBCfosIpkaC/BBdGUmPyqxn+AK4tS+yrErAqEi52ube3N1YsFhcBHvUFe4y8C+t1dOqM0AHJBiQ5QzI8PFwgIIu9okECkqzphauj+xIAsM0OSRqSyUwm00kl+XQ6fZP1GwC3kN9h8fjs/KpoNgT4F6KMIaG7dCfNVDctMu7qLf7b2ALJ8Nv51d6BrQnoLg0wwT1edkgOa1PE1HnIemT3G8LJbuVyubpCofAZvdkLjEQiZzc3N2V/itgk5Rg2ojtKkWyOOY/oO+YO/GqgNk7kh/32plX7MDxyETtKCbUieMdVofniIBrgeB8Iab829GXEOF8Rur34HxIh/XB58j40Od3vEZd7mmP6gKPJOKuYf3Lsndyvu3m7IiXEqM+v3mcrVRAoVCQ95SQyuhVpoUGHnYFshjtr37bs6zcPScJLogxuRSYdHbLQ0tJynvU9ZM+3huLY2CoyEI/Hz/mR2Bj9BA2qayBBF9WV/6+LgV/D7v6vY/1cLRyU50B2PXcHCfwHWk5j6/SwQSQAAAAASUVORK5CYII=) center no-repeat; }
+      background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABGUlEQVRYR+2Wyw3CQAxEHx3QASVAB0AJdEgHlAB0AJ1QAhqUSCEkux4TxCU57sfz5B07XvDnb/FnfWaAOQOlDByBFXAAHkmzLoFTc19xPr4SwAXYAjdgn4CQ+BnYAFdg5wIogCDWCYiu+L0RH8xizYQZiLC4MlID0BkHwhKPAkQhbHEHoAaREncBxiC03rq9aDi3CsZKv+8JnVOp2eKZDLRQXQitpcS/BWjTrjjZZhUqw/5T9A2n/UyzesWN9IEuwJDbtZ/tmBZAqdScZvWW0WgGInWegogARMSHqiNkzBqAI56CKAFkxG2IyECSbTJdT6hKNNTYE5GCaJL5ZiSTuO7bE9HYv2DS9ZoJJxVzn+Dn4plWPDnU/ARPp+tmIQjTNEQAAAAASUVORK5CYII=) center no-repeat;
+      background-size: 25px; }
 
 .modal-content .modal-message {
   height: 20px;
@@ -738,8 +739,9 @@ html, body {
     cursor: pointer;
     color: #476CBA; }
   .modal-content .modal-message.error-message {
-    font-size: 16px;
-    color: #ee0000; }
+    font-size: 16px; }
+    .modal-content .modal-message.error-message .icon {
+      margin-right: 10px; }
   .modal-content .modal-message .modal-message-left {
     float: left; }
   .modal-content .modal-message .modal-message-right {
@@ -749,6 +751,18 @@ html, body {
       border-radius: 2px;
       padding: 5px 10px;
       margin-left: 10px; }
+
+.modal-content .modal-button {
+  margin-top: 30px;
+  text-align: right; }
+  .modal-content .modal-button button {
+    width: 60px;
+    height: 30px;
+    margin-left: 10px;
+    background-color: #2D73A0;
+    border: none;
+    cursor: pointer;
+    color: #fff; }
 
 .modal-content .modal-form > div {
   margin: 0 auto; }
@@ -864,12 +878,55 @@ html, body {
           .content .main-content .main-content-body .report-head .report-head-item input {
             width: 300px;
             height: 30px; }
+          .content .main-content .main-content-body .report-head .report-head-item #monthpicker {
+            display: inline-block;
+            width: 300px;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid #A9A9A9;
+            color: #302F35; }
+          .content .main-content .main-content-body .report-head .report-head-item button {
+            width: 100px;
+            height: 30px;
+            margin-left: 10px;
+            background-color: #2D73A0;
+            border: none;
+            cursor: pointer;
+            color: #fff; }
       .content .main-content .main-content-body .report-body {
         margin-top: 20px;
         margin-bottom: 20px; }
+        .content .main-content .main-content-body .report-body .operation > div {
+          display: inline-block; }
+          .content .main-content .main-content-body .report-body .operation > div.right {
+            float: right; }
+          .content .main-content .main-content-body .report-body .operation > div input {
+            width: 300px;
+            height: 26px;
+            vertical-align: top; }
+          .content .main-content .main-content-body .report-body .operation > div button {
+            width: 100px;
+            height: 30px;
+            background-color: #2D73A0;
+            border: none;
+            cursor: pointer;
+            color: #fff;
+            vertical-align: top; }
+            .content .main-content .main-content-body .report-body .operation > div button.search-button {
+              width: 30px;
+              height: 30px;
+              background-color: #fff;
+              background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACHUlEQVRYR8WWi23UQBBA31WQUAGhgoQKIBUAFRAqCFQAVABUEFIBUAF0QFJBSAWBCkBP2jkt9u7G6/PdrXSydbZn3vxnxZ7Pas/66QE4AZ4BTxP0IfA73X8FvgG/eg2aAvAc+AAcJeHXmWL/EuQ4PfsBvAe8TjotAAV/SRbfAu8ALQ2rcwXCnQGvgQPgM/BqCkENQHerXMFvgI9ThCVvCHoOXAGnFeC1uBKAlv8EHiTrFdR79MZFCoUQ1VMCMH5PgMfJil7l8X5AfEqhKcoZAphwur7H7S1Ac8bKeVSrkCFAlFFk/Fzr4zvlGEJB9Mjo5AAmnrE3e83ipY4JbFKaU6MKygHM3rctd80kirC+SJ74T0wOYPJZAXpi6fM3NSiNbAL4MFrtkhACXJbyIPeAyWKMtgFQlT0MwTY9UOwHQ4CHKQmXdL95dTclBxwkTr1q05hJNbkKbBo3NdKZyv3MniKEnmg2Ih9ais52vVAau70cYVSxAhQ2bMVWwHegOUA6KDTIviJI0aDSNIzWuWlLDjnNwVZbSKxbQzEXIpQ73Axn9dQATBgnmHuBV62YsnDqahcRQ+kaZ1k317P7ltKwxPgJEttvbpGwsS07cv+kBUTF/l62IO4DUJFWOUQUlB/DlA8uFavQd/OEa0JMAciVWs8qjakZ67fX1ipehegF6KjA0atFiF0CRFc0lOs+s2uAUWveB0B1I9okvrO//Qea1HIhOIPtJwAAAABJRU5ErkJggg==);
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: 20px 20px;
+              border: 1px solid #999;
+              border-left: none; }
         .content .main-content .main-content-body .report-body table {
-          width: 100%; }
+          width: 100%;
+          margin-top: 5px; }
           .content .main-content .main-content-body .report-body table thead {
+            border-top: 2px solid #ddd;
             border-bottom: 2px solid #ddd;
             height: 35px;
             line-height: 35px; }
@@ -883,6 +940,10 @@ html, body {
             .content .main-content .main-content-body .report-body table tbody tr td {
               text-align: left;
               padding-left: 50px; }
+              .content .main-content .main-content-body .report-body table tbody tr td .icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 5px; }
               .content .main-content .main-content-body .report-body table tbody tr td button {
                 width: 50px;
                 margin-right: 10px;

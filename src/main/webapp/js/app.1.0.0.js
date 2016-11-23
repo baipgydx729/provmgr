@@ -20021,112 +20021,35 @@
 	    menuList: [
 	    	{
 	    		label: "中国人民银行",
-	    		active: true,
-	    		toggle: true
+				href: "#!/",
+	    		active: true
 	    	},
 	    	{
 	    		label: "备付金存管银行",
-	    		active: false,
-	    		toggle: false,
-	    		subMenuList: [
-					{
-						label: "兴业银行",
-						active: false
-					}
-				]
+				href: "#!/depository-bank",
+	    		active: false
 	    	},
 	    	{
 	    		label: "备付金合作银行",
-	    		active: false,
-	    		toggle: false,
-	    		subMenuList: [
-					{
-						label: "中国工商银行",
-						active: false
-					},
-					{
-						label: "中国建设银行",
-						active: false
-					},
-					{
-						label: "中国农业银行",
-						active: false
-					},
-					{
-						label: "中国银行",
-						active: false
-					},
-					{
-						label: "招商银行",
-						active: false
-					},
-					{
-						label: "浦发银行",
-						active: false
-					},
-					{
-						label: "平安银行",
-						active: false
-					}
-				]
+				href: "#!/cooperative-bank",
+	    		active: false
 	    	}
 	    ],
 	    init: function(){
-	        if (window.location.hash.match(/^#!\/\d+\/\d+$/)!=null) {
-	            var tmpArray = window.location.hash.split("/");
-	            var index = tmpArray[1];
-	            var subIndex = tmpArray[2];
-	
-	            for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
-	                if (i!=index) {
-	                    leftMenuVm.menuList[i].toggle = false;
-	                } else {
-	                    leftMenuVm.menuList[i].toggle = true;
-	                }
-	                
-	                leftMenuVm.menuList[i].active = false;
-	
-	                if (leftMenuVm.menuList[i].subMenuList!=undefined) {
-	                    for (var j = leftMenuVm.menuList[i].subMenuList.length - 1; j >= 0; j--) {
-	                        if (i==index && j==subIndex) {
-	                            leftMenuVm.menuList[i].subMenuList[j].active=true;
-	                        } else {
-	                            leftMenuVm.menuList[i].subMenuList[j].active=false;
-	                        }
-	                    }
-	                }
+	        for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
+	            if (leftMenuVm.menuList[i].href == window.location.hash) {
+	                leftMenuVm.menuList[i].active=true;
+	            } else {
+	                leftMenuVm.menuList[i].active=false;
 	            }
 	        }
 	    },
-	    toggle: function(index){
+	    active: function(index){
 	    	for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
 	    		if (i!=index) {
 	    			leftMenuVm.menuList[i].active = false;
-	    			leftMenuVm.menuList[i].toggle = false;
 	    		} else {
 	    			leftMenuVm.menuList[i].active = true;
-	    			leftMenuVm.menuList[i].toggle = true;
-	    		}
-	
-	    		if (leftMenuVm.menuList[i].subMenuList!=undefined) {
-	    			for (var j = leftMenuVm.menuList[i].subMenuList.length - 1; j >= 0; j--) {
-	    				leftMenuVm.menuList[i].subMenuList[j].active=false;
-	    			}
-	    		}
-	    	}
-	    },
-	    active: function(index, subIndex){
-	    	for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
-	    		leftMenuVm.menuList[i].active = false;
-	
-	    		if (leftMenuVm.menuList[i].subMenuList!=undefined) {
-	    			for (var j = leftMenuVm.menuList[i].subMenuList.length - 1; j >= 0; j--) {
-	    				if (i==index && j==subIndex) {
-	    					leftMenuVm.menuList[i].subMenuList[j].active=true;
-	    				} else {
-	    					leftMenuVm.menuList[i].subMenuList[j].active=false;
-	    				}
-	    			}
 	    		}
 	    	}
 	    }
@@ -20175,6 +20098,221 @@
 				var mainVm = avalon.define({
 					$id: 'main',
 					template: __webpack_require__(12),
+					data: {
+						bankList: [
+							{
+								label: "中国工商银行",
+								value: "中国工商银行"
+							},
+							{
+								label: "中国建设银行",
+								value: "中国建设银行"
+							},
+							{
+								label: "中国银行",
+								value: "中国银行"
+							},
+							{
+								label: "招商银行",
+								value: "招商银行"
+							}
+						],
+						accountList: [
+							{
+								accountName: "账户1",
+								accountNo: "1"
+							},
+							{
+								accountName: "账户2",
+								accountNo: "2"
+							},
+							{
+								accountName: "账户3",
+								accountNo: "3"
+							},
+							{
+								accountName: "账户4",
+								accountNo: "4"
+							}
+						],
+						selectedBankIndex: 0,
+						selectedAccountIndex: 0,
+						reportList: [
+							{
+								name: "表 1-1",
+								value: "表 1-1",
+								status: 1
+							},
+							{
+								name: "表 1-2",
+								value: "表 1-2",
+								status: 1
+							},
+							{
+								name: "表 1-3",
+								value: "表 1-3",
+								status: 0
+							},
+							{
+								name: "表 1-6",
+								value: "表 1-6",
+								status: 1
+							},
+							{
+								name: "表 1-9",
+								value: "表 1-9",
+								status: 0
+							},
+							{
+								name: "表 1-10",
+								value: "表 1-10",
+								status: 1
+							}
+						],
+						checkedReportIndexList: []
+					},
+					selectBank: function () {
+						alert(document.getElementsByName("bank")[0].value);
+					},
+					selectAccount: function () {
+						alert(document.getElementsByName("account")[0].value);
+					},
+					checkAll: function () {
+						mainVm.data.checkedReportIndexList=[];
+	
+						if(document.getElementsByName("check-all")[0].checked){
+							for(var i=0; i<mainVm.data.reportList.length; i++){
+								mainVm.data.checkedReportIndexList.push(i);
+							}
+	
+							for(var i=0; i<document.getElementsByName("check-one").length; i++){
+								document.getElementsByName("check-one")[i].checked = true;
+							}
+						} else {
+							for(var i=0; i<document.getElementsByName("check-one").length; i++){
+								document.getElementsByName("check-one")[i].checked = false;
+							}
+						}
+					},
+					checkOne: function () {
+						mainVm.data.checkedReportIndexList=[];
+	
+						for(var i=0; i<document.getElementsByName("check-one").length; i++){
+							if (document.getElementsByName("check-one")[i].checked) {
+								mainVm.data.checkedReportIndexList.push(i);
+							}
+						}
+	
+						console.log(mainVm.data.checkedReportIndexList);
+					},
+					batchGenerate: function () {
+						if (mainVm.data.checkedReportIndexList.length==0){
+							if(avalon.vmodels['error-controller']!=undefined){
+								delete avalon.vmodels['error-controller'];
+							}
+	
+							var errorVm = avalon.define({
+								$id: 'error-controller',
+								message: "请选择您要生成的报表!"
+							});
+	
+							var errorTemplate = __webpack_require__(15);
+	
+							$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+							avalon.scan(document.getElementById("modal").firstChild);
+						} else {
+	
+						}
+					},
+					submit: function () {
+						if(avalon.vmodels['submit-controller']!=undefined){
+							delete avalon.vmodels['submit-controller'];
+						}
+	
+						var submitVm = avalon.define({
+							$id: 'submit-controller',
+							submit: function () {
+								alert("test");
+							}
+						});
+	
+						var submitTemplate = __webpack_require__(17);
+	
+						$('#modal').html(submitTemplate).modal({fadeDuration: 100});
+						avalon.scan(document.getElementById("modal").firstChild);
+					},
+					downloadAll: function () {
+						//首先获取account列表
+	
+						//对每个account获取报表列表
+	
+						//判断所有报表的状态
+						for(var i=0; i<mainVm.data.reportList.length; i++){
+							if (mainVm.data.reportList[i].status==0){
+								if(avalon.vmodels['error-controller']!=undefined){
+									delete avalon.vmodels['error-controller'];
+								}
+	
+								var errorVm = avalon.define({
+									$id: 'error-controller',
+									message: "账户XXX的"+mainVm.data.reportList[i].name+"未生成!"
+								});
+	
+								var errorTemplate = __webpack_require__(15);
+	
+								$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+								avalon.scan(document.getElementById("modal").firstChild);
+	
+								break;
+							}
+						}
+					},
+					filter: function () {
+						//此处需要调用接口重新获取列表
+	
+						if($('#filter').val()!=''){
+							for(var i=0; i<mainVm.data.reportList.length; i++){
+								if (mainVm.data.reportList[i].name.indexOf($('#filter').val())<0){
+									mainVm.data.reportList.splice(i, 1);
+									i=i-1;
+								}
+							}
+						}
+					}
+				});
+	
+				mainVm.$watch('onReady', function(){
+					$("#filter").keydown(function(event){
+						if(event.which == "13"){
+							mainVm.filter();
+						}
+					});
+	
+					var yearArray = [];
+					for (var i = 0; i <50; i++) {
+						yearArray.push(2000+i);
+					}
+	
+					$('#monthpicker').monthpicker({
+						years: yearArray,
+						months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
+						topOffset: 6,
+						onMonthSelect: function(month, year) {
+							alert($('#monthpicker').html());
+						}
+					});
+				});
+				avalon.scan(document.body);
+			});
+	
+			avalon.router.add("/depository-bank", function (index, subIndex) {
+				if(avalon.vmodels['main']!=undefined){
+					delete avalon.vmodels['main'];
+				}
+	
+				var mainVm = avalon.define({
+					$id: 'main',
+					template: __webpack_require__(18),
 					data: ""
 				});
 	
@@ -20196,18 +20334,204 @@
 				avalon.scan(document.body);
 			});
 	
-			avalon.router.add("/:index/:subIndex", function (index, subIndex) {
+			avalon.router.add("/cooperative-bank", function (index, subIndex) {
 				if(avalon.vmodels['main']!=undefined){
 					delete avalon.vmodels['main'];
 				}
 	
 				var mainVm = avalon.define({
 					$id: 'main',
-					template: __webpack_require__(13),
-					data: ""
+					template: __webpack_require__(19),
+					data: {
+						bankList: [
+							{
+								label: "中国工商银行",
+								value: "中国工商银行"
+							},
+							{
+								label: "中国建设银行",
+								value: "中国建设银行"
+							},
+							{
+								label: "中国银行",
+								value: "中国银行"
+							},
+							{
+								label: "招商银行",
+								value: "招商银行"
+							}
+						],
+						accountList: [
+							{
+								accountName: "账户1",
+								accountNo: "1"
+							},
+							{
+								accountName: "账户2",
+								accountNo: "2"
+							},
+							{
+								accountName: "账户3",
+								accountNo: "3"
+							},
+							{
+								accountName: "账户4",
+								accountNo: "4"
+							}
+						],
+						selectedBankIndex: 0,
+						selectedAccountIndex: 0,
+						reportList: [
+							{
+								name: "表 1-1",
+								value: "表 1-1",
+								status: 1
+							},
+							{
+								name: "表 1-2",
+								value: "表 1-2",
+								status: 1
+							},
+							{
+								name: "表 1-3",
+								value: "表 1-3",
+								status: 0
+							},
+							{
+								name: "表 1-6",
+								value: "表 1-6",
+								status: 1
+							},
+							{
+								name: "表 1-9",
+								value: "表 1-9",
+								status: 0
+							},
+							{
+								name: "表 1-10",
+								value: "表 1-10",
+								status: 1
+							}
+						],
+						checkedReportIndexList: []
+					},
+					selectBank: function () {
+						alert(document.getElementsByName("bank")[0].value);
+					},
+					selectAccount: function () {
+						alert(document.getElementsByName("account")[0].value);
+					},
+					checkAll: function () {
+						mainVm.data.checkedReportIndexList=[];
+	
+						if(document.getElementsByName("check-all")[0].checked){
+							for(var i=0; i<mainVm.data.reportList.length; i++){
+								mainVm.data.checkedReportIndexList.push(i);
+							}
+	
+							for(var i=0; i<document.getElementsByName("check-one").length; i++){
+								document.getElementsByName("check-one")[i].checked = true;
+							}
+						} else {
+							for(var i=0; i<document.getElementsByName("check-one").length; i++){
+								document.getElementsByName("check-one")[i].checked = false;
+							}
+						}
+					},
+					checkOne: function () {
+						mainVm.data.checkedReportIndexList=[];
+	
+						for(var i=0; i<document.getElementsByName("check-one").length; i++){
+							if (document.getElementsByName("check-one")[i].checked) {
+								mainVm.data.checkedReportIndexList.push(i);
+							}
+						}
+	
+						console.log(mainVm.data.checkedReportIndexList);
+					},
+					batchGenerate: function () {
+						if (mainVm.data.checkedReportIndexList.length==0){
+							if(avalon.vmodels['error-controller']!=undefined){
+								delete avalon.vmodels['error-controller'];
+							}
+	
+							var errorVm = avalon.define({
+								$id: 'error-controller',
+								message: "请选择您要生成的报表!"
+							});
+	
+							var errorTemplate = __webpack_require__(15);
+	
+							$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+							avalon.scan(document.getElementById("modal").firstChild);
+						} else {
+	
+						}
+					},
+					submit: function () {
+						if(avalon.vmodels['submit-controller']!=undefined){
+							delete avalon.vmodels['submit-controller'];
+						}
+	
+						var submitVm = avalon.define({
+							$id: 'submit-controller',
+							submit: function () {
+								alert("test");
+							}
+						});
+	
+						var submitTemplate = __webpack_require__(17);
+	
+						$('#modal').html(submitTemplate).modal({fadeDuration: 100});
+						avalon.scan(document.getElementById("modal").firstChild);
+					},
+					downloadAll: function () {
+						//首先获取account列表
+	
+						//对每个account获取报表列表
+	
+						//判断所有报表的状态
+						for(var i=0; i<mainVm.data.reportList.length; i++){
+							if (mainVm.data.reportList[i].status==0){
+								if(avalon.vmodels['error-controller']!=undefined){
+									delete avalon.vmodels['error-controller'];
+								}
+	
+								var errorVm = avalon.define({
+									$id: 'error-controller',
+									message: "账户XXX的"+mainVm.data.reportList[i].name+"未生成!"
+								});
+	
+								var errorTemplate = __webpack_require__(15);
+	
+								$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+								avalon.scan(document.getElementById("modal").firstChild);
+	
+								break;
+							}
+						}
+					},
+					filter: function () {
+						//此处需要调用接口重新获取列表
+	
+						if($('#filter').val()!=''){
+							for(var i=0; i<mainVm.data.reportList.length; i++){
+								if (mainVm.data.reportList[i].name.indexOf($('#filter').val())<0){
+									mainVm.data.reportList.splice(i, 1);
+									i=i-1;
+								}
+							}
+						}
+					}
 				});
 	
 				mainVm.$watch('onReady', function(){
+					$("#filter").keydown(function(event){
+						if(event.which == "13"){
+							mainVm.filter();
+						}
+					});
+	
 					var yearArray = [];
 					for (var i = 0; i <50; i++) {
 						yearArray.push(2000+i);
@@ -20217,8 +20541,8 @@
 						years: yearArray,
 						months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
 						topOffset: 6,
-						onMonthSelect: function(m, y) {
-							
+						onMonthSelect: function(month, year) {
+							alert($('#monthpicker').html());
 						}
 					});
 				});
@@ -20368,15 +20692,51 @@
 
 /***/ },
 /* 12 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>银行名称</label>\r\n\t\t\t\t<select>\r\n\t\t\t\t\t<option value =\"1\">建设银行</option>\r\n\t\t\t\t\t<option value=\"2\">招商银行</option>\r\n\t\t\t\t\t<option value=\"3\">中国工商银行</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>日期</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<th>报表类型</th>\r\n\t\t\t\t\t\t<th>报表名称</th>\r\n\t\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-1</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-2</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-3</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-4</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-5</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-6</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-7</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': bank.value}\"\r\n\t\t\t\t\t\t\tms-if=\"@data.selectedBankIndex==index\" selected>\r\n\t\t\t\t\t\t{{bank.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': bank.value}\"\r\n\t\t\t\t\t\t\tms-if=\"@data.selectedBankIndex!=index\">\r\n\t\t\t\t\t\t{{bank.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.accountList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': account.accountNo}\"\r\n\t\t\t\t\t\t\tms-if=\"@data.selectedAccountIndex==index\" selected>\r\n\t\t\t\t\t\t{{account.accountName}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.accountList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': account.accountNo}\"\r\n\t\t\t\t\t\t\tms-if=\"@data.selectedAccountIndex!=index\">\r\n\t\t\t\t\t\t{{account.accountName}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>报表类型</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.reportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(13) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(14) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-if=\"report.status==0\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.status==1\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
 
 /***/ },
 /* 13 */
 /***/ function(module, exports) {
 
-	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>XX银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>账户</label>\r\n\t\t\t\t<select>\r\n\t\t\t\t\t<option value =\"1\">123456</option>\r\n\t\t\t\t\t<option value=\"2\">123456</option>\r\n\t\t\t\t\t<option value=\"3\">123456</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>账户名称</label>\r\n\t\t\t\tXX帐户\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>日期</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<th>报表类型</th>\r\n\t\t\t\t\t\t<th>报表名称</th>\r\n\t\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-1</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-2</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-3</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-4</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-5</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-6</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td>表 1-7</td>\r\n\t\t\t\t\t\t<td>XXXXXX</td>\r\n\t\t\t\t\t\t<td>已生成</td>\r\n\t\t\t\t\t\t<td><button>生成</button><button>下载</button><button>报送</button></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACUUlEQVRYR8WXTW7TUBDH/xPHbrsiG6SWDekCKezCCUhOQHoEbgAnoD1BuUnMCQgnILtaYoFZuRIbs3JkJxk0/kj8FfvZTpS3iWL7vfnN55shnHnRmeWjEcA1j4YU8AeAZgJOoLH8MngZKcIm6/TtmSxbVTElgOtgNCHGFwJNVA5m8IIJD8+6taj7vhJgwMPBVXA5VxWcFyYgnr66c8l2D4EcBHjpvxn3WZsT0bBOi6r3zGyvaXP31/gVuyn7dSmACNfR/w5g0EV4aq8bYD0tgygAhGb3L3921bzgDmbbM1bv8u4oANz4owWB3h9J88wxEhOOYU3TDzMAEu09JjH9ydaWeJrOjgzAKbVPNMpbYQcgRaYX0O+TqZ46eKvzbVKsdgA3/ttPBDx2B+B/ATYTjbTBIXcy8Nkxnr5G1TRexzF/JFzSrSqeGPzDMaywqh4RYC+8ro6UArzyRy5AL9q5QF14eGUx286FdZuxQBXAFvxxg81Sh7YoQjYTHgHgj3PxFJZ4JRckuRuZNg3RXHgI0CIGdrV8DwEkAVfn85JbsiwIa9MwAyGHSrQ3FR5ZoCQNFQtR5lZrI1wASguRvFCsBSGEpmtuL6A5gLAtU11p/2eCUP6c/TJqYAVVhTPf5bUvWEAeRA3J1ZIIr1tJObBJct8zvHFtQyL7i/neFWVfL/In1TSlfbOrJUTzNa1njZrShDJuy822LZr43NNXs1ZtedpU8WByrwoigplw33kwyfsrGs1kLONwNAPHMwNxPIqRyTqbRx/NuoZg1X6l2fCUAP8Bh55gMLtj2AwAAAAASUVORK5CYII="
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfUlEQVRYR82XTXLTMBTH/8/G2ZIlMzShbCBZkZyA5ASUG7QnAE5AuUFvUG5AOUHNCZquAqxCAjMs062F/BjZ8VcsWYpTJnhpS+//e3pfMuHADx1YHzsBfH8cjNinV8w8AaEL0Ch1gGdgrIkoJMmfn/0SM1fHnADmveCUiN4DOHY0vCCW756v5JVtfSPA/BGOKQguQTSxGdJ+Zw5ZiLPhbyxM+40A6rhjH9cAdVuJ55t47UlMTWHRAqTidLOfcHW3J3msg6gBJMfeCW7293wbn9ccifF2OOoAvSAkopf36X0RDQ4HKzEt264AbLL98p+Ib4wSy9fl6qgC9DsLAp7oADiOpz7TOvYRAvRQD8l3nsREEnfJ864NjiwGy+hp9i0HsCWeAhj+/BNuqkMDkYqrRJsfPZg0AKCckDnAvN85J0A1G8NTlFMdohB3KV8GPgyX0bkSKgCckk8HAWSeu4gnjZv5y3AlkuaWA3ztBTMQvbAnYBVCrVfH7iqezY7BUoyrAP0O28WzFdXutpt4amOwjBLnixPYDSBPOGXEnJhml+oA7iHIxZXwVggaSrQEw3w7WIlk765JWBFPh1WShMmwcT0JfRIeBRfw6E1DGWrEs0nZVKJ1i9oytDWirHmYE66AaNWIFOfc0oqTmHn0yTwpU4imVszAj+Eyym9W/9cwSk7BqSO6d4zyynLy1YZR9mJzIZmZJ147cYDvOBIj64WkaCwHupJl/rnWtP08ikmpW2u9liMIPra9oqmYQ4jTVtfyMu23nn8Sk39hui1te6ZKzWP5du8fk23DKizSpxMwTwjo5uOb+ZaBNYhCX/LVvf+a2ePcfoXTv2F78/adfwEPZoswq99u9AAAAABJRU5ErkJggg=="
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<div ms-controller=\"error-controller\">\r\n\t<div class=\"modal-content\">\r\n\t\t<div class=\"modal-message error-message\">\r\n\t\t\t<div class=\"modal-message-left\"><img class=\"icon\" src=\"" + __webpack_require__(16) + "\">{{@message}}</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACTElEQVRYR82XwVLbQAyGfzn1wgWaY2fapuTCxLfwBE2eoOFN2icgPEH7JqRPgHkCuCXTC65pZ3pM4VLWddTZtZNxHAfvrpmCL5kkK+mTVpIlwhM/9MT2YQUwfYUDEv4HMEYanNDXn4yr/PuEZfI1+IXI1DEjgOmbFwMiOgHRwEgxc8jMp8GPv2Hd+QcBrtto3+/5Z8aGy9aYw5275Lg7x3wbyFaAb6/9/qJFZwAO6ryo+T/yUj4+/Jlk11R6KgEy4zgHqN3QeC7Ocy/FsApiA0CHfV9cPoLnZfZo51Yela9jA2D61g+J6H2d5wx8h5RZUgoREvCuTgbMYe8mGRbPrQHobPe881pFuvJwGsRyrM5OO2JMwImR3GIxLFbHOoCh97mhiKXU3pAQCtosWUtRWAFkTUZcm3jR9AxL2V02qxXArON/BOhzU+Vm8vypFydfdPSWAqbJVzTgpXykvi9apKrG+GHmi+Am0QncCKAXSy0/6wg2tq4SuApg1vHnAL20UeQKACDqxbK7FoH/CaB6SBBLXTXP5wpcktD1CrblgHUZugIAVWXo0IhcASobke7pdq0YLgDF8K8loQaweBmp804AD72MbKNg2wnL3m9EQP2gBpI/++LK6P1u0bVU7e/eyn7tQKJ05iNZaNsZt/Pwby/FwGgkWypREGmLJk0joTxvpTyyGkqXEPo69vyJyYhW5b268927ZOQ0lhcVquoA0dgURBkG87jxYlL2Kl/NRrxazSgbw5j1KkYEtZpNHn01s0h266NGu6G1VguBfz8tKDBD89nnAAAAAElFTkSuQmCC"
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div class=\"modal-message-left\">确定要报送？</div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button ms-click=\"@submit()\">确定</button></a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>备付金存管银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div style=\"margin-top: 100px;font-size: 20px;text-align: center;\">即将上线，敬请期待！</div>\r\n\t</div>\r\n</div>";
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': bank.value}\"\r\n                            ms-if=\"@data.selectedBankIndex==index\" selected>\r\n                        {{bank.label}}\r\n                    </option>\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': bank.value}\"\r\n                            ms-if=\"@data.selectedBankIndex!=index\">\r\n                        {{bank.label}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\">报送</button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.accountList\"\r\n                            ms-attr=\"{'value': account.accountNo}\"\r\n                            ms-if=\"@data.selectedAccountIndex==index\" selected>\r\n                        {{account.accountName}}\r\n                    </option>\r\n                    <option ms-for=\"(index, account) in @data.accountList\"\r\n                            ms-attr=\"{'value': account.accountNo}\"\r\n                            ms-if=\"@data.selectedAccountIndex!=index\">\r\n                        {{account.accountName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表类型</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.name}}</td>\r\n                        <td ms-if=\"report.status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(13) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(14) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-if=\"report.status==0\">生成</button>\r\n                            <button ms-if=\"report.status==1\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }
 /******/ ]);

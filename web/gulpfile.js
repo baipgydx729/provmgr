@@ -64,7 +64,7 @@ gulp.task('copy-dist', function () {
 
 gulp.task('watch', function () {
     return gulp.watch('app/**/*', function() {
-    	runSequence(['clean-generate', 'clean-dist'], 'generate-template', 'generate-image', 'webpack-dev');
+    	runSequence(['clean-generate', 'clean-dist'], 'generate-template', 'generate-image', 'webpack-dev', 'copy-dist');
     });
 });
 
