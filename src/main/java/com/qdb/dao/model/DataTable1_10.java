@@ -1,4 +1,4 @@
-package com.qdb.report.pbc.bean;
+package com.qdb.dao.model;
 
 /**
  * @author mashengli

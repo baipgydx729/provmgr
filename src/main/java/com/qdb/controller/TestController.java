@@ -1,8 +1,6 @@
 package com.qdb.controller;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.base.Preconditions;
-import com.qdb.dao.DemoDao;
-import com.qdb.report.pbc.bean.DataTable1_1;
-import com.qdb.service.DemoService;
 
 /**
  * Login Demo
@@ -31,12 +26,7 @@ public class TestController {
 	private static Logger log = LoggerFactory.getLogger(TestController.class);
 	
 	//根据类型注入Bean
-	@Autowired
-	private DemoService demoService;
 
-    @Autowired
-    private DemoDao demoDao;
-	
 	@Autowired
 	private  AmqpTemplate mqsender;
 
@@ -59,8 +49,7 @@ public class TestController {
 		
 		String resultJson = null;
 		//调用Service层
-		resultJson = demoService.loginDo(UserName, pwd);
-		
+
 		pw.print(resultJson);
 		pw.flush();
 		pw.close();

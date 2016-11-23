@@ -11,8 +11,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qdb.dao.DBUtil;
-import com.qdb.dao.DemoDao;
-import com.qdb.report.pbc.bean.DataTable1_1;
+import com.qdb.dao.model.DataTable1_1;
+import com.qdb.service.pbc.PbcReportService;
 
 /**
  * @author mashengli
@@ -21,16 +21,19 @@ import com.qdb.report.pbc.bean.DataTable1_1;
 @ContextConfiguration("classpath*:applicationContext.xml")
 public class DaoTest {
     @Autowired
-    private DemoDao demoDao;
-    @Autowired
     private DBUtil dbUtil;
+    @Autowired
+    private PbcReportService pbcReportService;
 
     @Test
     public void test() {
+        List<DataTable1_1> dataList = pbcReportService.queryForTable1_1("2016-11-01", "2016-11-30", 152);
+
         List<Integer> adids = new ArrayList<>();
-        adids.add(174);
-        adids.add(175);
-        List<DataTable1_1> list = demoDao.findDataTable1_1List("2016-11-01", "2016-11-30", adids);
-        System.out.println(list);
+        adids.add(152);
+        adids.add(154);
+        Map<Integer, List<DataTable1_1>> dataMap = pbcReportService.queryListGroupByADID("2016-11-01", "2016-11-30", adids);
+
+        System.out.println("finish");
     }
 }

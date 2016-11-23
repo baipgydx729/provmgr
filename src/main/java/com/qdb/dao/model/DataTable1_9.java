@@ -1,16 +1,14 @@
-package com.qdb.report.pbc.bean;
+package com.qdb.dao.model;
 
 /**
  * @author mashengli
  */
-public class DataTable1_5 implements Comparable<DataTable1_5> {
+public class DataTable1_9 implements Comparable<DataTable1_9> {
     private String natuDate;
-    private Double E01;
-    private Double E02;
-    private Double E03;
-    private Double E04;
-    private Double E05;
-    private Double E06;
+    private Double J01;
+    private Double J02;
+    private Double J03;
+    private Double J04;
 
     //
     private String bankName;
@@ -26,52 +24,36 @@ public class DataTable1_5 implements Comparable<DataTable1_5> {
         this.natuDate = natuDate;
     }
 
-    public Double getE01() {
-        return E01;
+    public Double getJ01() {
+        return J01;
     }
 
-    public void setE01(Double e01) {
-        E01 = e01;
+    public void setJ01(Double j01) {
+        J01 = j01;
     }
 
-    public Double getE02() {
-        return E02;
+    public Double getJ02() {
+        return J02;
     }
 
-    public void setE02(Double e02) {
-        E02 = e02;
+    public void setJ02(Double j02) {
+        J02 = j02;
     }
 
-    public Double getE03() {
-        return E03;
+    public Double getJ03() {
+        return J03;
     }
 
-    public void setE03(Double e03) {
-        E03 = e03;
+    public void setJ03(Double j03) {
+        J03 = j03;
     }
 
-    public Double getE04() {
-        return E04;
+    public Double getJ04() {
+        return J04;
     }
 
-    public void setE04(Double e04) {
-        E04 = e04;
-    }
-
-    public Double getE05() {
-        return E05;
-    }
-
-    public void setE05(Double e05) {
-        E05 = e05;
-    }
-
-    public Double getE06() {
-        return E06;
-    }
-
-    public void setE06(Double e06) {
-        E06 = e06;
+    public void setJ04(Double j04) {
+        J04 = j04;
     }
 
     public String getBankName() {
@@ -110,7 +92,7 @@ public class DataTable1_5 implements Comparable<DataTable1_5> {
      * 按照日期从小到大顺序比较两个数据组
      */
     @Override
-    public int compareTo(DataTable1_5 o) {
+    public int compareTo(DataTable1_9 o) {
         if (o == null || o.getNatuDate() == null) {
             return 1;
         } else if (this.getNatuDate() == null) {
