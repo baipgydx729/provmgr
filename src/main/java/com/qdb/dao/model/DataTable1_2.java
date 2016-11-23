@@ -5,15 +5,15 @@ package com.qdb.dao.model;
  */
 public class DataTable1_2 implements Comparable<DataTable1_2> {
     private String natuDate;
-    private Double B01;
-    private Double B02;
-    private Double B03;
-    private Double B04;
-    private Double B05;
-    private Double B06;
-    private Double B07;
-    private Double B08;
-    private Double B09;
+    private Double b01;
+    private Double b02;
+    private Double b03;
+    private Double b04;
+    private Double b05;
+    private Double b06;
+    private Double b07;
+    private Double b08;
+    private Double b09;
 
     //
     private String bankName;
@@ -30,75 +30,75 @@ public class DataTable1_2 implements Comparable<DataTable1_2> {
     }
 
     public Double getB01() {
-        return B01;
+        return b01;
     }
 
     public void setB01(Double b01) {
-        B01 = b01;
+        this.b01 = b01;
     }
 
     public Double getB02() {
-        return B02;
+        return b02;
     }
 
     public void setB02(Double b02) {
-        B02 = b02;
+        this.b02 = b02;
     }
 
     public Double getB03() {
-        return B03;
+        return b03;
     }
 
     public void setB03(Double b03) {
-        B03 = b03;
+        this.b03 = b03;
     }
 
     public Double getB04() {
-        return B04;
+        return b04;
     }
 
     public void setB04(Double b04) {
-        B04 = b04;
+        this.b04 = b04;
     }
 
     public Double getB05() {
-        return B05;
+        return b05;
     }
 
     public void setB05(Double b05) {
-        B05 = b05;
+        this.b05 = b05;
     }
 
     public Double getB06() {
-        return B06;
+        return b06;
     }
 
     public void setB06(Double b06) {
-        B06 = b06;
+        this.b06 = b06;
     }
 
     public Double getB07() {
-        return B07;
+        return b07;
     }
 
     public void setB07(Double b07) {
-        B07 = b07;
+        this.b07 = b07;
     }
 
     public Double getB08() {
-        return B08;
+        return b08;
     }
 
     public void setB08(Double b08) {
-        B08 = b08;
+        this.b08 = b08;
     }
 
     public Double getB09() {
-        return B09;
+        return b09;
     }
 
     public void setB09(Double b09) {
-        B09 = b09;
+        this.b09 = b09;
     }
 
     public String getBankName() {

@@ -172,6 +172,7 @@ public class MapUtil {
                 bean = clazz.newInstance();
                 mapToBean(map, bean);
                 list.add(bean);
+                list.add((T) convertToBean(clazz, map));
             }
         }
         return list;

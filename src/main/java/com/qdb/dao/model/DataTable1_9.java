@@ -5,10 +5,10 @@ package com.qdb.dao.model;
  */
 public class DataTable1_9 implements Comparable<DataTable1_9> {
     private String natuDate;
-    private Double J01;
-    private Double J02;
-    private Double J03;
-    private Double J04;
+    private Double j01;
+    private Double j02;
+    private Double j03;
+    private Double j04;
 
     //
     private String bankName;
@@ -25,35 +25,35 @@ public class DataTable1_9 implements Comparable<DataTable1_9> {
     }
 
     public Double getJ01() {
-        return J01;
+        return j01;
     }
 
     public void setJ01(Double j01) {
-        J01 = j01;
+        this.j01 = j01;
     }
 
     public Double getJ02() {
-        return J02;
+        return j02;
     }
 
     public void setJ02(Double j02) {
-        J02 = j02;
+        this.j02 = j02;
     }
 
     public Double getJ03() {
-        return J03;
+        return j03;
     }
 
     public void setJ03(Double j03) {
-        J03 = j03;
+        this.j03 = j03;
     }
 
     public Double getJ04() {
-        return J04;
+        return j04;
     }
 
     public void setJ04(Double j04) {
-        J04 = j04;
+        this.j04 = j04;
     }
 
     public String getBankName() {

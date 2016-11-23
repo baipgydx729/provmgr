@@ -5,28 +5,28 @@ package com.qdb.dao.model;
  */
 public class DataTable1_1 implements Comparable<DataTable1_1> {
     private String natuDate;
-    private Double A01;
-    private Double A02;
-    private Double A03;
-    private Double A0301;
-    private Double A0302;
-    private Double A04;
-    private Double A05;
-    private Double A06;
-    private Double A0601;
-    private Double A0602;
-    private Double A07;
-    private Double A08;
-    private Double A09;
-    private Double A0901;
-    private Double A0902;
-    private Double A10;
-    private Double A11;
-    private Double A12;
-    private Double A13;
-    private Double A1301;
-    private Double A1302;
-    private Double A14;
+    private Double a01;
+    private Double a02;
+    private Double a03;
+    private Double a0301;
+    private Double a0302;
+    private Double a04;
+    private Double a05;
+    private Double a06;
+    private Double a0601;
+    private Double a0602;
+    private Double a07;
+    private Double a08;
+    private Double a09;
+    private Double a0901;
+    private Double a0902;
+    private Double a10;
+    private Double a11;
+    private Double a12;
+    private Double a13;
+    private Double a1301;
+    private Double a1302;
+    private Double a14;
 
     //
     private String bankName;
@@ -43,179 +43,179 @@ public class DataTable1_1 implements Comparable<DataTable1_1> {
     }
 
     public Double getA01() {
-        return A01;
+        return a01;
     }
 
     public void setA01(Double a01) {
-        A01 = a01;
+        this.a01 = a01;
     }
 
     public Double getA02() {
-        return A02;
+        return a02;
     }
 
     public void setA02(Double a02) {
-        A02 = a02;
+        this.a02 = a02;
     }
 
     public Double getA03() {
-        return A03;
+        return a03;
     }
 
     public void setA03(Double a03) {
-        A03 = a03;
+        this.a03 = a03;
     }
 
     public Double getA0301() {
-        return A0301;
+        return a0301;
     }
 
     public void setA0301(Double a0301) {
-        A0301 = a0301;
+        this.a0301 = a0301;
     }
 
     public Double getA0302() {
-        return A0302;
+        return a0302;
     }
 
     public void setA0302(Double a0302) {
-        A0302 = a0302;
+        this.a0302 = a0302;
     }
 
     public Double getA04() {
-        return A04;
+        return a04;
     }
 
     public void setA04(Double a04) {
-        A04 = a04;
+        this.a04 = a04;
     }
 
     public Double getA05() {
-        return A05;
+        return a05;
     }
 
     public void setA05(Double a05) {
-        A05 = a05;
+        this.a05 = a05;
     }
 
     public Double getA06() {
-        return A06;
+        return a06;
     }
 
     public void setA06(Double a06) {
-        A06 = a06;
+        this.a06 = a06;
     }
 
     public Double getA0601() {
-        return A0601;
+        return a0601;
     }
 
     public void setA0601(Double a0601) {
-        A0601 = a0601;
+        this.a0601 = a0601;
     }
 
     public Double getA0602() {
-        return A0602;
+        return a0602;
     }
 
     public void setA0602(Double a0602) {
-        A0602 = a0602;
+        this.a0602 = a0602;
     }
 
     public Double getA07() {
-        return A07;
+        return a07;
     }
 
     public void setA07(Double a07) {
-        A07 = a07;
+        this.a07 = a07;
     }
 
     public Double getA08() {
-        return A08;
+        return a08;
     }
 
     public void setA08(Double a08) {
-        A08 = a08;
+        this.a08 = a08;
     }
 
     public Double getA09() {
-        return A09;
+        return a09;
     }
 
     public void setA09(Double a09) {
-        A09 = a09;
+        this.a09 = a09;
     }
 
     public Double getA0901() {
-        return A0901;
+        return a0901;
     }
 
     public void setA0901(Double a0901) {
-        A0901 = a0901;
+        this.a0901 = a0901;
     }
 
     public Double getA0902() {
-        return A0902;
+        return a0902;
     }
 
     public void setA0902(Double a0902) {
-        A0902 = a0902;
+        this.a0902 = a0902;
     }
 
     public Double getA10() {
-        return A10;
+        return a10;
     }
 
     public void setA10(Double a10) {
-        A10 = a10;
+        this.a10 = a10;
     }
 
     public Double getA11() {
-        return A11;
+        return a11;
     }
 
     public void setA11(Double a11) {
-        A11 = a11;
+        this.a11 = a11;
     }
 
     public Double getA12() {
-        return A12;
+        return a12;
     }
 
     public void setA12(Double a12) {
-        A12 = a12;
+        this.a12 = a12;
     }
 
     public Double getA13() {
-        return A13;
+        return a13;
     }
 
     public void setA13(Double a13) {
-        A13 = a13;
+        this.a13 = a13;
     }
 
     public Double getA1301() {
-        return A1301;
+        return a1301;
     }
 
     public void setA1301(Double a1301) {
-        A1301 = a1301;
+        this.a1301 = a1301;
     }
 
     public Double getA1302() {
-        return A1302;
+        return a1302;
     }
 
     public void setA1302(Double a1302) {
-        A1302 = a1302;
+        this.a1302 = a1302;
     }
 
     public Double getA14() {
-        return A14;
+        return a14;
     }
 
     public void setA14(Double a14) {
-        A14 = a14;
+        this.a14 = a14;
     }
 
     public String getBankName() {

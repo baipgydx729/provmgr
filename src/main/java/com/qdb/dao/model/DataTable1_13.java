@@ -5,14 +5,14 @@ package com.qdb.dao.model;
  */
 public class DataTable1_13 implements Comparable<DataTable1_13> {
     private String natuDate;
-    private Double N01;
-    private Double N02;
-    private Double N03;
-    private Double N04;
-    private Double N05;
-    private Double N06;
+    private Double n01;
+    private Double n02;
+    private Double n03;
+    private Double n04;
+    private Double n05;
+    private Double n06;
 
-    //
+      //
     private String bankName;
     private String AD;
     private Integer ADID;
@@ -27,51 +27,51 @@ public class DataTable1_13 implements Comparable<DataTable1_13> {
     }
 
     public Double getN01() {
-        return N01;
+        return n01;
     }
 
     public void setN01(Double n01) {
-        N01 = n01;
+        this.n01 = n01;
     }
 
     public Double getN02() {
-        return N02;
+        return n02;
     }
 
     public void setN02(Double n02) {
-        N02 = n02;
+        this.n02 = n02;
     }
 
     public Double getN03() {
-        return N03;
+        return n03;
     }
 
     public void setN03(Double n03) {
-        N03 = n03;
+        this.n03 = n03;
     }
 
     public Double getN04() {
-        return N04;
+        return n04;
     }
 
     public void setN04(Double n04) {
-        N04 = n04;
+        this.n04 = n04;
     }
 
     public Double getN05() {
-        return N05;
+        return n05;
     }
 
     public void setN05(Double n05) {
-        N05 = n05;
+        this.n05 = n05;
     }
 
     public Double getN06() {
-        return N06;
+        return n06;
     }
 
     public void setN06(Double n06) {
-        N06 = n06;
+        this.n06 = n06;
     }
 
     public String getBankName() {
