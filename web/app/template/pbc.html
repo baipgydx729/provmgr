@@ -4,39 +4,39 @@
 	<div class="main-content-body">
 		<div class="report-head">
 			<div class="report-head-item">
-				<label>选择月份</label>
-				<a href="#monthpicker" id="monthpicker"></a>
+				<label>时间区间</label>
+				<input id="datetime-start" class="datetime-picker" type="text" readonly>
+				<hr class="datetime-separator"/>
+				<input id="datetime-end" class="datetime-picker" type="text" readonly>
 				<button ms-click="@submit()">报送</button>
 				<button ms-click="@downloadAll()">下载全部</button>
 			</div>
 
 			<div class="report-head-item">
+				<label>报表类型</label>
+				<select name="report-type" ms-on-change="@selectReportType()">
+					<option ms-for="(index, reportType) in @data.reportTypeList"
+							ms-attr="{'value': index}">
+						{{reportType.label}}
+					</option>
+				</select>
+			</div>
+
+			<div class="report-head-item" ms-if="@data.selectedReportTypeIndex==1">
 				<label>选择银行</label>
 				<select name="bank" ms-on-change="@selectBank()">
 					<option ms-for="(index, bank) in @data.bankList"
-							ms-attr="{'value': bank.value}"
-							ms-if="@data.selectedBankIndex==index" selected>
-						{{bank.label}}
-					</option>
-					<option ms-for="(index, bank) in @data.bankList"
-							ms-attr="{'value': bank.value}"
-							ms-if="@data.selectedBankIndex!=index">
+							ms-attr="{'value': bank.value}">
 						{{bank.label}}
 					</option>
 				</select>
 			</div>
 
-			<div class="report-head-item">
+			<div class="report-head-item" ms-if="@data.selectedReportTypeIndex==1">
 				<label>选择账户</label>
 				<select name="account" ms-on-change="@selectAccount()">
 					<option ms-for="(index, account) in @data.accountList"
-							ms-attr="{'value': account.accountNo}"
-							ms-if="@data.selectedAccountIndex==index" selected>
-						{{account.accountName}}
-					</option>
-					<option ms-for="(index, account) in @data.accountList"
-							ms-attr="{'value': account.accountNo}"
-							ms-if="@data.selectedAccountIndex!=index">
+							ms-attr="{'value': account.accountNo}">
 						{{account.accountName}}
 					</option>
 				</select>
@@ -57,7 +57,7 @@
 					<th>
 						<input name="check-all" type="checkbox" ms-click="@checkAll()"/>&nbsp;&nbsp;全选
 					</th>
-					<th>报表类型</th>
+					<th>报表名称</th>
 					<th>状态</th>
 					<th>操作</th>
 				</tr>
