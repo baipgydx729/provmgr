@@ -22,22 +22,22 @@
 				</select>
 			</div>
 
-			<div class="report-head-item" ms-if="@data.selectedReportTypeIndex==1">
+			<div class="report-head-item" ms-visible="@data.selectedReportTypeIndex==1">
 				<label>选择银行</label>
 				<select name="bank" ms-on-change="@selectBank()">
 					<option ms-for="(index, bank) in @data.bankList"
-							ms-attr="{'value': bank.value}">
-						{{bank.label}}
+							ms-attr="{'value': index}">
+						{{bank.bank_name}}
 					</option>
 				</select>
 			</div>
 
-			<div class="report-head-item" ms-if="@data.selectedReportTypeIndex==1">
+			<div class="report-head-item" ms-visible="@data.selectedReportTypeIndex==1">
 				<label>选择账户</label>
 				<select name="account" ms-on-change="@selectAccount()">
-					<option ms-for="(index, account) in @data.accountList"
-							ms-attr="{'value': account.accountNo}">
-						{{account.accountName}}
+					<option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
+							ms-attr="{'value': index}">
+						{{account.account_name}}
 					</option>
 				</select>
 			</div>
@@ -57,7 +57,9 @@
 					<th>
 						<input name="check-all" type="checkbox" ms-click="@checkAll()"/>&nbsp;&nbsp;全选
 					</th>
-					<th>报表名称</th>
+					<th>银行</th>
+					<th>账户</th>
+					<th>报表</th>
 					<th>状态</th>
 					<th>操作</th>
 				</tr>
@@ -69,16 +71,18 @@
 							   name="check-one"
 							   ms-click="@checkOne()"/>
 					</td>
-					<td>{{report.name}}</td>
-					<td ms-if="report.status==1">
+					<td>{{report.bank_name}}</td>
+					<td>{{report.account_no}}</td>
+					<td>{{report.report_name}}</td>
+					<td ms-if="report.report_status==1">
 						<img class="icon" src="../image/round_check_fill.png">已生成
 					</td>
-					<td ms-if="report.status==0">
+					<td ms-if="report.report_status==0">
 						<img class="icon" src="../image/round_close_fill.png">未生成
 					</td>
 					<td>
-						<button ms-if="report.status==0">生成</button>
-						<button ms-if="report.status==1">下载</button>
+						<button ms-if="report.report_status==0">生成</button>
+						<button ms-if="report.report_status==1">下载</button>
 					</td>
 				</tr>
 				</tbody>
