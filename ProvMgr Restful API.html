@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ProvMgr Restful API</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h2>ProvMgr Restful API</h2>
+<h3>格式说明</h3>
+<ul>
+<li><code>-H</code> —— HTTP请求报文Header应包含的字段</li>
+<li><code>-d</code> —— HTTP请求报文Body</li>
+<li>HTTP响应报文Body为json格式字符串</li>
+</ul>
+<h3>错误码定义</h3>
+<ul>
+<li><strong>200</strong> —— 成功</li>
+<li><strong>400</strong> —— 错误</li>
+<li><strong>403</strong> —— 未授权</li>
+</ul>
+<h3>1. 获取银行账户信息接口</h3>
+<p>GET /bank-account</p>
+<p>成功返回示例：<br />
+{<br />
+　　code: 200,<br />
+　　data: [<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;中国工商银行&quot;,<br />
+　　　　　　account_list:[<br />
+　　　　　　　　{<br />
+　　　　　　　　　　account_id: &quot;1000001&quot;,<br />
+　　　　　　　　　　account_no: &quot;1000001&quot;,<br />
+　　　　　　　　　　account_name: &quot;账户1&quot;<br />
+　　　　　　　　},<br />
+　　　　　　　　{<br />
+　　　　　　　　　　account_id: &quot;1000002&quot;,<br />
+　　　　　　　　　　account_no: &quot;1000001&quot;,<br />
+　　　　　　　　　　account_name: &quot;账户2&quot;<br />
+　　　　　　　　}<br />
+　　　　　　]<br />
+　　　　},<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;中国银行&quot;,<br />
+　　　　　　account_list:[<br />
+　　　　　　　　{<br />
+　　　　　　　　　　account_id: &quot;1000001&quot;,<br />
+　　　　　　　　　　account_no: &quot;1000001&quot;,<br />
+　　　　　　　　　　account_name: &quot;账户1&quot;<br />
+　　　　　　　　},<br />
+　　　　　　　　{<br />
+　　　　　　　　　　account_id: &quot;1000002&quot;,<br />
+　　　　　　　　　　account_no: &quot;1000001&quot;,<br />
+　　　　　　　　　　account_name: &quot;账户2&quot;<br />
+　　　　　　　　}<br />
+　　　　　　]<br />
+　　　　}<br />
+　　]<br />
+}  </p>
+<p>错误返回示例：<br />
+{<br />
+　　code: 400,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+<h3>2. 获取报表列表接口</h3>
+<p>GET /report/:bank_type?bank_name={bankName}&amp;account_id={accountId}&amp;start_day={startDay}&amp;end_day={endDay}&amp;report_type={reportType}</p>
+<blockquote>
+<p>说明：</p>
+<p>bank_type取值:<br />
+- pbc —— 中国人民银行<br />
+- cib —— 兴业银行（备付金存管银行）<br />
+以下为合作银行<br />
+- ccb —— 中国建设银行<br />
+- pbc —— 平安银行<br />
+- spdb —— 浦发银行<br />
+- bojs —— 江苏银行  
+</p>
+<p>report_type只针对中国人民银行，该参数可选，取值如下:<br />
+- 0 —— 汇总类报表<br />
+- 1 —— 账户类报表</p>
+<p>针对中国人民银行，参数bank_name、account_id可选，且account_id存在时bank_name必须存在;<br />
+针对合作银行，忽略bank_name，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account_id </p>
+</blockquote>
+<p>示例：<br />
+GET /report/pbc?bank_name=1001&amp;account_id=1000001&amp;start_day=2016-11-01&amp;end_day=2016-11-30</p>
+<p>GET /report/pbc?bank_name=1001&amp;start_day=2016-11-01&amp;end_day=2016-11-30</p>
+<p>GET /report/pbc?start_day=2016-11-01&amp;end_day=2016-11-30</p>
+<p>GET /report/ccb?start_day=2016-11-01&amp;end_day=2016-11-30</p>
+<p>成功返回示例：<br />
+{<br />
+　　code: 200,<br />
+　　data: [<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;中国工商银行&quot;,<br />
+　　　　　　account_id: &quot;1000001&quot;,<br />
+　　　　　　account_no: &quot;1000001&quot;,<br />
+　　　　　　account_name: &quot;账户1&quot;,<br />
+　　　　　　report_name: &quot;表1-1&quot;,<br />
+　　　　　　report_status: 1<br />
+　　　　},<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;中国工商银行&quot;,<br />
+　　　　　　account_id: &quot;1000001&quot;,<br />
+　　　　　　account_no: &quot;1000001&quot;,<br />
+　　　　　　account_name: &quot;账户1&quot;,<br />
+　　　　　　report_name: &quot;表1-2&quot;,<br />
+　　　　　　report_status: 1<br />
+　　　　}<br />
+　　]<br />
+}  </p>
+<p>错误返回示例：<br />
+{<br />
+　　code: 400,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+<blockquote>
+<p>说明：<br />
+中国建设银行、平安银行、浦发银行、江苏银行忽略bank_name、account_id、account_no、account_name
+report_status取值：0——未生成, 1——已生成  
+</p>
+</blockquote>
+<h3>3. 生成报表接口</h3>
+<p>POST /report/:bank_type -d {<br />
+　　start_day: &quot;xxx&quot;,<br />
+　　end_day: &quot;xxx&quot;,<br />
+　　[<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;xxx&quot;,<br />
+　　　　　　account_id: &quot;xxx&quot;,<br />
+　　　　　　report_name: &quot;xxx&quot;<br />
+　　　　},<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;xxx&quot;,<br />
+　　　　　　account_id: &quot;xxx&quot;,<br />
+　　　　　　report_name: &quot;xxx&quot;<br />
+　　　　},<br />
+　　　　{<br />
+　　　　　　bank_name: &quot;xxx&quot;,<br />
+　　　　　　account_id: &quot;xxx&quot;,<br />
+　　　　　　report_name: &quot;xxx&quot;<br />
+　　　　}<br />
+　　]<br />
+}</p>
+<blockquote>
+<p>说明：</p>
+<p>bank_type取值:</p>
+<ul>
+<li>pbc —— 中国人民银行</li>
+<li>cib —— 兴业银行（备付金存管银行）<br />
+以下为合作银行</li>
+<li>ccb —— 中国建设银行</li>
+<li>pbc —— 平安银行</li>
+<li>spdb —— 浦发银行</li>
+<li>bojs —— 江苏银行</li>
+</ul>
+<p>针对中国人民银行，参数bank_name、account_id可选，且account_id存在时bank_name必须存在;<br />
+针对合作银行，忽略bank_name，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account_id</p>
+</blockquote>
+<p>成功返回示例：<br />
+{<br />
+　　code: 200,<br />
+　　message: &quot;xxxx&quot;<br />
+}  </p>
+<p>错误返回示例：<br />
+{<br />
+　　code: 400,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+<h3>4. 报送报表接口</h3>
+<p>POST /report/:bank_type/submit?start_day={startDay}&amp;end_day={endDay}</p>
+<blockquote>
+<p>说明：</p>
+<p>bank_type取值:<br />
+- pbc —— 中国人民银行<br />
+- cib —— 兴业银行（备付金存管银行）<br />
+以下为合作银行<br />
+- ccb —— 中国建设银行<br />
+- pbc —— 平安银行<br />
+- spdb —— 浦发银行<br />
+- bojs —— 江苏银行</p>
+</blockquote>
+<p>成功返回实例:<br />
+{<br />
+　　code: 200,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+<p>错误返回示例：<br />
+{<br />
+　　code: 400,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+<h3>5. 下载报表接口</h3>
+<p>GET /report/:bank_type/download?bank_name={bankId}&amp;account_id={accountId}&amp;start_day={startDay}&amp;end_day={endDay}&amp;report_name={reportName}</p>
+<blockquote>
+<p>说明：</p>
+<p>bank_type取值:<br />
+- pbc —— 中国人民银行<br />
+- cib —— 兴业银行（备付金存管银行）<br />
+以下为合作银行<br />
+- ccb —— 中国建设银行<br />
+- pbc —— 平安银行<br />
+- spdb —— 浦发银行<br />
+- bojs —— 江苏银行</p>
+<p>针对中国人民银行，参数bank_name、account_id可选，且account_id存在时bank_name必须存在;<br />
+针对合作银行，忽略bank_name，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account_id  
+</p>
+</blockquote>
+<p>示例：<br />
+GET /report/pbc/download?bank_name=1001&amp;account_id=1000001&amp;start_day=2016-11-01&amp;end_day=2016-11-30&amp;report_name=xxx</p>
+<p>GET /report/pbc/download?bank_name=1001&amp;start_day=2016-11-01&amp;end_day=2016-11-30&amp;report_name=xxx</p>
+<p>GET /report/pbc/download?start_day=2016-11-01&amp;end_day=2016-11-30</p>
+<p>GET /report/ccb/download?start_day=2016-11-01&amp;end_day=2016-11-30&amp;report_name=xxx</p>
+<p>成功则返回文件  </p>
+<p>错误返回示例：<br />
+{<br />
+　　code: 400,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+<h3>6. 下载所有报表接口</h3>
+<p>GET /report/:bank_type/download-all?start_day={startDay}&amp;end_day={endDay}</p>
+<blockquote>
+<p>说明：</p>
+<p>bank_type取值:<br />
+- pbc —— 中国人民银行<br />
+- cib —— 兴业银行（备付金存管银行）<br />
+以下为合作银行<br />
+- ccb —— 中国建设银行<br />
+- pbc —— 平安银行<br />
+- spdb —— 浦发银行<br />
+- bojs —— 江苏银行</p>
+</blockquote>
+<p>成功则返回文件  </p>
+<p>错误返回示例：<br />
+{<br />
+　　code: 400,<br />
+　　message: &quot;xxxxxxxxxxx&quot;<br />
+}  </p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
