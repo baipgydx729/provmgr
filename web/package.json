@@ -30,6 +30,7 @@
     "html-loader": "^0.4.3",
     "html-webpack-plugin": "^2.22.0",
     "jquery": "^1.12.4",
+    "jquery-datetimepicker": "2.5.1",
     "jquery-modal": "^0.8.0",
     "node-sass": "^3.8.0",
     "normalize.css": "^5.0.0",

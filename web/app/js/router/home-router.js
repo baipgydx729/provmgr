@@ -1,5 +1,3 @@
-require('../lib/jquery.monthpicker');
-
 var homeModule = require("../module/home-module");
 
 module.exports = {
@@ -49,8 +47,15 @@ module.exports = {
 							accountNo: "4"
 						}
 					],
-					selectedBankIndex: 0,
-					selectedAccountIndex: 0,
+					reportTypeList: [
+						{
+							label: "汇总报表"
+						},
+						{
+							label: "账户报表"
+						}
+					],
+					selectedReportTypeIndex: 0,
 					reportList: [
 						{
 							name: "表 1-1",
@@ -90,6 +95,9 @@ module.exports = {
 				},
 				selectAccount: function () {
 					alert(document.getElementsByName("account")[0].value);
+				},
+				selectReportType: function(){
+					mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -139,6 +147,24 @@ module.exports = {
 					}
 				},
 				submit: function () {
+					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
+						if(avalon.vmodels['error-controller']!=undefined){
+							delete avalon.vmodels['error-controller'];
+						}
+
+						var errorVm = avalon.define({
+							$id: 'error-controller',
+							message: "请选择时间区间!"
+						});
+
+						var errorTemplate = require("../../template/error.html");
+
+						$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+						avalon.scan(document.getElementById("modal").firstChild);
+
+						return;
+					}
+
 					if(avalon.vmodels['submit-controller']!=undefined){
 						delete avalon.vmodels['submit-controller'];
 					}
@@ -202,17 +228,27 @@ module.exports = {
 					}
 				});
 
-				var yearArray = [];
-				for (var i = 0; i <50; i++) {
-					yearArray.push(2000+i);
-				}
+				$.datetimepicker.setLocale('ch');
 
-				$('#monthpicker').monthpicker({
-					years: yearArray,
-					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-					topOffset: 6,
-					onMonthSelect: function(month, year) {
-						alert($('#monthpicker').html());
+				$('#datetime-start').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					maxDate:'+1970/01/01',
+					onShow:function(){
+						this.setOptions({
+							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
+						});
+					}
+				});
+
+				$('#datetime-end').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					maxDate:'+1970/01/01',
+					onShow:function(){
+						this.setOptions({
+							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
+						});
 					}
 				});
 			});
@@ -231,19 +267,6 @@ module.exports = {
 			});
 
 			mainVm.$watch('onReady', function(){
-				var yearArray = [];
-				for (var i = 0; i <50; i++) {
-					yearArray.push(2000+i);
-				}
-
-				$('#monthpicker').monthpicker({
-					years: yearArray,
-					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-					topOffset: 6,
-					onMonthSelect: function(m, y) {
-						
-					}
-				});
 			});
 			avalon.scan(document.body);
 		});
@@ -293,8 +316,6 @@ module.exports = {
 							accountNo: "4"
 						}
 					],
-					selectedBankIndex: 0,
-					selectedAccountIndex: 0,
 					reportList: [
 						{
 							name: "表 1-1",
@@ -383,6 +404,24 @@ module.exports = {
 					}
 				},
 				submit: function () {
+					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
+						if(avalon.vmodels['error-controller']!=undefined){
+							delete avalon.vmodels['error-controller'];
+						}
+
+						var errorVm = avalon.define({
+							$id: 'error-controller',
+							message: "请选择时间区间!"
+						});
+
+						var errorTemplate = require("../../template/error.html");
+
+						$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+						avalon.scan(document.getElementById("modal").firstChild);
+
+						return;
+					}
+
 					if(avalon.vmodels['submit-controller']!=undefined){
 						delete avalon.vmodels['submit-controller'];
 					}
@@ -446,17 +485,26 @@ module.exports = {
 					}
 				});
 
-				var yearArray = [];
-				for (var i = 0; i <50; i++) {
-					yearArray.push(2000+i);
-				}
+				$.datetimepicker.setLocale('ch');
 
-				$('#monthpicker').monthpicker({
-					years: yearArray,
-					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-					topOffset: 6,
-					onMonthSelect: function(month, year) {
-						alert($('#monthpicker').html());
+				$('#datetime-start').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					onShow:function(){
+						this.setOptions({
+							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
+						});
+					}
+				});
+
+				$('#datetime-end').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					maxDate:'+1970/01/01',
+					onShow:function(){
+						this.setOptions({
+							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
+						});
 					}
 				});
 			});
