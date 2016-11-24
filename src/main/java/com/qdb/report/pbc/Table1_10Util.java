@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.model.DataTable1_10;
+import com.qdb.dao.entity.DataTable1_10;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -105,8 +106,8 @@ public class Table1_10Util {
         for (int i = 0; i < size; i++) {
             DataTable1_10 dataTable1_10 = dataList.get(i);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                Double value = getDoubleDataByColumnIndex(dataTable1_10, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_10, j);
+                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
     }
@@ -137,7 +138,7 @@ public class Table1_10Util {
      * @param index        下标
      * @return
      */
-    public static Double getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
+    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
         switch (index) {
             case 1:
                 return dataTable1_10.getK01();
@@ -188,7 +189,7 @@ public class Table1_10Util {
             case 24:
                 return dataTable1_10.getK24();
             default:
-                return (double) 0;
+                return new BigDecimal("0");
         }
     }
 
@@ -197,8 +198,6 @@ public class Table1_10Util {
 
         for (int i = 0; i <= 30; i++) {
             DataTable1_10 dataTable1_10 = new DataTable1_10();
-            dataTable1_10.setK01(i + 0.1);
-            dataTable1_10.setK02(i + 0.2);
             dataList.add(dataTable1_10);
         }
         try {

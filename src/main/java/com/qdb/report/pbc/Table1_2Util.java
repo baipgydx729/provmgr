@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.model.DataTable1_2;
+import com.qdb.dao.entity.DataTable1_2;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -106,14 +107,14 @@ public class Table1_2Util {
             DataTable1_2 dataTable1_2 = dataList.get(i);
             total = addData(total, dataTable1_2);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                Double value = getDoubleDataByColumnIndex(dataTable1_2, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_2, j);
+                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
         //合计行
         for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            Double value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+            BigDecimal value = getDoubleDataByColumnIndex(total, j);
+            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
         }
     }
 
@@ -140,7 +141,7 @@ public class Table1_2Util {
      * @param index 下标
      * @return
      */
-    public static Double getDoubleDataByColumnIndex(DataTable1_2 dataTable1_2, int index) {
+    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_2 dataTable1_2, int index) {
         switch (index) {
             case 1:
                 return dataTable1_2.getB01();
@@ -161,7 +162,7 @@ public class Table1_2Util {
             case 9:
                 return dataTable1_2.getB09();
             default:
-                return (double) 0;
+                return new BigDecimal("0");
         }
     }
 
@@ -178,15 +179,15 @@ public class Table1_2Util {
         if (data2 == null) {
             return data1;
         }
-        data1.setB01((null != data1.getB01() ? data1.getB01() : 0) + (null != data2.getB01() ? data2.getB01() : 0));
-        data1.setB02((null != data1.getB02() ? data1.getB02() : 0) + (null != data2.getB02() ? data2.getB02() : 0));
-        data1.setB03((null != data1.getB03() ? data1.getB03() : 0) + (null != data2.getB03() ? data2.getB03() : 0));
-        data1.setB04((null != data1.getB04() ? data1.getB04() : 0) + (null != data2.getB04() ? data2.getB04() : 0));
-        data1.setB05((null != data1.getB05() ? data1.getB05() : 0) + (null != data2.getB05() ? data2.getB05() : 0));
-        data1.setB06((null != data1.getB06() ? data1.getB06() : 0) + (null != data2.getB06() ? data2.getB06() : 0));
-        data1.setB07((null != data1.getB07() ? data1.getB07() : 0) + (null != data2.getB07() ? data2.getB07() : 0));
-        data1.setB08((null != data1.getB08() ? data1.getB08() : 0) + (null != data2.getB08() ? data2.getB08() : 0));
-        data1.setB09((null != data1.getB09() ? data1.getB09() : 0) + (null != data2.getB09() ? data2.getB09() : 0));
+        data1.setB01(DecimalTool.add(data1.getB01(), data2.getB01()));
+        data1.setB02(DecimalTool.add(data1.getB02(), data2.getB02()));
+        data1.setB03(DecimalTool.add(data1.getB03(), data2.getB03()));
+        data1.setB04(DecimalTool.add(data1.getB04(), data2.getB04()));
+        data1.setB05(DecimalTool.add(data1.getB05(), data2.getB05()));
+        data1.setB06(DecimalTool.add(data1.getB06(), data2.getB06()));
+        data1.setB07(DecimalTool.add(data1.getB07(), data2.getB07()));
+        data1.setB08(DecimalTool.add(data1.getB08(), data2.getB08()));
+        data1.setB09(DecimalTool.add(data1.getB09(), data2.getB09()));
         return data1;
     }
 
@@ -195,8 +196,8 @@ public class Table1_2Util {
 
         for (int i = 0; i <= 30; i++) {
             DataTable1_2 dataTable1_2 = new DataTable1_2();
-            dataTable1_2.setB01(i + 0.1);
-            dataTable1_2.setB02(i + 0.2);
+            dataTable1_2.setB01(new BigDecimal(i + 0.1));
+            dataTable1_2.setB02(new BigDecimal(i + 0.2));
             dataList.add(dataTable1_2);
         }
         try {
@@ -207,4 +208,5 @@ public class Table1_2Util {
         }
 
     }
+
 }

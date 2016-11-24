@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.model.DataTable1_9;
+import com.qdb.dao.entity.DataTable1_9;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -105,8 +106,8 @@ public class Table1_9Util {
         for (int i = 0; i < size; i++) {
             DataTable1_9 dataTable1_9 = dataList.get(i);
             for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
-                Double value = getDoubleDataByRowIndex(dataTable1_9, j);
-                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value : 0);
+                BigDecimal value = getDoubleDataByRowIndex(dataTable1_9, j);
+                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
     }
@@ -137,7 +138,7 @@ public class Table1_9Util {
      * @param index        下标
      * @return
      */
-    public static Double getDoubleDataByRowIndex(DataTable1_9 dataTable1_9, int index) {
+    public static BigDecimal getDoubleDataByRowIndex(DataTable1_9 dataTable1_9, int index) {
         switch (index) {
             case 5:
                 return dataTable1_9.getJ01();
@@ -148,7 +149,7 @@ public class Table1_9Util {
             case 8:
                 return dataTable1_9.getJ04();
             default:
-                return (double) 0;
+                return new BigDecimal("0");
         }
     }
 
@@ -157,10 +158,6 @@ public class Table1_9Util {
 
         for (int i = 0; i <= 30; i++) {
             DataTable1_9 dataTable1_9 = new DataTable1_9();
-            dataTable1_9.setJ01(i + 0.1);
-            dataTable1_9.setJ02(i + 0.2);
-            dataTable1_9.setJ03(i + 0.3);
-            dataTable1_9.setJ04(i + 0.4);
             dataList.add(dataTable1_9);
         }
         try {

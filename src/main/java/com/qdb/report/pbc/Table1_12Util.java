@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,7 +16,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.model.DataTable1_12;
+import com.qdb.dao.entity.DataTable1_12;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -105,8 +106,8 @@ public class Table1_12Util {
         for (int i = 0; i < size; i++) {
             DataTable1_12 dataTable1_12 = dataList.get(i);
             for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
-                Double value = getDoubleDataByRowIndex(dataTable1_12, j);
-                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value : 0);
+                BigDecimal value = getDoubleDataByRowIndex(dataTable1_12, j);
+                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
     }
@@ -137,7 +138,7 @@ public class Table1_12Util {
      * @param index        下标
      * @return
      */
-    public static Double getDoubleDataByRowIndex(DataTable1_12 dataTable1_12, int index) {
+    public static BigDecimal getDoubleDataByRowIndex(DataTable1_12 dataTable1_12, int index) {
         switch (index) {
             case 4:
                 return dataTable1_12.getM1();
@@ -152,7 +153,7 @@ public class Table1_12Util {
             case 9:
                 return dataTable1_12.getM6();
             case 10:
-                return (double) 0;
+                return new BigDecimal("0");
             case 11:
                 return dataTable1_12.getM7();
             case 12:
@@ -170,9 +171,9 @@ public class Table1_12Util {
             case 18:
                 return dataTable1_12.getZ202();
             case 19:
-                return (double) 0;
+                return new BigDecimal("0");
             case 20:
-                return (double) 0;
+                return new BigDecimal("0");
             case 21:
                 return dataTable1_12.getM12();
             case 22:
@@ -180,7 +181,7 @@ public class Table1_12Util {
             case 23:
                 return dataTable1_12.getM14();
             default:
-                return (double) 0;
+                return new BigDecimal("0");
         }
     }
 
@@ -189,11 +190,6 @@ public class Table1_12Util {
 
         for (int i = 0; i <= 30; i++) {
             DataTable1_12 dataTable1_12 = new DataTable1_12();
-            dataTable1_12.setM1(i + 0.1);
-            dataTable1_12.setM2(i + 0.2);
-            dataTable1_12.setM4(i + 0.3);
-            dataTable1_12.setZ2(i + 0.4);
-            dataTable1_12.setM14(i + 0.4);
             dataList.add(dataTable1_12);
         }
         try {

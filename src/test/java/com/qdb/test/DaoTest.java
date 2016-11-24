@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qdb.dao.DBUtil;
-import com.qdb.dao.model.DataTable1_1;
+import com.qdb.dao.entity.DataTable1_1;
 import com.qdb.service.pbc.PbcReportService;
 
 /**
