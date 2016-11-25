@@ -119,7 +119,7 @@ GET /report/ccb?start\_day=2016-11-01&end\_day=2016-11-30
 }  
 
 > 说明：  
-> 中国建设银行、平安银行、浦发银行、江苏银行忽略bank\_name、account\_id、account\_no、account\_name
+> 中国建设银行、平安银行、浦发银行、江苏银行忽略bank\_name、account\_id、account\_no、account\_name  
 > report\_status取值：0——未生成, 1——已生成  
 
 ### 3. 生成报表接口 ###
