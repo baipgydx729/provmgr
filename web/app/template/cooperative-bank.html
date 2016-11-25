@@ -7,40 +7,30 @@
                 <label>选择银行</label>
                 <select name="bank" ms-on-change="@selectBank()">
                     <option ms-for="(index, bank) in @data.bankList"
-                            ms-attr="{'value': bank.value}"
-                            ms-if="@data.selectedBankIndex==index" selected>
-                        {{bank.label}}
-                    </option>
-                    <option ms-for="(index, bank) in @data.bankList"
-                            ms-attr="{'value': bank.value}"
-                            ms-if="@data.selectedBankIndex!=index">
-                        {{bank.label}}
+                            ms-attr="{'value': index}">
+                        {{bank.bank_name}}
                     </option>
                 </select>
             </div>
 
             <div class="report-head-item">
-                <label>选择月份</label>
-                <a href="#monthpicker" id="monthpicker"></a>
+                <label>时间区间</label>
+                <input id="datetime-start" class="datetime-picker" type="text" readonly>
+                <hr class="datetime-separator"/>
+                <input id="datetime-end" class="datetime-picker" type="text" readonly>
                 <button ms-click="@submit()">报送</button>
                 <button ms-click="@downloadAll()">下载全部</button>
             </div>
 
-            <div class="report-head-item">
+            <!--<div class="report-head-item">
                 <label>选择账户</label>
                 <select name="account" ms-on-change="@selectAccount()">
-                    <option ms-for="(index, account) in @data.accountList"
-                            ms-attr="{'value': account.accountNo}"
-                            ms-if="@data.selectedAccountIndex==index" selected>
-                        {{account.accountName}}
-                    </option>
-                    <option ms-for="(index, account) in @data.accountList"
-                            ms-attr="{'value': account.accountNo}"
-                            ms-if="@data.selectedAccountIndex!=index">
-                        {{account.accountName}}
+                    <option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
+                            ms-attr="{'value': index}">
+                        {{account.account_name}}
                     </option>
                 </select>
-            </div>
+            </div>-->
         </div>
 
         <div class="report-body">
@@ -57,7 +47,7 @@
                     <th>
                         <input name="check-all" type="checkbox" ms-click="@checkAll()"/>&nbsp;&nbsp;全选
                     </th>
-                    <th>报表类型</th>
+                    <th>报表</th>
                     <th>状态</th>
                     <th>操作</th>
                 </tr>
@@ -69,16 +59,16 @@
                                    name="check-one"
                                    ms-click="@checkOne()"/>
                         </td>
-                        <td>{{report.name}}</td>
-                        <td ms-if="report.status==1">
+                        <td>{{report.report_name}}</td>
+                        <td ms-if="report.report_status==1">
                             <img class="icon" src="../image/round_check_fill.png">已生成
                         </td>
-                        <td ms-if="report.status==0">
+                        <td ms-if="report.report_status==0">
                             <img class="icon" src="../image/round_close_fill.png">未生成
                         </td>
                         <td>
-                            <button ms-if="report.status==0">生成</button>
-                            <button ms-if="report.status==1">下载</button>
+                            <button ms-if="report.report_status==0">生成</button>
+                            <button ms-if="report.report_status==1">下载</button>
                         </td>
                     </tr>
                 </tbody>

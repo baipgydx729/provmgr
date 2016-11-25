@@ -1,5 +1,3 @@
-require('../lib/jquery.monthpicker');
-
 var homeModule = require("../module/home-module");
 
 module.exports = {
@@ -15,81 +13,107 @@ module.exports = {
 				data: {
 					bankList: [
 						{
-							label: "中国工商银行",
-							value: "中国工商银行"
+							bank_name: "中国工商银行",
+							account_list:[
+								{
+									account_id: "1000001",
+									account_no: "1000001",
+									account_name: "账户1"
+								},
+								{
+									account_id: "1000002",
+									account_no: "1000001",
+									account_name: "账户2"
+								}
+							]
 						},
 						{
-							label: "中国建设银行",
-							value: "中国建设银行"
-						},
-						{
-							label: "中国银行",
-							value: "中国银行"
-						},
-						{
-							label: "招商银行",
-							value: "招商银行"
-						}
-					],
-					accountList: [
-						{
-							accountName: "账户1",
-							accountNo: "1"
-						},
-						{
-							accountName: "账户2",
-							accountNo: "2"
-						},
-						{
-							accountName: "账户3",
-							accountNo: "3"
-						},
-						{
-							accountName: "账户4",
-							accountNo: "4"
+							bank_name: "中国建设银行",
+							account_list:[
+								{
+									account_id: "1000001",
+									account_no: "1000001",
+									account_name: "账户3"
+								},
+								{
+									account_id: "1000002",
+									account_no: "1000001",
+									account_name: "账户4"
+								}
+							]
 						}
 					],
 					selectedBankIndex: 0,
 					selectedAccountIndex: 0,
+					reportTypeList: [
+						{
+							label: "汇总报表"
+						},
+						{
+							label: "账户报表"
+						}
+					],
+					selectedReportTypeIndex: 0,
 					reportList: [
 						{
-							name: "表 1-1",
-							value: "表 1-1",
-							status: 1
+							bank_name: "中国工商银行",
+							account_id: "1000001",
+							account_no: "1000001",
+							account_name: "账户1",
+							report_name: "表1-1",
+							report_status: 1
 						},
 						{
-							name: "表 1-2",
-							value: "表 1-2",
-							status: 1
+							bank_name: "中国工商银行",
+							account_id: "1000001",
+							account_no: "1000001",
+							account_name: "账户1",
+							report_name: "表1-2",
+							report_status: 0
 						},
 						{
-							name: "表 1-3",
-							value: "表 1-3",
-							status: 0
+							bank_name: "中国工商银行",
+							account_id: "1000001",
+							account_no: "1000001",
+							account_name: "账户1",
+							report_name: "表1-3",
+							report_status: 1
 						},
 						{
-							name: "表 1-6",
-							value: "表 1-6",
-							status: 1
+							bank_name: "中国工商银行",
+							account_id: "1000001",
+							account_no: "1000001",
+							account_name: "账户1",
+							report_name: "表1-6",
+							report_status: 0
 						},
 						{
-							name: "表 1-9",
-							value: "表 1-9",
-							status: 0
+							bank_name: "中国工商银行",
+							account_id: "1000001",
+							account_no: "1000001",
+							account_name: "账户1",
+							report_name: "表1-9",
+							report_status: 1
 						},
 						{
-							name: "表 1-10",
-							value: "表 1-10",
-							status: 1
+							bank_name: "中国工商银行",
+							account_id: "1000001",
+							account_no: "1000001",
+							account_name: "账户1",
+							report_name: "表1-10",
+							report_status: 0
 						}
 					],
 					checkedReportIndexList: []
 				},
 				selectBank: function () {
-					alert(document.getElementsByName("bank")[0].value);
+					mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
 				},
 				selectAccount: function () {
-					alert(document.getElementsByName("account")[0].value);
+					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
+				},
+				selectReportType: function(){
+					mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -139,6 +163,24 @@ module.exports = {
 					}
 				},
 				submit: function () {
+					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
+						if(avalon.vmodels['error-controller']!=undefined){
+							delete avalon.vmodels['error-controller'];
+						}
+
+						var errorVm = avalon.define({
+							$id: 'error-controller',
+							message: "请选择时间区间!"
+						});
+
+						var errorTemplate = require("../../template/error.html");
+
+						$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+						avalon.scan(document.getElementById("modal").firstChild);
+
+						return;
+					}
+
 					if(avalon.vmodels['submit-controller']!=undefined){
 						delete avalon.vmodels['submit-controller'];
 					}
@@ -156,37 +198,14 @@ module.exports = {
 					avalon.scan(document.getElementById("modal").firstChild);
 				},
 				downloadAll: function () {
-					//首先获取account列表
 
-					//对每个account获取报表列表
-
-					//判断所有报表的状态
-					for(var i=0; i<mainVm.data.reportList.length; i++){
-						if (mainVm.data.reportList[i].status==0){
-							if(avalon.vmodels['error-controller']!=undefined){
-								delete avalon.vmodels['error-controller'];
-							}
-
-							var errorVm = avalon.define({
-								$id: 'error-controller',
-								message: "账户XXX的"+mainVm.data.reportList[i].name+"未生成!"
-							});
-
-							var errorTemplate = require("../../template/error.html");
-
-							$('#modal').html(errorTemplate).modal({fadeDuration: 100});
-							avalon.scan(document.getElementById("modal").firstChild);
-
-							break;
-						}
-					}
 				},
 				filter: function () {
 					//此处需要调用接口重新获取列表
 
 					if($('#filter').val()!=''){
 						for(var i=0; i<mainVm.data.reportList.length; i++){
-							if (mainVm.data.reportList[i].name.indexOf($('#filter').val())<0){
+							if (mainVm.data.reportList[i].report_name.indexOf($('#filter').val())<0){
 								mainVm.data.reportList.splice(i, 1);
 								i=i-1;
 							}
@@ -202,17 +221,27 @@ module.exports = {
 					}
 				});
 
-				var yearArray = [];
-				for (var i = 0; i <50; i++) {
-					yearArray.push(2000+i);
-				}
+				$.datetimepicker.setLocale('ch');
 
-				$('#monthpicker').monthpicker({
-					years: yearArray,
-					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-					topOffset: 6,
-					onMonthSelect: function(month, year) {
-						alert($('#monthpicker').html());
+				$('#datetime-start').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					maxDate:'+1970/01/01',
+					onShow:function(){
+						this.setOptions({
+							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
+						});
+					}
+				});
+
+				$('#datetime-end').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					maxDate:'+1970/01/01',
+					onShow:function(){
+						this.setOptions({
+							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
+						});
 					}
 				});
 			});
@@ -231,19 +260,6 @@ module.exports = {
 			});
 
 			mainVm.$watch('onReady', function(){
-				var yearArray = [];
-				for (var i = 0; i <50; i++) {
-					yearArray.push(2000+i);
-				}
-
-				$('#monthpicker').monthpicker({
-					years: yearArray,
-					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-					topOffset: 6,
-					onMonthSelect: function(m, y) {
-						
-					}
-				});
 			});
 			avalon.scan(document.body);
 		});
@@ -259,81 +275,71 @@ module.exports = {
 				data: {
 					bankList: [
 						{
-							label: "中国工商银行",
-							value: "中国工商银行"
+							bank_name: "中国工商银行",
+							account_list:[
+								{
+									account_id: "1000001",
+									account_no: "1000001",
+									account_name: "账户1"
+								},
+								{
+									account_id: "1000002",
+									account_no: "1000001",
+									account_name: "账户2"
+								}
+							]
 						},
 						{
-							label: "中国建设银行",
-							value: "中国建设银行"
-						},
-						{
-							label: "中国银行",
-							value: "中国银行"
-						},
-						{
-							label: "招商银行",
-							value: "招商银行"
-						}
-					],
-					accountList: [
-						{
-							accountName: "账户1",
-							accountNo: "1"
-						},
-						{
-							accountName: "账户2",
-							accountNo: "2"
-						},
-						{
-							accountName: "账户3",
-							accountNo: "3"
-						},
-						{
-							accountName: "账户4",
-							accountNo: "4"
+							bank_name: "中国建设银行",
+							account_list:[
+								{
+									account_id: "1000001",
+									account_no: "1000001",
+									account_name: "账户3"
+								},
+								{
+									account_id: "1000002",
+									account_no: "1000001",
+									account_name: "账户4"
+								}
+							]
 						}
 					],
 					selectedBankIndex: 0,
 					selectedAccountIndex: 0,
 					reportList: [
 						{
-							name: "表 1-1",
-							value: "表 1-1",
-							status: 1
+							report_name: "表1-1",
+							report_status: 1
 						},
 						{
-							name: "表 1-2",
-							value: "表 1-2",
-							status: 1
+							report_name: "表1-2",
+							report_status: 0
 						},
 						{
-							name: "表 1-3",
-							value: "表 1-3",
-							status: 0
+							report_name: "表1-3",
+							report_status: 1
 						},
 						{
-							name: "表 1-6",
-							value: "表 1-6",
-							status: 1
+							report_name: "表1-6",
+							report_status: 0
 						},
 						{
-							name: "表 1-9",
-							value: "表 1-9",
-							status: 0
+							report_name: "表1-9",
+							report_status: 1
 						},
 						{
-							name: "表 1-10",
-							value: "表 1-10",
-							status: 1
+							report_name: "表1-10",
+							report_status: 0
 						}
 					],
 					checkedReportIndexList: []
 				},
 				selectBank: function () {
-					alert(document.getElementsByName("bank")[0].value);
+					mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
 				},
 				selectAccount: function () {
-					alert(document.getElementsByName("account")[0].value);
+					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -383,6 +389,24 @@ module.exports = {
 					}
 				},
 				submit: function () {
+					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
+						if(avalon.vmodels['error-controller']!=undefined){
+							delete avalon.vmodels['error-controller'];
+						}
+
+						var errorVm = avalon.define({
+							$id: 'error-controller',
+							message: "请选择时间区间!"
+						});
+
+						var errorTemplate = require("../../template/error.html");
+
+						$('#modal').html(errorTemplate).modal({fadeDuration: 100});
+						avalon.scan(document.getElementById("modal").firstChild);
+
+						return;
+					}
+
 					if(avalon.vmodels['submit-controller']!=undefined){
 						delete avalon.vmodels['submit-controller'];
 					}
@@ -400,30 +424,7 @@ module.exports = {
 					avalon.scan(document.getElementById("modal").firstChild);
 				},
 				downloadAll: function () {
-					//首先获取account列表
 
-					//对每个account获取报表列表
-
-					//判断所有报表的状态
-					for(var i=0; i<mainVm.data.reportList.length; i++){
-						if (mainVm.data.reportList[i].status==0){
-							if(avalon.vmodels['error-controller']!=undefined){
-								delete avalon.vmodels['error-controller'];
-							}
-
-							var errorVm = avalon.define({
-								$id: 'error-controller',
-								message: "账户XXX的"+mainVm.data.reportList[i].name+"未生成!"
-							});
-
-							var errorTemplate = require("../../template/error.html");
-
-							$('#modal').html(errorTemplate).modal({fadeDuration: 100});
-							avalon.scan(document.getElementById("modal").firstChild);
-
-							break;
-						}
-					}
 				},
 				filter: function () {
 					//此处需要调用接口重新获取列表
@@ -446,17 +447,26 @@ module.exports = {
 					}
 				});
 
-				var yearArray = [];
-				for (var i = 0; i <50; i++) {
-					yearArray.push(2000+i);
-				}
+				$.datetimepicker.setLocale('ch');
 
-				$('#monthpicker').monthpicker({
-					years: yearArray,
-					months: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"],
-					topOffset: 6,
-					onMonthSelect: function(month, year) {
-						alert($('#monthpicker').html());
+				$('#datetime-start').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					onShow:function(){
+						this.setOptions({
+							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
+						});
+					}
+				});
+
+				$('#datetime-end').datetimepicker({
+					timepicker:false,
+					format:'Y-m-d',
+					maxDate:'+1970/01/01',
+					onShow:function(){
+						this.setOptions({
+							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
+						});
 					}
 				});
 			});
