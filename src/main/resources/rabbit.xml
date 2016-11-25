@@ -33,7 +33,7 @@
                                password="${rabbit.passwd}"/>
     <rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory"/>
     <!-- spring amqp默认的是jackson的一个插件,目的将生产者生产的数据转换为json存入消息队列，由于fastjson的速度快于jackson,这里替换为fastjson的一个实现 -->
-    <bean id="jsonMessageConverter" class="com.qdb.mq.FastJsonMessageConverter"/>
+    <bean id="jsonMessageConverter" class="com.qdb.provmgr.mq.FastJsonMessageConverter"/>
     <!-- 交换机 -->
     <rabbit:template exchange="test.helloworld.exchange" id="amqpTemplate" connection-factory="connectionFactory"
                      message-converter="jsonMessageConverter"/>
