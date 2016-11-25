@@ -5,17 +5,21 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
-import com.qdb.dao.model.DataTable1_4;
+import com.qdb.dao.entity.report.DataTable1_4;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -107,14 +111,14 @@ public class Table1_4Util {
             DataTable1_4 dataTable1_4 = dataList.get(i);
             total = addData(total, dataTable1_4);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                Double value = getDoubleDataByColumnIndex(dataTable1_4, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_4, j);
+                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
         //合计行
         for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            Double value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value : 0);
+            BigDecimal value = getDoubleDataByColumnIndex(total, j);
+            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
         }
     }
 
@@ -144,7 +148,7 @@ public class Table1_4Util {
      * @param index        下标
      * @return
      */
-    public static Double getDoubleDataByColumnIndex(DataTable1_4 dataTable1_4, int index) {
+    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_4 dataTable1_4, int index) {
         switch (index) {
             case 1:
                 return dataTable1_4.getD01();
@@ -155,10 +159,30 @@ public class Table1_4Util {
             case 4:
                 return dataTable1_4.getD04();
             default:
-                return (double) 0;
+                return new BigDecimal("0");
         }
     }
 
+    /**
+     * 将查询结果按日累加并重新组装成列表
+     * @param dataList 源数据
+     * @return
+     */
+    public static List<DataTable1_4> mergeAndSumByDate(List<DataTable1_4> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, DataTable1_4> map = new HashMap<>();
+        for (DataTable1_4 dataTable1_4 : dataList) {
+            if (map.containsKey(dataTable1_4.getNatuDate())) {
+                map.put(dataTable1_4.getNatuDate(), addData(map.get(dataTable1_4.getNatuDate()), dataTable1_4));
+            } else {
+                map.put(dataTable1_4.getNatuDate(), dataTable1_4);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+    
     /**
      * 做加法
      * @param data1
@@ -172,10 +196,10 @@ public class Table1_4Util {
         if (data2 == null) {
             return data1;
         }
-        data1.setD01((null != data1.getD01() ? data1.getD01() : 0) + (null != data2.getD01() ? data2.getD01() : 0));
-        data1.setD02((null != data1.getD02() ? data1.getD02() : 0) + (null != data2.getD02() ? data2.getD02() : 0));
-        data1.setD03((null != data1.getD03() ? data1.getD03() : 0) + (null != data2.getD03() ? data2.getD03() : 0));
-        data1.setD04((null != data1.getD04() ? data1.getD04() : 0) + (null != data2.getD04() ? data2.getD04() : 0));
+        data1.setD01(DecimalTool.add(data1.getD01(), data2.getD01()));
+        data1.setD02(DecimalTool.add(data1.getD02(), data2.getD02()));
+        data1.setD03(DecimalTool.add(data1.getD03(), data2.getD03()));
+        data1.setD04(DecimalTool.add(data1.getD04(), data2.getD04()));
         return data1;
     }
 
@@ -184,10 +208,10 @@ public class Table1_4Util {
 
         for (int i = 0; i <= 30; i++) {
             DataTable1_4 dataTable1_4 = new DataTable1_4();
-            dataTable1_4.setD01(i + 0.1);
-            dataTable1_4.setD02(i + 0.2);
-            dataTable1_4.setD03(i + 0.3);
-            dataTable1_4.setD04(i + 0.4);
+            dataTable1_4.setD01(new BigDecimal(i + 0.1));
+            dataTable1_4.setD02(new BigDecimal(i + 0.2));
+            dataTable1_4.setD03(new BigDecimal(i + 0.3));
+            dataTable1_4.setD04(new BigDecimal(i + 0.4));
             dataList.add(dataTable1_4);
         }
         try {

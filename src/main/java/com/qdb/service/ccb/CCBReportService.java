@@ -1,21 +1,21 @@
 package com.qdb.service.ccb;
 
-import com.qdb.dao.DBUtil;
-import com.qdb.dao.TableModeEnum;
 import com.qdb.dao.ccb.CCBReportDao;
-import com.qdb.dao.model.DataTable1_3;
+import com.qdb.dao.entity.report.DataTable1_3;
 import com.qdb.dao.model.DataTable3Entity;
-import com.qdb.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yuwenzhong on 2016-11-23.
  */
 @Service
-public class CBCReportService {
+public class CCBReportService {
 
     @Autowired
     private CCBReportDao ccbReportDao;
@@ -48,7 +48,7 @@ public class CBCReportService {
             DataTable1_3 dataTable3 = new DataTable1_3();
 
             Map<String, Object> map = list.get(i);
-            dataTable3.setC01((Double) map.get("C01"));
+            dataTable3.setC01((BigDecimal) map.get("C01"));
             rowC01List.add(dataTable3);
         }
         Map<String, Object> map = list.get(0);

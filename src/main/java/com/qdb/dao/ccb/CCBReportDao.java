@@ -72,33 +72,33 @@ public class CCBReportDao {
      */
     private StringBuffer buildBaseSql(String tableType, String bankName, String accountNo, String beginDate, String endDate){
         StringBuffer sqlBuf = new StringBuffer();
-        if(TableModeEnum.Table1_1.getTableMode().equals(tableType)){
+        if("1_1".equals(tableType)){
             sqlBuf.append(" SELECT t.bankName_S, t.ADID, t.name, t.AD, day(t.natuDate) as 'natuDate', " +
                     " t.A01, t.A02, t.A03, t.A04, t.A05, t.A06, t.A07, " +
                     " t.A08, t.A09, t.A10, t.A11, t.A12, t.A13, t.A14 " +
                     " FROM UacAutoCheck.ProvMgr.report_provision_cent_1_1  t WHERE 1=1");
         }
-        if(TableModeEnum.Table1_2.getTableMode().equals(tableType)){
+        if("1_2".equals(tableType)){
             sqlBuf.append(" SELECT t.bankName_S, t.ADID, day(t.natuDate) as 'natuDate', " +
                     " t.B01, t.B02, t.B03, t.B04, t.B05, t.B06, t.B07, t.B08, t.B09 " +
                     " FROM UacAutoCheck.ProvMgr.report_provision_cent_1_2  t WHERE 1=1 ");
         }
-        if(TableModeEnum.Table1_3.getTableMode().equals(tableType)){
+        if("1_3".equals(tableType)){
             sqlBuf.append(" SELECT t.bankName_S, t.AD, t.name, day(t.natuDate) as 'natuDate', t.C01 " +
                     " FROM UacAutoCheck.ProvMgr.report_provision_cent_1_3  t WHERE 1=1 ");
         }
-        if(TableModeEnum.Table1_6.getTableMode().equals(tableType)){
+        if("1_6".equals(tableType)){
             sqlBuf.append("SELECT t.bankName_S, t.ADID, t.name, t.AD, day(t.natuDate) as 'natuDate', " +
                     "t.F01, t.F02, t.F03, t.F04, t.F05, t.F06, t.F07, t.F08, t.F09, t.F10, " +
                     "t.G01, t.G02, t.G03, t.G04, t.G05, t.G06, t.G07, t.G08, t.G09, t.G10, t.G11, t.G12, t.G13, t.G14 " +
                     "  FROM UacAutoCheck.ProvMgr.report_provision_cent_1_6 t WHERE 1=1 " );
         }
-        if(TableModeEnum.Table1_9.getTableMode().equals(tableType)){
+        if("1_9".equals(tableType)){
             sqlBuf.append(" SELECT  t.bankName_S, t.ADID, t.name, t.AD, " +
                     "DAY(t.natuDate) as 'natuDate', t.J01, t.J02, t.J03, t.J04 " +
                     " FROM UacAutoCheck.ProvMgr.report_provision_cent_1_9 t WHERE 1=1 ");
         }
-        if(TableModeEnum.Table1_10.getTableMode().equals(tableType)){
+        if("1_10".equals(tableType)){
             sqlBuf.append(" SELECT bankName_S, t.ADID, t.name, t.AD, DAY(t.natuDate) as 'natuDate', " +
                     "t.K01, t.K02, t.K03, t.K04, t.K05, t.K06, t.K07, t.K08, t.K09, t.K10, t.K11, t.K12, " +
                     "t.K13, t.K14, t.K15, t.K16, t.K17, t.K18, t.K19, t.K20, t.K21, t.K22, t.K23, t.K24 " +

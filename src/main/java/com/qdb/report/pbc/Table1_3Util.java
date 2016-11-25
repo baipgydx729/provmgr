@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.model.DataTable1_3;
+import com.qdb.dao.entity.report.DataTable1_3;
+import com.qdb.util.BigDecimalUtil;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -174,11 +176,12 @@ public class Table1_3Util {
         LinkedHashMap<String, Double> totalMap = new LinkedHashMap<>();
 
         for (DataTable1_3 data : dataList) {
+            double cvalue = null != data.getC01() ? data.getC01().doubleValue() : 0;
             if (totalMap.containsKey(data.getNatuDate())) {
-                Double newValue = totalMap.get(data.getNatuDate()) + (null != data.getC01() ? data.getC01() : 0);
+                double newValue = BigDecimalUtil.add(totalMap.get(data.getNatuDate()), cvalue);
                 totalMap.put(data.getNatuDate(), newValue);
             } else {
-                totalMap.put(data.getNatuDate(), (null != data.getC01() ? data.getC01() : 0));
+                totalMap.put(data.getNatuDate(), cvalue);
             }
             //按照账户进行分组，将同一账户的不同日期进行行列转换，并按照日期顺序进行赋值
             if (resultMap.containsKey(data.getAD())) {
@@ -190,7 +193,7 @@ public class Table1_3Util {
                 row.put("name", data.getName());
                 row.put("AD", data.getAD());
                 row.put("C01", "C01");
-                row.put(data.getNatuDate(), (null != data.getC01() ? data.getC01() : 0));
+                row.put(data.getNatuDate(), cvalue);
                 resultMap.put(data.getName(), row);
             }
         }
@@ -207,7 +210,7 @@ public class Table1_3Util {
             data1.setName("账户1");
             data1.setBankName("银行1");
             data1.setNatuDate("2016-10-0" + i);
-            data1.setC01(i + 0.1);
+            data1.setC01(new BigDecimal(i + 0.1));
             dataList.add(data1);
         }
 
@@ -217,7 +220,7 @@ public class Table1_3Util {
             data1.setName("账户2");
             data1.setBankName("银行2");
             data1.setNatuDate("2016-10-0" + i);
-            data1.setC01(i + 0.2);
+            data1.setC01(new BigDecimal(i + 0.2));
             dataList.add(data1);
         }
         try {

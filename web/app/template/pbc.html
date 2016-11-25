@@ -1,77 +1,90 @@
-<script src="../js/pbc/pbc.js"></script>
 <div>
 	<div class="main-content-head"><h4>中国人民银行</h4></div>
 
 	<div class="main-content-body">
 		<div class="report-head">
 			<div class="report-head-item">
-				<label>银行名称</label>
-				<select>
-					<option value ="1">建设银行</option>
-					<option value="2">招商银行</option>
-					<option value="3">中国工商银行</option>
-				</select>
+				<label>时间区间</label>
+				<input id="datetime-start" class="datetime-picker" type="text" readonly>
+				<hr class="datetime-separator"/>
+				<input id="datetime-end" class="datetime-picker" type="text" readonly>
+				<button ms-click="@submit()">报送</button>
+				<button ms-click="@downloadAll()">下载全部</button>
 			</div>
 
 			<div class="report-head-item">
-				<label>日期</label>
-				<a href="#monthpicker" id="monthpicker"></a>
+				<label>报表类型</label>
+				<select name="report-type" ms-on-change="@selectReportType()">
+					<option ms-for="(index, reportType) in @data.reportTypeList"
+							ms-attr="{'value': index}">
+						{{reportType.label}}
+					</option>
+				</select>
+			</div>
+
+			<div class="report-head-item" ms-visible="@data.selectedReportTypeIndex==1">
+				<label>选择银行</label>
+				<select name="bank" ms-on-change="@selectBank()">
+					<option ms-for="(index, bank) in @data.bankList"
+							ms-attr="{'value': index}">
+						{{bank.bank_name}}
+					</option>
+				</select>
+			</div>
+
+			<div class="report-head-item" ms-visible="@data.selectedReportTypeIndex==1">
+				<label>选择账户</label>
+				<select name="account" ms-on-change="@selectAccount()">
+					<option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
+							ms-attr="{'value': index}">
+						{{account.account_name}}
+					</option>
+				</select>
 			</div>
 		</div>
 
 		<div class="report-body">
+			<div class="operation">
+				<div><button ms-click="@batchGenerate()">批量生成</button></div>
+				<div class="right">
+					<input type="text" placeholder="可按报表类型检索" id="filter">
+					<button class="search-button" ms-click="@filter()"></button>
+				</div>
+			</div>
 			<table>
 				<thead>
-					<tr>
-						<th>报表类型</th>
-						<th>报表名称</th>
-						<th>状态</th>
-						<th>操作</th>
-					</tr>
+				<tr>
+					<th>
+						<input name="check-all" type="checkbox" ms-click="@checkAll()"/>&nbsp;&nbsp;全选
+					</th>
+					<th>银行</th>
+					<th>账户</th>
+					<th>报表</th>
+					<th>状态</th>
+					<th>操作</th>
+				</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>表 1-1</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-2</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-3</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-4</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-5</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-6</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
-					<tr>
-						<td>表 1-7</td>
-						<td>XXXXXX</td>
-						<td>已生成</td>
-						<td><button>生成</button><button>下载</button><button>报送</button></td>
-					</tr>
+				<tr ms-for="(index, report) in @data.reportList">
+					<td>
+						<input type="checkbox"
+							   name="check-one"
+							   ms-click="@checkOne()"/>
+					</td>
+					<td>{{report.bank_name}}</td>
+					<td>{{report.account_no}}</td>
+					<td>{{report.report_name}}</td>
+					<td ms-if="report.report_status==1">
+						<img class="icon" src="../image/round_check_fill.png">已生成
+					</td>
+					<td ms-if="report.report_status==0">
+						<img class="icon" src="../image/round_close_fill.png">未生成
+					</td>
+					<td>
+						<button ms-if="report.report_status==0">生成</button>
+						<button ms-if="report.report_status==1">下载</button>
+					</td>
+				</tr>
 				</tbody>
 			</table>
 		</div>

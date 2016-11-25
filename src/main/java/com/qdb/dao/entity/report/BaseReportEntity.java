@@ -1,22 +1,17 @@
-package com.qdb.dao.model;
+package com.qdb.dao.entity.report;
+
+import com.qdb.dao.TableModeEnum;
 
 /**
  * @author mashengli
  */
-public class DataTable1_13 implements Comparable<DataTable1_13> {
+public abstract class BaseReportEntity implements Comparable<BaseReportEntity> {
     private String natuDate;
-    private Double n01;
-    private Double n02;
-    private Double n03;
-    private Double n04;
-    private Double n05;
-    private Double n06;
-
-      //
     private String bankName;
     private String AD;
     private Integer ADID;
     private String name;
+    private TableModeEnum tableMode;
 
     public String getNatuDate() {
         return natuDate;
@@ -24,54 +19,6 @@ public class DataTable1_13 implements Comparable<DataTable1_13> {
 
     public void setNatuDate(String natuDate) {
         this.natuDate = natuDate;
-    }
-
-    public Double getN01() {
-        return n01;
-    }
-
-    public void setN01(Double n01) {
-        this.n01 = n01;
-    }
-
-    public Double getN02() {
-        return n02;
-    }
-
-    public void setN02(Double n02) {
-        this.n02 = n02;
-    }
-
-    public Double getN03() {
-        return n03;
-    }
-
-    public void setN03(Double n03) {
-        this.n03 = n03;
-    }
-
-    public Double getN04() {
-        return n04;
-    }
-
-    public void setN04(Double n04) {
-        this.n04 = n04;
-    }
-
-    public Double getN05() {
-        return n05;
-    }
-
-    public void setN05(Double n05) {
-        this.n05 = n05;
-    }
-
-    public Double getN06() {
-        return n06;
-    }
-
-    public void setN06(Double n06) {
-        this.n06 = n06;
     }
 
     public String getBankName() {
@@ -106,11 +53,19 @@ public class DataTable1_13 implements Comparable<DataTable1_13> {
         this.name = name;
     }
 
+    public TableModeEnum getTableMode() {
+        return tableMode;
+    }
+
+    public void setTableMode(TableModeEnum tableMode) {
+        this.tableMode = tableMode;
+    }
+
     /**
      * 按照日期从小到大顺序比较两个数据组
      */
     @Override
-    public int compareTo(DataTable1_13 o) {
+    public int compareTo(BaseReportEntity o) {
         if (o == null || o.getNatuDate() == null) {
             return 1;
         } else if (this.getNatuDate() == null) {
