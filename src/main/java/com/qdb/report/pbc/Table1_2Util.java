@@ -8,15 +8,18 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
-import com.qdb.dao.entity.DataTable1_2;
+import com.qdb.dao.entity.report.DataTable1_2;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -164,6 +167,26 @@ public class Table1_2Util {
             default:
                 return new BigDecimal("0");
         }
+    }
+
+    /**
+     * 将查询结果按日累加并重新组装成列表
+     * @param dataList 源数据
+     * @return
+     */
+    public static List<DataTable1_2> mergeAndSumByDate(List<DataTable1_2> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, DataTable1_2> map = new HashMap<>();
+        for (DataTable1_2 dataTable1_2 : dataList) {
+            if (map.containsKey(dataTable1_2.getNatuDate())) {
+                map.put(dataTable1_2.getNatuDate(), addData(map.get(dataTable1_2.getNatuDate()), dataTable1_2));
+            } else {
+                map.put(dataTable1_2.getNatuDate(), dataTable1_2);
+            }
+        }
+        return new ArrayList<>(map.values());
     }
 
     /**

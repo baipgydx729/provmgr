@@ -1,15 +1,17 @@
-package com.qdb.dao.entity;
+package com.qdb.dao.entity.report;
+
+import com.qdb.dao.TableModeEnum;
 
 /**
  * @author mashengli
  */
-public abstract class BaseEntity implements Comparable<BaseEntity> {
+public abstract class BaseReportEntity implements Comparable<BaseReportEntity> {
     private String natuDate;
     private String bankName;
     private String AD;
     private Integer ADID;
     private String name;
-    private String tableMode;
+    private TableModeEnum tableMode;
 
     public String getNatuDate() {
         return natuDate;
@@ -51,11 +53,11 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
         this.name = name;
     }
 
-    public String getTableMode() {
+    public TableModeEnum getTableMode() {
         return tableMode;
     }
 
-    public void setTableMode(String tableMode) {
+    public void setTableMode(TableModeEnum tableMode) {
         this.tableMode = tableMode;
     }
 
@@ -63,7 +65,7 @@ public abstract class BaseEntity implements Comparable<BaseEntity> {
      * 按照日期从小到大顺序比较两个数据组
      */
     @Override
-    public int compareTo(BaseEntity o) {
+    public int compareTo(BaseReportEntity o) {
         if (o == null || o.getNatuDate() == null) {
             return 1;
         } else if (this.getNatuDate() == null) {

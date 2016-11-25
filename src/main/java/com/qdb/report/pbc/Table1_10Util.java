@@ -8,15 +8,18 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
-import com.qdb.dao.entity.DataTable1_10;
+import com.qdb.dao.entity.report.DataTable1_10;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -129,6 +132,66 @@ public class Table1_10Util {
         sheet.getRow(2).createCell(1).setCellValue(reportDate);
         sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(writeUserName);
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(checkUserName);
+    }
+
+    /**
+     * 将查询结果按日累加并重新组装成列表
+     * @param dataList 源数据
+     * @return
+     */
+    public static List<DataTable1_10> mergeAndSumByDate(List<DataTable1_10> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, DataTable1_10> map = new HashMap<>();
+        for (DataTable1_10 dataTable1_10 : dataList) {
+            if (map.containsKey(dataTable1_10.getNatuDate())) {
+                map.put(dataTable1_10.getNatuDate(), addData(map.get(dataTable1_10.getNatuDate()), dataTable1_10));
+            } else {
+                map.put(dataTable1_10.getNatuDate(), dataTable1_10);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    private static DataTable1_10 addData(DataTable1_10 data1, DataTable1_10 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setK01(DecimalTool.add(data1.getK01(), data2.getK01()));
+        data1.setK02(DecimalTool.add(data1.getK02(), data2.getK02()));
+        data1.setK03(DecimalTool.add(data1.getK03(), data2.getK03()));
+        data1.setK04(DecimalTool.add(data1.getK04(), data2.getK04()));
+        data1.setK05(DecimalTool.add(data1.getK05(), data2.getK05()));
+        data1.setK06(DecimalTool.add(data1.getK06(), data2.getK06()));
+        data1.setK07(DecimalTool.add(data1.getK07(), data2.getK07()));
+        data1.setK08(DecimalTool.add(data1.getK08(), data2.getK08()));
+        data1.setK09(DecimalTool.add(data1.getK09(), data2.getK09()));
+        data1.setK10(DecimalTool.add(data1.getK10(), data2.getK10()));
+        data1.setK11(DecimalTool.add(data1.getK11(), data2.getK11()));
+        data1.setK12(DecimalTool.add(data1.getK12(), data2.getK12()));
+        data1.setK13(DecimalTool.add(data1.getK13(), data2.getK13()));
+        data1.setK14(DecimalTool.add(data1.getK14(), data2.getK14()));
+        data1.setK15(DecimalTool.add(data1.getK15(), data2.getK15()));
+        data1.setK16(DecimalTool.add(data1.getK16(), data2.getK16()));
+        data1.setK17(DecimalTool.add(data1.getK17(), data2.getK17()));
+        data1.setK18(DecimalTool.add(data1.getK18(), data2.getK18()));
+        data1.setK19(DecimalTool.add(data1.getK19(), data2.getK19()));
+        data1.setK20(DecimalTool.add(data1.getK20(), data2.getK20()));
+        data1.setK21(DecimalTool.add(data1.getK21(), data2.getK21()));
+        data1.setK22(DecimalTool.add(data1.getK22(), data2.getK22()));
+        data1.setK23(DecimalTool.add(data1.getK23(), data2.getK23()));
+        data1.setK24(DecimalTool.add(data1.getK24(), data2.getK24()));
+        return data1;
     }
 
     /**

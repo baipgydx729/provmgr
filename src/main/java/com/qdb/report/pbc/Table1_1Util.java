@@ -16,7 +16,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.entity.DataTable1_1;
+import com.qdb.dao.entity.report.DataTable1_1;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -139,6 +139,44 @@ public class Table1_1Util {
     }
 
     /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    private static DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setA01(DecimalTool.add(data1.getA01(), data2.getA01()));
+        data1.setA02(DecimalTool.add(data1.getA02(), data2.getA02()));
+        data1.setA03(DecimalTool.add(data1.getA03(), data2.getA03()));
+        data1.setA0301(DecimalTool.add(data1.getA0301(), data2.getA0301()));
+        data1.setA0302(DecimalTool.add(data1.getA0302(), data2.getA0302()));
+        data1.setA04(DecimalTool.add(data1.getA04(), data2.getA04()));
+        data1.setA05(DecimalTool.add(data1.getA05(), data2.getA05()));
+        data1.setA06(DecimalTool.add(data1.getA06(), data2.getA06()));
+        data1.setA0601(DecimalTool.add(data1.getA0601(), data2.getA0601()));
+        data1.setA0602(DecimalTool.add(data1.getA0602(), data2.getA0602()));
+        data1.setA07(DecimalTool.add(data1.getA07(), data2.getA07()));
+        data1.setA08(DecimalTool.add(data1.getA08(), data2.getA08()));
+        data1.setA09(DecimalTool.add(data1.getA09(), data2.getA09()));
+        data1.setA0901(DecimalTool.add(data1.getA0901(), data2.getA0901()));
+        data1.setA0902(DecimalTool.add(data1.getA0902(), data2.getA0902()));
+        data1.setA10(DecimalTool.add(data1.getA10(), data2.getA10()));
+        data1.setA11(DecimalTool.add(data1.getA11(), data2.getA11()));
+        data1.setA12(DecimalTool.add(data1.getA12(), data2.getA12()));
+        data1.setA13(DecimalTool.add(data1.getA13(), data2.getA13()));
+        data1.setA1301(DecimalTool.add(data1.getA1301(), data2.getA1301()));
+        data1.setA1302(DecimalTool.add(data1.getA1302(), data2.getA1302()));
+        data1.setA14(DecimalTool.add(data1.getA14(), data2.getA14()));
+        return data1;
+    }
+
+    /**
      * 获取数据
      *
      * @param dataTable1_1 数据
@@ -196,63 +234,7 @@ public class Table1_1Util {
         }
     }
 
-    /**
-     * 做加法
-     * @param data1
-     * @param data2
-     * @return
-     */
-    private static DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
-        if (data1 == null) {
-            return data2;
-        }
-        if (data2 == null) {
-            return data1;
-        }
-        data1.setA01(DecimalTool.add(data1.getA01(), data2.getA01()));
-        data1.setA02(DecimalTool.add(data1.getA02(), data2.getA02()));
-        data1.setA03(DecimalTool.add(data1.getA03(), data2.getA03()));
-        data1.setA0301(DecimalTool.add(data1.getA0301(), data2.getA0301()));
-        data1.setA0302(DecimalTool.add(data1.getA0302(), data2.getA0302()));
-        data1.setA04(DecimalTool.add(data1.getA04(), data2.getA04()));
-        data1.setA05(DecimalTool.add(data1.getA05(), data2.getA05()));
-        data1.setA06(DecimalTool.add(data1.getA06(), data2.getA06()));
-        data1.setA0601(DecimalTool.add(data1.getA0601(), data2.getA0601()));
-        data1.setA0602(DecimalTool.add(data1.getA0602(), data2.getA0602()));
-        data1.setA07(DecimalTool.add(data1.getA07(), data2.getA07()));
-        data1.setA08(DecimalTool.add(data1.getA08(), data2.getA08()));
-        data1.setA09(DecimalTool.add(data1.getA09(), data2.getA09()));
-        data1.setA0901(DecimalTool.add(data1.getA0901(), data2.getA0901()));
-        data1.setA0902(DecimalTool.add(data1.getA0902(), data2.getA0902()));
-        data1.setA10(DecimalTool.add(data1.getA10(), data2.getA10()));
-        data1.setA11(DecimalTool.add(data1.getA11(), data2.getA11()));
-        data1.setA12(DecimalTool.add(data1.getA12(), data2.getA12()));
-        data1.setA13(DecimalTool.add(data1.getA13(), data2.getA13()));
-        data1.setA1301(DecimalTool.add(data1.getA1301(), data2.getA1301()));
-        data1.setA1302(DecimalTool.add(data1.getA1302(), data2.getA1302()));
-        data1.setA14(DecimalTool.add(data1.getA14(), data2.getA14()));
-//        data1.setA03((null != data1.getA03() ? data1.getA03() : 0) + (null != data2.getA03() ? data2.getA03() : 0));
-//        data1.setA0301((null != data1.getA0301() ? data1.getA0301() : 0) + (null != data2.getA0301() ? data2.getA0301() : 0));
-//        data1.setA0302((null != data1.getA0302() ? data1.getA0302() : 0) + (null != data2.getA0302() ? data2.getA0302() : 0));
-//        data1.setA04((null != data1.getA04() ? data1.getA04() : 0) + (null != data2.getA04() ? data2.getA04() : 0));
-//        data1.setA05((null != data1.getA05() ? data1.getA05() : 0) + (null != data2.getA05() ? data2.getA05() : 0));
-//        data1.setA06((null != data1.getA06() ? data1.getA06() : 0) + (null != data2.getA06() ? data2.getA06() : 0));
-//        data1.setA0601((null != data1.getA0601() ? data1.getA0601() : 0) + (null != data2.getA0601() ? data2.getA0601() : 0));
-//        data1.setA0602((null != data1.getA0602() ? data1.getA0602() : 0) + (null != data2.getA0602() ? data2.getA0602() : 0));
-//        data1.setA07((null != data1.getA07() ? data1.getA07() : 0) + (null != data2.getA07() ? data2.getA07() : 0));
-//        data1.setA08((null != data1.getA08() ? data1.getA08() : 0) + (null != data2.getA08() ? data2.getA08() : 0));
-//        data1.setA09((null != data1.getA09() ? data1.getA09() : 0) + (null != data2.getA09() ? data2.getA09() : 0));
-//        data1.setA0901((null != data1.getA0901() ? data1.getA0901() : 0) + (null != data2.getA0901() ? data2.getA0901() : 0));
-//        data1.setA0902((null != data1.getA0902() ? data1.getA0902() : 0) + (null != data2.getA0902() ? data2.getA0902() : 0));
-//        data1.setA10((null != data1.getA10() ? data1.getA10() : 0) + (null != data2.getA10() ? data2.getA10() : 0));
-//        data1.setA11((null != data1.getA11() ? data1.getA11() : 0) + (null != data2.getA11() ? data2.getA11() : 0));
-//        data1.setA12((null != data1.getA12() ? data1.getA12() : 0) + (null != data2.getA12() ? data2.getA12() : 0));
-//        data1.setA13((null != data1.getA13() ? data1.getA13() : 0) + (null != data2.getA13() ? data2.getA13() : 0));
-//        data1.setA1301((null != data1.getA1301() ? data1.getA1301() : 0) + (null != data2.getA1301() ? data2.getA1301() : 0));
-//        data1.setA1302((null != data1.getA1302() ? data1.getA1302() : 0) + (null != data2.getA1302() ? data2.getA1302() : 0));
-//        data1.setA14((null != data1.getA14() ? data1.getA14() : 0) + (null != data2.getA14() ? data2.getA14() : 0));
-        return data1;
-    }
+
 
     public static void main(String[] args) {
         List<DataTable1_1> dataList = new ArrayList<>();

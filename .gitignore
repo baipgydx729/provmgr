@@ -3,10 +3,11 @@
 target/
 .idea/
 .svn/
-*.properties/
 *.properties
 *.cer/
 *.pfx/
+.classpath
+.settings/
 
 web/dist
 web/generate

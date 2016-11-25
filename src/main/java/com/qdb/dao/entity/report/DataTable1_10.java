@@ -1,11 +1,11 @@
-package com.qdb.dao.entity;
+package com.qdb.dao.entity.report;
 
 import java.math.BigDecimal;
 
 /**
  * @author mashengli
  */
-public class DataTable1_10 extends BaseEntity {
+public class DataTable1_10 extends BaseReportEntity {
     private BigDecimal k01;
     private BigDecimal k02;
     private BigDecimal k03;

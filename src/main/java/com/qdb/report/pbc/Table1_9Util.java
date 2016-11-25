@@ -8,15 +8,18 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
-import com.qdb.dao.entity.DataTable1_9;
+import com.qdb.dao.entity.report.DataTable1_9;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -110,6 +113,46 @@ public class Table1_9Util {
                 sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
+    }
+
+    /**
+     * 将查询结果按日累加并重新组装成列表
+     * @param dataList 源数据
+     * @return
+     */
+    public static List<DataTable1_9> mergeAndSumByDate(List<DataTable1_9> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, DataTable1_9> map = new HashMap<>();
+        for (DataTable1_9 dataTable1_9 : dataList) {
+            if (map.containsKey(dataTable1_9.getNatuDate())) {
+                map.put(dataTable1_9.getNatuDate(), addData(map.get(dataTable1_9.getNatuDate()), dataTable1_9));
+            } else {
+                map.put(dataTable1_9.getNatuDate(), dataTable1_9);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    private static DataTable1_9 addData(DataTable1_9 data1, DataTable1_9 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setJ01(DecimalTool.add(data1.getJ01(), data2.getJ01()));
+        data1.setJ02(DecimalTool.add(data1.getJ02(), data2.getJ02()));
+        data1.setJ03(DecimalTool.add(data1.getJ03(), data2.getJ03()));
+        data1.setJ04(DecimalTool.add(data1.getJ04(), data2.getJ04()));
+        return data1;
     }
 
     /**

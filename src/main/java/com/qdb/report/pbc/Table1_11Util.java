@@ -8,15 +8,18 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
-import com.qdb.dao.entity.DataTable1_11;
+import com.qdb.dao.entity.report.DataTable1_11;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -131,6 +134,71 @@ public class Table1_11Util {
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(checkUserName);
     }
 
+    /**
+     * 将查询结果按日累加并重新组装成列表
+     * @param dataList 源数据
+     * @return
+     */
+    public static List<DataTable1_11> mergeAndSumByDate(List<DataTable1_11> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, DataTable1_11> map = new HashMap<>();
+        for (DataTable1_11 dataTable1_11 : dataList) {
+            if (map.containsKey(dataTable1_11.getNatuDate())) {
+                map.put(dataTable1_11.getNatuDate(), addData(map.get(dataTable1_11.getNatuDate()), dataTable1_11));
+            } else {
+                map.put(dataTable1_11.getNatuDate(), dataTable1_11);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    private static DataTable1_11 addData(DataTable1_11 data1, DataTable1_11 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setL1(DecimalTool.add(data1.getL1(), data2.getL1()));
+        data1.setL2(DecimalTool.add(data1.getL2(), data2.getL2()));
+        data1.setL3(DecimalTool.add(data1.getL3(), data2.getL3()));
+        data1.setL4(DecimalTool.add(data1.getL4(), data2.getL4()));
+        data1.setL5(DecimalTool.add(data1.getL5(), data2.getL5()));
+        data1.setL6(DecimalTool.add(data1.getL6(), data2.getL6()));
+        data1.setL7(DecimalTool.add(data1.getL7(), data2.getL7()));
+        data1.setL8(DecimalTool.add(data1.getL8(), data2.getL8()));
+        data1.setL9(DecimalTool.add(data1.getL9(), data2.getL9()));
+        data1.setL10(DecimalTool.add(data1.getL10(), data2.getL10()));
+        data1.setL11(DecimalTool.add(data1.getL11(), data2.getL11()));
+        data1.setL12(DecimalTool.add(data1.getL12(), data2.getL12()));
+        data1.setL13(DecimalTool.add(data1.getL13(), data2.getL13()));
+        data1.setL14(DecimalTool.add(data1.getL14(), data2.getL14()));
+        data1.setL15(DecimalTool.add(data1.getL15(), data2.getL15()));
+        data1.setL16(DecimalTool.add(data1.getL16(), data2.getL16()));
+        data1.setL17(DecimalTool.add(data1.getL17(), data2.getL17()));
+        data1.setL18(DecimalTool.add(data1.getL18(), data2.getL18()));
+        data1.setL19(DecimalTool.add(data1.getL19(), data2.getL19()));
+        data1.setL20(DecimalTool.add(data1.getL20(), data2.getL20()));
+        data1.setL21(DecimalTool.add(data1.getL21(), data2.getL21()));
+        data1.setL22(DecimalTool.add(data1.getL22(), data2.getL22()));
+        data1.setL23(DecimalTool.add(data1.getL23(), data2.getL23()));
+        data1.setL24(DecimalTool.add(data1.getL24(), data2.getL24()));
+        data1.setL25(DecimalTool.add(data1.getL25(), data2.getL25()));
+        data1.setL26(DecimalTool.add(data1.getL26(), data2.getL26()));
+        data1.setZ1(DecimalTool.add(data1.getZ1(), data2.getZ1()));
+        data1.setZ101(DecimalTool.add(data1.getZ101(), data2.getZ101()));
+        data1.setZ102(DecimalTool.add(data1.getZ102(), data2.getZ102()));
+        return data1;
+    }
+    
     /**
      * 获取数据
      *

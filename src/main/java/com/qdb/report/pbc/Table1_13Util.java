@@ -8,15 +8,18 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
-import com.qdb.dao.entity.DataTable1_13;
+import com.qdb.dao.entity.report.DataTable1_13;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
 
@@ -128,6 +131,48 @@ public class Table1_13Util {
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(checkUserName);
     }
 
+    /**
+     * 将查询结果按日累加并重新组装成列表
+     * @param dataList 源数据
+     * @return
+     */
+    public static List<DataTable1_13> mergeAndSumByDate(List<DataTable1_13> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, DataTable1_13> map = new HashMap<>();
+        for (DataTable1_13 dataTable1_13 : dataList) {
+            if (map.containsKey(dataTable1_13.getNatuDate())) {
+                map.put(dataTable1_13.getNatuDate(), addData(map.get(dataTable1_13.getNatuDate()), dataTable1_13));
+            } else {
+                map.put(dataTable1_13.getNatuDate(), dataTable1_13);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    private static DataTable1_13 addData(DataTable1_13 data1, DataTable1_13 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setN01(DecimalTool.add(data1.getN01(), data2.getN01()));
+        data1.setN02(DecimalTool.add(data1.getN02(), data2.getN02()));
+        data1.setN03(DecimalTool.add(data1.getN03(), data2.getN03()));
+        data1.setN04(DecimalTool.add(data1.getN04(), data2.getN04()));
+        data1.setN05(DecimalTool.add(data1.getN05(), data2.getN05()));
+        data1.setN06(DecimalTool.add(data1.getN06(), data2.getN06()));
+        return data1;
+    }
+    
     /**
      * 获取数据
      * @param dataTable1_13 数据

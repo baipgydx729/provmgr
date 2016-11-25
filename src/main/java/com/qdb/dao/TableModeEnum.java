@@ -1,16 +1,16 @@
 package com.qdb.dao;
 
-import com.qdb.dao.entity.DataTable1_1;
-import com.qdb.dao.entity.DataTable1_10;
-import com.qdb.dao.entity.DataTable1_11;
-import com.qdb.dao.entity.DataTable1_12;
-import com.qdb.dao.entity.DataTable1_13;
-import com.qdb.dao.entity.DataTable1_2;
-import com.qdb.dao.entity.DataTable1_3;
-import com.qdb.dao.entity.DataTable1_4;
-import com.qdb.dao.entity.DataTable1_5;
-import com.qdb.dao.entity.DataTable1_6;
-import com.qdb.dao.entity.DataTable1_9;
+import com.qdb.dao.entity.report.DataTable1_1;
+import com.qdb.dao.entity.report.DataTable1_10;
+import com.qdb.dao.entity.report.DataTable1_11;
+import com.qdb.dao.entity.report.DataTable1_12;
+import com.qdb.dao.entity.report.DataTable1_13;
+import com.qdb.dao.entity.report.DataTable1_2;
+import com.qdb.dao.entity.report.DataTable1_3;
+import com.qdb.dao.entity.report.DataTable1_4;
+import com.qdb.dao.entity.report.DataTable1_5;
+import com.qdb.dao.entity.report.DataTable1_6;
+import com.qdb.dao.entity.report.DataTable1_9;
 
 /**
  * @author mashengli

@@ -23,7 +23,7 @@ import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.qdb.dao.entity.DataTable1_3;
+import com.qdb.dao.entity.report.DataTable1_3;
 import com.qdb.util.BigDecimalUtil;
 import com.qdb.util.FileUtil;
 import com.qdb.util.POIUtil;
