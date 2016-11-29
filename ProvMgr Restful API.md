@@ -127,7 +127,7 @@ GET /report/ccb?start\_day=2016-11-01&end\_day=2016-11-30
 POST /report/:bank\_type/create -d {
 　　start\_day: "xxx",  
 　　end\_day: "xxx",  
-　　[  
+　　report\_list: [  
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
