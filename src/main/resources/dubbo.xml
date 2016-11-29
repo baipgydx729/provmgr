@@ -38,7 +38,7 @@
 	dispather="all" threadpool="cached" threads="200" />
 
 	<!-- 声明需要暴露的服务接口 -->
-	<dubbo:service interface="com.qdb.inter.IAdd" class="com.qdb.inter.IAddImpl"  />
+	<dubbo:service interface="com.qdb.provmgr.inter.IAdd" class="com.qdb.provmgr.inter.IAddImpl"  />
 
 	<!-- dubbo 引用远程服务 -->
 	<!-- <dubbo:reference id="riskService" interface="com.qdb.risk.service.api.RiskControlServiceI" />-->
