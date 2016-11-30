@@ -13,7 +13,7 @@
 
 ### 1. 获取银行账户信息接口 ###
 
-GET /bank-account
+GET /report/bank-account?start\_day={startDay}&end\_day={endDay}
 
 成功返回示例：  
 {  
@@ -60,7 +60,7 @@ GET /bank-account
 
 ### 2. 获取报表列表接口 ###
 
-GET /report/:bank\_type?bank\_name={bankName}&account\_id={accountId}&start\_day={startDay}&end\_day={endDay}&report\_type={reportType}
+GET /report/:bank\_type/list?bank\_name={bankName}&account\_id={accountId}&start\_day={startDay}&end\_day={endDay}&report\_type={reportType}
 
 > 说明：
 
@@ -124,23 +124,26 @@ GET /report/ccb?start\_day=2016-11-01&end\_day=2016-11-30
 
 ### 3. 生成报表接口 ###
 
-POST /report/:bank\_type -d {  
+POST /report/:bank\_type/create -d {
 　　start\_day: "xxx",  
 　　end\_day: "xxx",  
-　　[  
+　　report\_list: [  
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
+　　　　　　report\_type: "xxx",  
 　　　　　　report\_name: "xxx"  
 　　　　},  
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
+　　　　　　report\_type: "xxx",  
 　　　　　　report\_name: "xxx"  
 　　　　},  
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
+　　　　　　report\_type: "xxx",  
 　　　　　　report\_name: "xxx"  
 　　　　}  
 　　]  
@@ -158,8 +161,8 @@ POST /report/:bank\_type -d {
 - spdb —— 浦发银行
 - bojs —— 江苏银行
 
-> 针对中国人民银行，参数bank\_name、account\_id可选，且account\_id存在时bank\_name必须存在;  
-> 针对合作银行，忽略bank\_name，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account\_id
+> 针对中国人民银行，参数bank\_name、account\_id可选，且account\_id存在时bank\_name必须存在;
+> 针对合作银行，忽略bank\_name、report\_type，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account\_id
 
 成功返回示例：  
 {  

@@ -305,7 +305,7 @@ img {
 <li><strong>403</strong> —— 未授权</li>
 </ul>
 <h3>1. 获取银行账户信息接口</h3>
-<p>GET /bank-account</p>
+<p>GET /report/bank-account?start_day={startDay}&amp;end_day={endDay}</p>
 <p>成功返回示例：<br />
 {<br />
 　　code: 200,<br />
@@ -348,7 +348,7 @@ img {
 　　message: &quot;xxxxxxxxxxx&quot;<br />
 }  </p>
 <h3>2. 获取报表列表接口</h3>
-<p>GET /report/:bank_type?bank_name={bankName}&amp;account_id={accountId}&amp;start_day={startDay}&amp;end_day={endDay}&amp;report_type={reportType}</p>
+<p>GET /report/:bank_type/list?bank_name={bankName}&amp;account_id={accountId}&amp;start_day={startDay}&amp;end_day={endDay}&amp;report_type={reportType}</p>
 <blockquote>
 <p>说明：</p>
 <p>bank_type取值:<br />
@@ -400,28 +400,31 @@ GET /report/pbc?bank_name=1001&amp;account_id=1000001&amp;start_day=2016-11-01&a
 }  </p>
 <blockquote>
 <p>说明：<br />
-中国建设银行、平安银行、浦发银行、江苏银行忽略bank_name、account_id、account_no、account_name
+中国建设银行、平安银行、浦发银行、江苏银行忽略bank_name、account_id、account_no、account_name<br />
 report_status取值：0——未生成, 1——已生成  
 </p>
 </blockquote>
 <h3>3. 生成报表接口</h3>
-<p>POST /report/:bank_type -d {<br />
+<p>POST /report/:bank_type/create -d {
 　　start_day: &quot;xxx&quot;,<br />
 　　end_day: &quot;xxx&quot;,<br />
-　　[<br />
+　　report_list: [<br />
 　　　　{<br />
 　　　　　　bank_name: &quot;xxx&quot;,<br />
 　　　　　　account_id: &quot;xxx&quot;,<br />
+　　　　　　report_type: &quot;xxx&quot;,<br />
 　　　　　　report_name: &quot;xxx&quot;<br />
 　　　　},<br />
 　　　　{<br />
 　　　　　　bank_name: &quot;xxx&quot;,<br />
 　　　　　　account_id: &quot;xxx&quot;,<br />
+　　　　　　report_type: &quot;xxx&quot;,<br />
 　　　　　　report_name: &quot;xxx&quot;<br />
 　　　　},<br />
 　　　　{<br />
 　　　　　　bank_name: &quot;xxx&quot;,<br />
 　　　　　　account_id: &quot;xxx&quot;,<br />
+　　　　　　report_type: &quot;xxx&quot;,<br />
 　　　　　　report_name: &quot;xxx&quot;<br />
 　　　　}<br />
 　　]<br />
@@ -438,8 +441,8 @@ report_status取值：0——未生成, 1——已生成
 <li>spdb —— 浦发银行</li>
 <li>bojs —— 江苏银行</li>
 </ul>
-<p>针对中国人民银行，参数bank_name、account_id可选，且account_id存在时bank_name必须存在;<br />
-针对合作银行，忽略bank_name，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account_id</p>
+<p>针对中国人民银行，参数bank_name、account_id可选，且account_id存在时bank_name必须存在;
+针对合作银行，忽略bank_name、report_type，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account_id</p>
 </blockquote>
 <p>成功返回示例：<br />
 {<br />
@@ -519,7 +522,7 @@ GET /report/pbc/download?bank_name=1001&amp;account_id=1000001&amp;start_day=201
 {<br />
 　　code: 400,<br />
 　　message: &quot;xxxxxxxxxxx&quot;<br />
-}  </p>
+}  </p>
 
 </body>
 </html>
