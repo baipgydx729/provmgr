@@ -131,16 +131,19 @@ POST /report/:bank\_type/create -d {
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
+　　　　　　report\_type: "xxx",  
 　　　　　　report\_name: "xxx"  
 　　　　},  
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
+　　　　　　report\_type: "xxx",  
 　　　　　　report\_name: "xxx"  
 　　　　},  
 　　　　{  
 　　　　　　bank\_name: "xxx",  
 　　　　　　account\_id: "xxx",  
+　　　　　　report\_type: "xxx",  
 　　　　　　report\_name: "xxx"  
 　　　　}  
 　　]  
@@ -158,8 +161,8 @@ POST /report/:bank\_type/create -d {
 - spdb —— 浦发银行
 - bojs —— 江苏银行
 
-> 针对中国人民银行，参数bank\_name、account\_id可选，且account\_id存在时bank\_name必须存在;  
-> 针对合作银行，忽略bank\_name，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account\_id
+> 针对中国人民银行，参数bank\_name、account\_id可选，且account\_id存在时bank\_name必须存在;
+> 针对合作银行，忽略bank\_name、report\_type，中国建设银行、平安银行、浦发银行、江苏银行忽略参数account\_id
 
 成功返回示例：  
 {  
