@@ -21,13 +21,7 @@
 	<!-- 配置spring自动注入，扫描的路径 -->
 	<context:component-scan base-package="com.qdb"/>
 	<!--加载db.properties文件 -->
-	<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="location" value="classpath*:*.properties"/>
-	</bean>
-
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
-		<property name="properties" ref="configProperties"></property>
-	</bean>
+	<context:property-placeholder location="classpath*:*.properties" file-encoding="UTF-8" />
 
 	<mvc:default-servlet-handler/>
 	<!-- jsp 视图 -->
