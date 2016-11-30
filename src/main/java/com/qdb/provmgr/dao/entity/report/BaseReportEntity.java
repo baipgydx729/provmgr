@@ -1,7 +1,5 @@
 package com.qdb.provmgr.dao.entity.report;
 
-import com.qdb.provmgr.dao.TableModeEnum;
-
 /**
  * @author mashengli
  */
@@ -11,7 +9,6 @@ public abstract class BaseReportEntity implements Comparable<BaseReportEntity> {
     private String AD;
     private Integer ADID;
     private String name;
-    private TableModeEnum tableMode;
 
     public String getNatuDate() {
         return natuDate;
@@ -51,14 +48,6 @@ public abstract class BaseReportEntity implements Comparable<BaseReportEntity> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public TableModeEnum getTableMode() {
-        return tableMode;
-    }
-
-    public void setTableMode(TableModeEnum tableMode) {
-        this.tableMode = tableMode;
     }
 
     /**

@@ -30,7 +30,6 @@ public class POIUtil {
      */
     public static void copySheet(HSSFSheet sourceSheet, HSSFSheet targetSheet,
                                  HSSFWorkbook sourceWork, HSSFWorkbook targetWork) throws Exception {
-
         if (targetSheet == null || sourceSheet == null || targetWork == null || sourceWork == null) {
             throw new IllegalArgumentException("调用PoiUtil.copySheet()方法时，targetSheet、sourceSheet、targetWork、sourceWork都不能为空，故抛出该异常！");
         }
@@ -185,7 +184,6 @@ public class POIUtil {
             newComment.setMarginRight(comment.getMarginRight());
             newComment.setNoFill(comment.isNoFill());
             newComment.setRow(comment.getRow());
-            newComment.setShapeType(comment.getShapeType());
             newComment.setString(comment.getString());
             newComment.setVerticalAlignment(comment.getVerticalAlignment());
             newComment.setVisible(comment.isVisible());

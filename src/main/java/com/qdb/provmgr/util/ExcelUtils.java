@@ -1,14 +1,5 @@
 package com.qdb.provmgr.util;
 
-import net.sf.jxls.transformer.XLSTransformer;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,6 +8,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
+import net.sf.jxls.transformer.XLSTransformer;
 
 /**
  * Created by yuwenzhong on 2016-11-23.
@@ -27,7 +29,7 @@ public class ExcelUtils {
 
     private static  final String DATAKEY = "data_list";
 
-    @Value("#{propertyConfigurer['excel.template.path']}")
+    @Value("${excel.template.path}")
     private static String templatePath;
 
     //按月份到处excel表格

@@ -1,14 +1,22 @@
 package com.qdb.provmgr.report;
 
-import java.math.BigDecimal;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -22,21 +30,56 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.dao.entity.report.DataTable1_9;
-import com.qdb.provmgr.report.pbc.DecimalTool;
+import com.qdb.provmgr.util.FileUtil;
+import com.qdb.provmgr.util.POIUtil;
 
 /**
  * @author mashengli
  */
-public abstract class DataTableUtils {
+@Repository
+public abstract class ReportExcelUtil {
 
-    private static Logger log = LoggerFactory.getLogger(DataTableUtils.class);
+    private Logger log = LoggerFactory.getLogger(ReportExcelUtil.class);
+
+    public File createExcelFile(String templateFile, String targetFileName, PresetContent presetContent, List<BaseReportEntity> dataList) throws Exception {
+        File tempFile = FileUtil.getTempExcelFile(targetFileName);
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(templateFile);
+            HSSFWorkbook workbookIn = new HSSFWorkbook(is);
+            HSSFSheet sheetIn = workbookIn.getSheetAt(0);
+
+            os = new FileOutputStream(tempFile);
+            HSSFWorkbook workbookOut = new HSSFWorkbook();     //创建工作簿
+            HSSFSheet sheetOut = workbookOut.createSheet();       //创建sheet
+
+            //拷贝模板
+            POIUtil.copySheet(sheetIn, sheetOut, workbookIn, workbookOut);
+
+            //填写数据
+            writeData(sheetOut, presetContent, dataList);
+
+            workbookOut.write(os);
+            os.flush();
+        } catch (Exception e) {
+            log.error("创建excel失败");
+            throw e;
+        } finally {
+            IOUtils.closeQuietly(os);
+            IOUtils.closeQuietly(is);
+        }
+        return tempFile;
+    }
+
+    public abstract void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList);
 
     /**
      * 将原始数据按照账户分割成N个数组
      * @param dataList 源数据
      * @return
      */
-    public static List<List<BaseReportEntity>> splitByAD(List<BaseReportEntity> dataList) {
+    public List<List<BaseReportEntity>> splitByAD(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return Collections.EMPTY_LIST;
         }
@@ -54,11 +97,33 @@ public abstract class DataTableUtils {
     }
 
     /**
+     * 将原始数据按照账户分割成N个数组
+     * @param dataList 源数据
+     * @return
+     */
+    public List<List<BaseReportEntity>> splitByBankName(List<BaseReportEntity> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<String, List<BaseReportEntity>> map = new HashMap<>();
+        for (BaseReportEntity baseReportEntity : dataList) {
+            if (map.containsKey(baseReportEntity.getBankName())) {
+                map.get(baseReportEntity.getBankName()).add(baseReportEntity);
+            } else {
+                List<BaseReportEntity> newList = new ArrayList<>();
+                newList.add(baseReportEntity);
+                map.put(baseReportEntity.getBankName(), newList);
+            }
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    /**
      * 将原始数据按照日期分割成N个数组
      * @param dataList 源数据
      * @return
      */
-    public static List<List<BaseReportEntity>> splitByDate(List<BaseReportEntity> dataList) {
+    public List<List<BaseReportEntity>> splitByDate(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return Collections.EMPTY_LIST;
         }
@@ -80,7 +145,7 @@ public abstract class DataTableUtils {
      * @param dataList 源数据
      * @return
      */
-    public static BaseReportEntity mergeAndSumByDate(List<BaseReportEntity> dataList) {
+    public BaseReportEntity mergeAndSumByDate(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return null;
         }
@@ -96,27 +161,7 @@ public abstract class DataTableUtils {
         return baseReportEntity;
     }
 
-//    /**
-//     * 将查询结果按日累加并重新组装成列表，组装后的列表将不再区分账户
-//     * @param dataList 源数据
-//     * @return
-//     */
-//    public static List<BaseReportEntity> mergeAndSumByDate(List<BaseReportEntity> dataList) {
-//        if (CollectionUtils.isEmpty(dataList)) {
-//            return Collections.EMPTY_LIST;
-//        }
-//        Map<String, BaseReportEntity> map = new HashMap<>();
-//        for (BaseReportEntity baseReportEntity : dataList) {
-//            if (map.containsKey(baseReportEntity.getNatuDate())) {
-//                map.put(baseReportEntity.getNatuDate(), addData(map.get(baseReportEntity.getNatuDate()), baseReportEntity));
-//            } else {
-//                map.put(baseReportEntity.getNatuDate(), baseReportEntity);
-//            }
-//        }
-//        return new ArrayList<>(map.values());
-//    }
-
-    private static BaseReportEntity addData(BaseReportEntity data1, BaseReportEntity data2) {
+    private BaseReportEntity addData(BaseReportEntity data1, BaseReportEntity data2) {
         if (!data1.getClass().equals(data2.getClass())) {
             log.error("类型不一致无法进行累加");
             return null;
@@ -160,7 +205,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
+    public DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -198,7 +243,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
+    public DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -223,7 +268,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_4 addData(DataTable1_4 data1, DataTable1_4 data2) {
+    public DataTable1_4 addData(DataTable1_4 data1, DataTable1_4 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -243,7 +288,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_5 addData(DataTable1_5 data1, DataTable1_5 data2) {
+    public DataTable1_5 addData(DataTable1_5 data1, DataTable1_5 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -265,7 +310,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_6 addData(DataTable1_6 data1, DataTable1_6 data2) {
+    public DataTable1_6 addData(DataTable1_6 data1, DataTable1_6 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -305,7 +350,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_9 addData(DataTable1_9 data1, DataTable1_9 data2) {
+    public DataTable1_9 addData(DataTable1_9 data1, DataTable1_9 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -325,7 +370,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_10 addData(DataTable1_10 data1, DataTable1_10 data2) {
+    public DataTable1_10 addData(DataTable1_10 data1, DataTable1_10 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -365,7 +410,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_11 addData(DataTable1_11 data1, DataTable1_11 data2) {
+    public DataTable1_11 addData(DataTable1_11 data1, DataTable1_11 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -410,7 +455,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_12 addData(DataTable1_12 data1, DataTable1_12 data2) {
+    public DataTable1_12 addData(DataTable1_12 data1, DataTable1_12 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -443,7 +488,7 @@ public abstract class DataTableUtils {
      * @param data2
      * @return
      */
-    private static DataTable1_13 addData(DataTable1_13 data1, DataTable1_13 data2) {
+    public DataTable1_13 addData(DataTable1_13 data1, DataTable1_13 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -457,18 +502,6 @@ public abstract class DataTableUtils {
         data1.setN05(DecimalTool.add(data1.getN05(), data2.getN05()));
         data1.setN06(DecimalTool.add(data1.getN06(), data2.getN06()));
         return data1;
-    }
-
-    public static void main(String[] args) {
-        List<DataTable1_1> dataList = new ArrayList<>();
-
-        for (int i = 0; i <= 30; i++) {
-            DataTable1_1 dataTable1_1 = new DataTable1_1();
-            dataTable1_1.setA01(new BigDecimal(i + 0.1));
-            dataTable1_1.setA02(new BigDecimal(i + 0.1));
-            dataList.add(dataTable1_1);
-        }
-
     }
 
 }
