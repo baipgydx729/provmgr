@@ -43,7 +43,7 @@ public class CcbReportController {
     public void ctrateReports(HttpServletRequest request, HttpServletResponse response){
         String beginDate = "2016-10-01";
         String endDate = "2016-10-31";
-        String tableType = "1_2";
+        String tableType = "1_6";
 //        for (String tableType: typeList) {
         String tableNo = tableNameMap.get(tableType);
             String templateName = "agentCode_" + tableNo + "_n.xls";
@@ -59,30 +59,18 @@ public class CcbReportController {
             String sheetName = "sheet";
             if("1_3".equals(tableType)){
                 List<Map<String, Object>> dataList = reportService.findTableDataList(tableType, BANKNAME, "汇总", "99999", null, beginDate, endDate);
-                DataTable3Entity totalDo = reportService.convertResult2Entity(dataList);
-                List<DataTable1_3> totalList = totalDo.getList();
-                int days = 0;
-                if (!CollectionUtils.isEmpty(totalList)){
-                    days = totalList.size();
-                }
-
-//                List<Integer> dayList = this.getDayList(days);
-                infoMap.put("total", totalDo);
+                infoMap.put("total", dataList);
 //                infoMap.put("dates", dayList);
                 List<DataTable3Entity> table3DataList = reportService.findTable3Data(tableType, BANKNAME, null, null, beginDate, endDate);
-                ExcelUtils.createExcel(request, response, table3DataList, sheetName, bankType, templateName, destFileName, infoMap);
+                ExcelUtils.excelDownLoad(request, response, table3DataList, sheetName, bankType, templateName, destFileName, infoMap);
             }else{
                 //建行按照客户级别上报，不分账户，统计每天合计金额
                 List<Map<String, Object>> dataList = reportService.findTableDataList(tableType, BANKNAME, "汇总", "99999", null, beginDate, endDate);
-                ExcelUtils.createExcel(request, response, dataList, sheetName, bankType, templateName, destFileName,infoMap);
+                ExcelUtils.excelDownLoad(request, response, dataList, sheetName, bankType, templateName, destFileName,infoMap);
             }
 //        }
     }
 
-    @RequestMapping("/test")
-    public void test(){
-        logger.info("***********来了***********");
-    }
     /**
      * 返回日列表
      * @param days
@@ -92,7 +80,7 @@ public class CcbReportController {
         List<Integer> dayList = new ArrayList<>();
         int i = 1;
         while (i <= days){
-            dayList.add(i);
+           dayList.add(i);
         }
         return dayList;
     }
