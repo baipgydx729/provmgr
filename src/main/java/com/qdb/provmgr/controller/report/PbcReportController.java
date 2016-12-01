@@ -40,7 +40,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 import com.qdb.provmgr.report.PresetContent;
 import com.qdb.provmgr.report.ReportExcelUtil;
 import com.qdb.provmgr.report.ReportHelper;
-import com.qdb.provmgr.service.TESTFtpFileService;
+import com.qdb.provmgr.service.FtpFileService;
 import com.qdb.provmgr.service.ReportService;
 import com.qdb.provmgr.service.pbc.PbcReportService;
 import com.qdb.provmgr.util.DateUtils;
@@ -59,7 +59,7 @@ public class PbcReportController {
     @Autowired
     private PbcReportService pbcReportService;
     @Autowired
-    private TESTFtpFileService ftpFileService;
+    private FtpFileService ftpFileService;
     @Autowired
     private ReportExcelUtil reportExcelUtil;
     @Autowired

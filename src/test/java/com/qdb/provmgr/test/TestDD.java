@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.qdb.provmgr.service.TESTFtpFileService;
+import com.qdb.provmgr.service.FtpFileService;
 
 /**
  * @author mashengli
@@ -15,7 +15,7 @@ import com.qdb.provmgr.service.TESTFtpFileService;
 @ContextConfiguration(locations = "classpath*:applicationContext.xml")
 public class TestDD {
     @Autowired
-    private TESTFtpFileService ftpFileService;
+    private FtpFileService ftpFileService;
 
     @Test
     public void test2(){
