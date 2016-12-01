@@ -16,9 +16,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
+import com.qdb.provmgr.dao.TableModeEnum;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_1;
 import com.qdb.provmgr.dao.entity.report.DataTable1_10;
@@ -30,18 +30,33 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.dao.entity.report.DataTable1_9;
+import com.qdb.provmgr.report.pbc.Excel1_1;
+import com.qdb.provmgr.report.pbc.Excel1_10;
+import com.qdb.provmgr.report.pbc.Excel1_10_2;
+import com.qdb.provmgr.report.pbc.Excel1_11;
+import com.qdb.provmgr.report.pbc.Excel1_12;
+import com.qdb.provmgr.report.pbc.Excel1_13;
+import com.qdb.provmgr.report.pbc.Excel1_1_2;
+import com.qdb.provmgr.report.pbc.Excel1_2;
+import com.qdb.provmgr.report.pbc.Excel1_2_1;
+import com.qdb.provmgr.report.pbc.Excel1_3;
+import com.qdb.provmgr.report.pbc.Excel1_4;
+import com.qdb.provmgr.report.pbc.Excel1_5;
+import com.qdb.provmgr.report.pbc.Excel1_6;
+import com.qdb.provmgr.report.pbc.Excel1_6_2;
+import com.qdb.provmgr.report.pbc.Excel1_9;
+import com.qdb.provmgr.report.pbc.Excel1_9_2;
 import com.qdb.provmgr.util.FileUtil;
 import com.qdb.provmgr.util.POIUtil;
 
 /**
  * @author mashengli
  */
-@Repository
-public abstract class ReportExcelUtil {
+public class ReportExcelUtil {
 
-    private Logger log = LoggerFactory.getLogger(ReportExcelUtil.class);
+    private static Logger log = LoggerFactory.getLogger(ReportExcelUtil.class);
 
-    public File createExcelFile(String templateFile, String targetFileName, PresetContent presetContent, List<BaseReportEntity> dataList) throws Exception {
+    public static File createExcelFile(TableModeEnum tableMode, String templateFile, String targetFileName, PresetContent presetContent, List<BaseReportEntity> dataList) throws Exception {
         File tempFile = FileUtil.getTempExcelFile(targetFileName);
         InputStream is = null;
         OutputStream os = null;
@@ -58,7 +73,7 @@ public abstract class ReportExcelUtil {
             POIUtil.copySheet(sheetIn, sheetOut, workbookIn, workbookOut);
 
             //填写数据
-            writeData(sheetOut, presetContent, dataList);
+            writeData(tableMode, sheetOut, presetContent, dataList);
 
             workbookOut.write(os);
             os.flush();
@@ -72,14 +87,77 @@ public abstract class ReportExcelUtil {
         return tempFile;
     }
 
-    public abstract void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList);
-
+    public static void writeData(TableModeEnum tableMode, HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+        if (TableModeEnum.Table1_1.equals(tableMode)) {
+            Excel1_1.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_1_2.equals(tableMode)) {
+            Excel1_1_2.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_2.equals(tableMode)) {
+            Excel1_2.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_2_1.equals(tableMode)) {
+            Excel1_2_1.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_3.equals(tableMode)) {
+            Excel1_3.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_4.equals(tableMode)) {
+            Excel1_4.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_5.equals(tableMode)) {
+            Excel1_5.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_6.equals(tableMode)) {
+            Excel1_6.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_6_2.equals(tableMode)) {
+            Excel1_6_2.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_9.equals(tableMode)) {
+            Excel1_9.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_9_2.equals(tableMode)) {
+            Excel1_9_2.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_10.equals(tableMode)) {
+            Excel1_10.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_10_2.equals(tableMode)) {
+            Excel1_10_2.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_11.equals(tableMode)) {
+            Excel1_11.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_12.equals(tableMode)) {
+            Excel1_12.writeData(sheet, presetContent, dataList);
+            return;
+        }
+        if (TableModeEnum.Table1_13.equals(tableMode)) {
+            Excel1_13.writeData(sheet, presetContent, dataList);
+        }
+    }
     /**
      * 将原始数据按照账户分割成N个数组
      * @param dataList 源数据
      * @return
      */
-    public List<List<BaseReportEntity>> splitByAD(List<BaseReportEntity> dataList) {
+    public static List<List<BaseReportEntity>> splitByAD(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return Collections.EMPTY_LIST;
         }
@@ -101,7 +179,7 @@ public abstract class ReportExcelUtil {
      * @param dataList 源数据
      * @return
      */
-    public List<List<BaseReportEntity>> splitByBankName(List<BaseReportEntity> dataList) {
+    public static List<List<BaseReportEntity>> splitByBankName(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return Collections.EMPTY_LIST;
         }
@@ -123,7 +201,7 @@ public abstract class ReportExcelUtil {
      * @param dataList 源数据
      * @return
      */
-    public List<List<BaseReportEntity>> splitByDate(List<BaseReportEntity> dataList) {
+    public static List<List<BaseReportEntity>> splitByDate(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return Collections.EMPTY_LIST;
         }
@@ -145,7 +223,7 @@ public abstract class ReportExcelUtil {
      * @param dataList 源数据
      * @return
      */
-    public BaseReportEntity mergeAndSumByDate(List<BaseReportEntity> dataList) {
+    public static BaseReportEntity mergeAndSumByDate(List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
             return null;
         }
@@ -161,7 +239,7 @@ public abstract class ReportExcelUtil {
         return baseReportEntity;
     }
 
-    private BaseReportEntity addData(BaseReportEntity data1, BaseReportEntity data2) {
+    private static BaseReportEntity addData(BaseReportEntity data1, BaseReportEntity data2) {
         if (!data1.getClass().equals(data2.getClass())) {
             log.error("类型不一致无法进行累加");
             return null;
@@ -205,7 +283,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
+    public static DataTable1_1 addData(DataTable1_1 data1, DataTable1_1 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -243,7 +321,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
+    public static DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -268,7 +346,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_4 addData(DataTable1_4 data1, DataTable1_4 data2) {
+    public static DataTable1_4 addData(DataTable1_4 data1, DataTable1_4 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -288,7 +366,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_5 addData(DataTable1_5 data1, DataTable1_5 data2) {
+    public static DataTable1_5 addData(DataTable1_5 data1, DataTable1_5 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -310,7 +388,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_6 addData(DataTable1_6 data1, DataTable1_6 data2) {
+    public static DataTable1_6 addData(DataTable1_6 data1, DataTable1_6 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -350,7 +428,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_9 addData(DataTable1_9 data1, DataTable1_9 data2) {
+    public static DataTable1_9 addData(DataTable1_9 data1, DataTable1_9 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -370,7 +448,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_10 addData(DataTable1_10 data1, DataTable1_10 data2) {
+    public static DataTable1_10 addData(DataTable1_10 data1, DataTable1_10 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -410,7 +488,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_11 addData(DataTable1_11 data1, DataTable1_11 data2) {
+    public static DataTable1_11 addData(DataTable1_11 data1, DataTable1_11 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -455,7 +533,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_12 addData(DataTable1_12 data1, DataTable1_12 data2) {
+    public static DataTable1_12 addData(DataTable1_12 data1, DataTable1_12 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -488,7 +566,7 @@ public abstract class ReportExcelUtil {
      * @param data2
      * @return
      */
-    public DataTable1_13 addData(DataTable1_13 data1, DataTable1_13 data2) {
+    public static DataTable1_13 addData(DataTable1_13 data1, DataTable1_13 data2) {
         if (data1 == null) {
             return data2;
         }

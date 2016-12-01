@@ -8,8 +8,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
-import com.qdb.provmgr.report.ReportExcelUtil;
 import com.qdb.provmgr.report.PresetContent;
+import com.qdb.provmgr.report.ReportExcelUtil;
 
 /**
  * @author mashengli
@@ -35,8 +35,7 @@ public class Excel1_13 extends ReportExcelUtil {
      */
     private static int DATA_END_COLUMN_NUM = 6;
 
-    @Override
-    public void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+    public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
         writeData(sheet, dataList);
     }
@@ -64,7 +63,7 @@ public class Excel1_13 extends ReportExcelUtil {
      * @param sheet         表格
      * @param presetContent 预设内同
      */
-    private void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
+    private static void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
         //填充交易时期、填报日期、填表人及审核人
         sheet.getRow(0).createCell(1).setCellValue(presetContent.getCompanyName());
         sheet.getRow(1).createCell(1).setCellValue(presetContent.getTranPeriod());

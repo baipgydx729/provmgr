@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.springframework.stereotype.Repository;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_10;
@@ -14,6 +15,7 @@ import com.qdb.provmgr.report.PresetContent;
 /**
  * @author mashengli
  */
+@Repository
 public class Excel1_10 extends ReportExcelUtil {
     /**
      * 数据区域起始行数下标（下标从0开始）
@@ -35,8 +37,7 @@ public class Excel1_10 extends ReportExcelUtil {
      */
     private static int DATA_END_COLUMN_NUM = 24;
 
-    @Override
-    public void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+    public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
         writeData(sheet, dataList);
     }
@@ -47,7 +48,7 @@ public class Excel1_10 extends ReportExcelUtil {
      * @param sheet    表格
      * @param dataList 数据列表
      */
-    private void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
+    private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
         Collections.sort(dataList);
         int size = dataList.size();
         for (int i = 0; i < size; i++) {
@@ -65,7 +66,7 @@ public class Excel1_10 extends ReportExcelUtil {
      * @param sheet         表格
      * @param presetContent 预设内容
      */
-    private void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
+    private static void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
         //填充交易时期、填报日期、填表人及审核人
         sheet.getRow(0).createCell(1).setCellValue(presetContent.getCompanyName());
         sheet.getRow(1).createCell(1).setCellValue(presetContent.getLegalPerson());
@@ -86,7 +87,7 @@ public class Excel1_10 extends ReportExcelUtil {
      * @param index        下标
      * @return
      */
-    public BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
+    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
         switch (index) {
             case 1:
                 return dataTable1_10.getK01();

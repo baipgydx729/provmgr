@@ -35,8 +35,7 @@ public class Excel1_9 extends ReportExcelUtil {
      */
     private static int DATA_END_COLUMN_NUM = 32;
 
-    @Override
-    public void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+    public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
         writeData(sheet, dataList);
     }
@@ -47,7 +46,7 @@ public class Excel1_9 extends ReportExcelUtil {
      * @param sheet    表格
      * @param dataList 数据列表
      */
-    private void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
+    private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
         Collections.sort(dataList);
         int size = dataList.size();
         for (int i = 0; i < size; i++) {

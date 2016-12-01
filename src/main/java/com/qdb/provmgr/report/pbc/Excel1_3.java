@@ -14,14 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
-import com.qdb.provmgr.report.ReportExcelUtil;
 import com.qdb.provmgr.report.PresetContent;
 import com.qdb.provmgr.util.BigDecimalUtil;
 
 /**
  * @author mashengli
  */
-public class Excel1_3 extends ReportExcelUtil {
+public class Excel1_3 {
 
     private static Logger log = LoggerFactory.getLogger(Excel1_3.class);
 
@@ -35,8 +34,7 @@ public class Excel1_3 extends ReportExcelUtil {
      */
     private static int DATA_START_COLUMN_NUM = 4;
 
-    @Override
-    public void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+    public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         Map<String, LinkedHashMap> dataMap = convertData(dataList);
         int rowNum = DATA_START_ROW_NUM;
         //保存合计的数值
@@ -89,7 +87,7 @@ public class Excel1_3 extends ReportExcelUtil {
      * @param dataList 源列表数据
      * @return
      */
-    private Map<String, LinkedHashMap> convertData(List<BaseReportEntity> dataList) {
+    private static Map<String, LinkedHashMap> convertData(List<BaseReportEntity> dataList) {
         Map<String, LinkedHashMap> resultMap = new HashMap<>();
         //按照日期进行排序
         Collections.sort(dataList);

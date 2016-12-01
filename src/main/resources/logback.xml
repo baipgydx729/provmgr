@@ -13,29 +13,29 @@
 	<!--log日志 -->
 	<appender name="logFile"
 	        class="ch.qos.logback.core.rolling.RollingFileAppender">
-	        <!-- xxx应为系统的简称 -->
-	        <File>/opt/application/xxx/log/info/info.log</File>
+	        <!-- provmgr应为系统的简称 -->
+	        <File>/opt/application/provmgr/log/info/info.log</File>
 	        <encoder>
 	        		<pattern>%date %level[%thread] %msg at %logger{36}[%file:%line]%n</pattern>
 	                <charset>UTF-8</charset>
 	        </encoder>
 	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-	        		<!-- xxx应为系统的简称 -->
-	                <fileNamePattern>D:/application/xxx/log/info/%d{yyyy-MM-dd}.log</fileNamePattern>
+	        		<!-- provmgr应为系统的简称 -->
+	                <fileNamePattern>/opt/application/provmgr/log/info/%d{yyyy-MM-dd}.log</fileNamePattern>
 	        </rollingPolicy>
 	</appender>
 	<!-- 错误日志 -->
 	<appender name="errorFile"
 	        class="ch.qos.logback.core.rolling.RollingFileAppender">
-	        <!-- xxx应为系统的简称 -->
-	        <File>/opt/application/xxx/log/error/error.log</File>
+	        <!-- provmgr应为系统的简称 -->
+	        <File>/opt/application/provmgr/log/error/error.log</File>
 	        <encoder>
 	        		<pattern>%date %level[%thread] %msg at %logger{36}[%file:%line]%n</pattern>
 	                <charset>UTF-8</charset>
 	        </encoder>
 	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-	        		<!-- xxx应为系统的简称 -->
-	                <fileNamePattern>/opt/application/xxx/log/error/%d{yyyy-MM-dd}.log</fileNamePattern>
+	        		<!-- provmgr应为系统的简称 -->
+	                <fileNamePattern>/opt/application/provmgr/log/error/%d{yyyy-MM-dd}.log</fileNamePattern>
 	        </rollingPolicy>
 	        <!-- 日志过滤器 ,只输出error级别的日志 -->
 	        <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -48,15 +48,15 @@
 	<!-- 数据库访问较慢的语句 -->
 	<appender name="slowsqlFile"
 	        class="ch.qos.logback.core.rolling.RollingFileAppender">
-	        <!-- xxx应为系统的简称 -->
-	        <File>/opt/application/xxx/log/slow/slow.log</File>
+	        <!-- provmgr应为系统的简称 -->
+	        <File>/opt/application/provmgr/log/slow/slow.log</File>
 	        <encoder>
 	        		<pattern>%date %level[%thread] %msg at %logger{36}[%file:%line]%n</pattern>
 	                <charset>UTF-8</charset>
 	        </encoder>
 	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-	        		<!-- xxx应为系统的简称 -->
-	                <fileNamePattern>/opt/application/xxx/log/slow/%d{yyyy-MM-dd}.log</fileNamePattern>
+	        		<!-- provmgr应为系统的简称 -->
+	                <fileNamePattern>/opt/application/provmgr/log/slow/%d{yyyy-MM-dd}.log</fileNamePattern>
 	        </rollingPolicy>
 	</appender>
 	

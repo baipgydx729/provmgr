@@ -162,7 +162,7 @@ public class PbcReportController {
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
                 try {
-                    File tempFile = reportExcelUtil.createExcelFile(reportHelper.getTemplateFileName(tableMode),
+                    File tempFile = reportExcelUtil.createExcelFile(tableMode, reportHelper.getTemplateFileName(tableMode),
                             reportHelper.getPbcFileNameDP(startDate, endDate, tableMode, reportHelper.getCompanyName()),
                             presetContent,
                             getDataList(tableMode, startDate, endDate));
@@ -203,7 +203,7 @@ public class PbcReportController {
                 presetContent.setLegalPerson(map.get("bank_name"));
 
                 try {
-                    File tempFile = reportExcelUtil.createExcelFile(reportHelper.getTemplateFileName(tableMode),
+                    File tempFile = reportExcelUtil.createExcelFile(tableMode, reportHelper.getTemplateFileName(tableMode),
                             reportHelper.getPbcFileNameCorp(startDate, endDate, tableMode, reportHelper
                                     .getCompanyName(), presetContent.getBankName(), presetContent.getAccount()),
                             presetContent,

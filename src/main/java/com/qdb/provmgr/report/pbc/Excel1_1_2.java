@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_1;
-import com.qdb.provmgr.report.ReportExcelUtil;
 import com.qdb.provmgr.report.PresetContent;
+import com.qdb.provmgr.report.ReportExcelUtil;
 
 /**
  * @author mashengli
  */
-public class Excel1_1_2 extends ReportExcelUtil {
+public class Excel1_1_2 {
 
     private static Logger log = LoggerFactory.getLogger(Excel1_1_2.class);
 
@@ -40,13 +40,12 @@ public class Excel1_1_2 extends ReportExcelUtil {
      */
     private static int DATA_END_COLUMN_NUM = 22;
 
-    @Override
-    public void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+    public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
         writeData(sheet, dataList);
     }
 
-    private void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
+    private static void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
         //填充交易时期、填报日期、填表人及审核人
         sheet.getRow(0).createCell(1).setCellValue(presetContent.getCompanyName());
         sheet.getRow(1).createCell(1).setCellValue(presetContent.getTranPeriod());
@@ -55,13 +54,13 @@ public class Excel1_1_2 extends ReportExcelUtil {
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(presetContent.getCheckUserName());
     }
 
-    private void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
+    private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
         Collections.sort(dataList);
         int size = dataList.size();
         DataTable1_1 total = new DataTable1_1();
         for (int i = 0; i < size; i++) {
             DataTable1_1 dataTable1_1 = (DataTable1_1)dataList.get(i);
-            total = addData(total, dataTable1_1);
+            total = ReportExcelUtil.addData(total, dataTable1_1);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                 BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
                 sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
@@ -81,7 +80,7 @@ public class Excel1_1_2 extends ReportExcelUtil {
      * @param index        下标
      * @return
      */
-    private BigDecimal getDoubleDataByColumnIndex(DataTable1_1 dataTable1_1, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_1 dataTable1_1, int index) {
         switch (index) {
             case 1:
                 return dataTable1_1.getA01();

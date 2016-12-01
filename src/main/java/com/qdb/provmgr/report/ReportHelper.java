@@ -6,14 +6,14 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import com.qdb.provmgr.dao.TableModeEnum;
 
 /**
  * @author mashengli
  */
-@Repository
+@Component
 public class ReportHelper {
 
     public static final String REPORT_ROOT_PATH = "/备付金报表";
