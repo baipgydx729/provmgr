@@ -24,8 +24,8 @@ import com.qdb.provmgr.util.ZipUtil;
  * @author mashengli
  */
 @Service
-public class FtpFileService {
-    private Logger log = LoggerFactory.getLogger(FtpFileService.class);
+public class TESTFtpFileService {
+    private Logger log = LoggerFactory.getLogger(TESTFtpFileService.class);
 
     @Value("${ftp.ip}")
     private String ftp_ip;
