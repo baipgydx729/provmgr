@@ -32,7 +32,7 @@ public class ReportService {
             try {
                 Date dateNow = new Date();
                 reportParam.setStartNatuDate(DateUtils.getFirstDayOfMonth(dateNow));
-                reportParam.setEndNatuDate(DateUtils.getFirstDayOfMonth(dateNow));
+                reportParam.setEndNatuDate(DateUtils.getLastDayOfMonth(dateNow));
             } catch (ParseException ignored) {}
         } else {
             reportParam.setStartNatuDate(sdf.format(startDate));

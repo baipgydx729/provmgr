@@ -3,7 +3,7 @@ package com.qdb.provmgr.dao.entity.report;
 /**
  * @author mashengli
  */
-public abstract class BaseReportEntity implements Comparable<BaseReportEntity> {
+public class BaseReportEntity implements Comparable<BaseReportEntity> {
     private String natuDate;
     private String bankName;
     private String AD;
