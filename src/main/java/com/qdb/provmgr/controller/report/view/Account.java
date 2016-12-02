@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class Account implements Serializable {
     private static final long serialVersionUID = 4679774260934746734L;
-    private String bankName;
+    private String bank_name;
     private String account_id;
     private String account_no;
     private String account_name;
@@ -36,11 +36,11 @@ public class Account implements Serializable {
         this.account_id = account_id;
     }
 
-    public String getBankName() {
-        return bankName;
+    public String getBank_name() {
+        return bank_name;
     }
 
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
+    public void setBank_name(String bank_name) {
+        this.bank_name = bank_name;
     }
 }

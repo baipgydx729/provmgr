@@ -136,6 +136,7 @@ public class ReportDao {
         List<Object> sqlParams = new ArrayList<>();
         StringBuilder SQL = new StringBuilder();
         SQL.append(" SELECT DISTINCT t1.bankName_S bankName,t1.ADID,t1.AD, t1.name ")
+                .append(ReportSQLConstant.SQL_FROM)
                 .append(ReportSQLConstant.TABLE1_3_NAME)
                 .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
         sqlParams.add(params.getStartNatuDate());

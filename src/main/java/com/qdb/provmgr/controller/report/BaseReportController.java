@@ -44,7 +44,7 @@ public class BaseReportController {
     public Map getBankList(HttpServletRequest request, HttpServletResponse response) {
         Date startDate = null;
         Date endDate = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             startDate = sdf.parse(request.getParameter("start_day"));
             endDate = sdf.parse(request.getParameter("end_day"));
@@ -72,6 +72,7 @@ public class BaseReportController {
                 account.setAccount_id(baseReportEntity.getADID().toString());
                 account.setAccount_name(baseReportEntity.getName());
                 account.setAccount_no(baseReportEntity.getAD());
+                account.setBank_name(bankAccountView.getBank_name());
                 accountList.add(account);
             }
             bankAccountView.setAccount_list(accountList);
