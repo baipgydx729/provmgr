@@ -1237,6 +1237,10 @@ html, body {
     font-size: 16px; }
     .modal-content .modal-message.error-message .icon {
       margin-right: 10px; }
+  .modal-content .modal-message.info-message {
+    font-size: 16px; }
+    .modal-content .modal-message.info-message .icon {
+      margin-right: 10px; }
   .modal-content .modal-message .modal-message-left {
     float: left; }
   .modal-content .modal-message .modal-message-right {

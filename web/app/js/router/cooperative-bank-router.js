@@ -16,11 +16,13 @@ module.exports = {
                     bankList: pbcModule.getBankList(),
                     selectedBankIndex: 0,
                     selectedAccountIndex: 0,
-                    reportList: cooperativeBankModule.getReportList(),
+                    reportList: [],
                     checkedReportIndexList: []
                 },
                 selectBank: function () {
                     mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
+
+                    mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
                 },
                 selectAccount: function () {
                     mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
@@ -50,15 +52,30 @@ module.exports = {
                             mainVm.data.checkedReportIndexList.push(i);
                         }
                     }
-
-                    console.log(mainVm.data.checkedReportIndexList);
                 },
                 batchGenerate: function () {
                     if (mainVm.data.checkedReportIndexList.length==0){
                         commonModule.errorModal("请选择您要生成的报表!");
-                    } else {
 
+                        return ;
                     }
+
+                    var reportList={
+                        start_day: $('#datetime-start').val(),
+                        end_day: $('#datetime-end').val(),
+                        report_list: []
+                    };
+
+                    for (var i=0; i<mainVm.data.checkedReportIndexList.length; i++){
+                        reportList.report_list.push({
+                            report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+                        });
+                    }
+
+                    cooperativeBankModule.generateReport(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        reportList
+                    );
                 },
                 submit: function () {
                     if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
@@ -74,7 +91,11 @@ module.exports = {
                     var submitVm = avalon.define({
                         $id: 'submit-controller',
                         submit: function () {
-                            alert("test");
+                            cooperativeBankModule.submitReport(
+                                mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                                $('#datetime-start').val(),
+                                $('#datetime-end').val()
+                            );
                         }
                     });
 
@@ -100,6 +121,8 @@ module.exports = {
                 }
             });
 
+            mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
+
             mainVm.$watch('onReady', function(){
                 $("#filter").keydown(function(event){
                     if(event.which == "13"){
@@ -116,6 +139,9 @@ module.exports = {
                         this.setOptions({
                             maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
                         });
+                    },
+                    onSelectDate: function(){
+                        mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
                     }
                 });
 
@@ -127,6 +153,9 @@ module.exports = {
                         this.setOptions({
                             minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
                         });
+                    },
+                    onSelectDate: function(){
+                        mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
                     }
                 });
 

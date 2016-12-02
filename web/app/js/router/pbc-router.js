@@ -24,17 +24,43 @@ module.exports = {
 						}
 					],
 					selectedReportTypeIndex: 0,
-					reportList: pbcModule.getReportList(),
+					reportList: pbcModule.getReportList(0),
 					checkedReportIndexList: []
 				},
 				selectBank: function () {
 					mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
+                    document.getElementsByName("account")[0].value = 0;
+                    mainVm.data.selectedAccountIndex = 0;
+
+                    mainVm.data.reportList = pbcModule.getReportList(
+                        mainVm.data.selectedReportTypeIndex,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                    );
 				},
 				selectAccount: function () {
 					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
+
+                    mainVm.data.reportList = pbcModule.getReportList(
+                        mainVm.data.selectedReportTypeIndex,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                    );
 				},
 				selectReportType: function(){
 					mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
+
+                    mainVm.data.selectedBankIndex = 0;
+                    document.getElementsByName("bank")[0].value = 0;
+
+                    mainVm.data.selectedAccountIndex = 0;
+                    document.getElementsByName("account")[0].value = 0;
+
+					mainVm.data.reportList = pbcModule.getReportList(
+                        mainVm.data.selectedReportTypeIndex,
+						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+					);
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -71,9 +97,22 @@ module.exports = {
                         return;
 					}
 
+					var reportList={
+                        start_day: $('#datetime-start').val(),
+                        end_day: $('#datetime-end').val(),
+                        report_list: []
+					};
+
 					for (var i=0; i<mainVm.data.checkedReportIndexList.length; i++){
-						console.log(mainVm.data.checkedReportIndexList[i]);
+                        reportList.report_list.push({
+                            bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                            report_type: mainVm.data.selectedReportTypeIndex,
+                            report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+                        });
 					}
+
+                    pbcModule.generateReport(reportList);
 				},
 				submit: function () {
 					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
@@ -89,7 +128,7 @@ module.exports = {
 					var submitVm = avalon.define({
 						$id: 'submit-controller',
 						submit: function () {
-							alert("test");
+                            pbcModule.submitReport($('#datetime-start').val(), $('#datetime-end').val());
 						}
 					});
 
@@ -132,7 +171,14 @@ module.exports = {
 						this.setOptions({
 							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
 						});
-					}
+					},
+                    onSelectDate: function(){
+                        mainVm.data.reportList = pbcModule.getReportList(
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+                    }
 				});
 
 				$('#datetime-end').datetimepicker({
@@ -143,7 +189,14 @@ module.exports = {
 						this.setOptions({
 							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
 						});
-					}
+					},
+                    onSelectDate: function(){
+                        mainVm.data.reportList = pbcModule.getReportList(
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+                    }
 				});
 
                 var dateObj = new Date();
