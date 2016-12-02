@@ -4,262 +4,290 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
+/**
+ * 文件名：DateUtils.java 日期处理相关工具类
+ * @date 2016-7-7
+ * @author mashengli
+ */
 public class DateUtils {
-    /**
-     * 变量：日期格式化类型 - 格式:yyyy/MM/dd
-     */
-    public static final int DEFAULT = 0;
-    public static final String DEFAULT_PATTERN = "yyyy/MM/dd";
+
+    /**定义常量**/
+    public static final String DATE_JFP_STR="yyyyMM";
+    public static final String DATE_FULL_STR = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_SMALL_STR = "yyyy-MM-dd";
+    public static final String DATE_KEY_STR = "yyyyMMddHHmmss";
 
     /**
-     * 变量：日期格式化类型 - 格式:yyyy/MM
-     */
-    public static final int YM = 1;
-    public static final String YM_PATTERN = "yyyy/MM";
-
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyyMMdd
-     */
-    public static final int NO_SLASH = 2;
-    public static final String NO_SLASH_PATTERN = "yyyyMMdd";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyyMM
-     */
-    public static final int YM_NO_SLASH = 3;
-    public static final String YM_NO_SLASH_PATTERN = "yyyyMM";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyy/MM/dd HH:mm:ss
-     */
-    public static final int DATE_TIME = 4;
-    public static final String DATE_TIME_PATTERN = "yyyy/MM/dd HH:mm:ss";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyyMMddHHmmss
-     */
-    public static final int DATE_TIME_NO_SLASH = 5;
-    public static final String DATE_TIME_NO_SLASH_PATTERN = "yyyyMMddHHmmss";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyy/MM/dd HH:mm
-     */
-    public static final int DATE_HM = 6;
-    public static final String DATE_HM_PATTERN = "yyyy/MM/dd HH:mm";
-
-    /**
-     * 变量：日期格式化类型 - 格式:HH:mm:ss
-     */
-    public static final int TIME = 7;
-    public static final String TIME_PATTERN = "HH:mm:ss";
-
-    /**
-     * 变量：日期格式化类型 - 格式:HH:mm
-     */
-    public static final int HM = 8;
-    public static final String HM_PATTERN = "HH:mm";
-
-    /**
-     * 变量：日期格式化类型 - 格式:HHmmss
-     */
-    public static final int LONG_TIME = 9;
-    public static final String LONG_TIME_PATTERN = "HHmmss";
-
-    /**
-     * 变量：日期格式化类型 - 格式:HHmm
-     */
-    public static final int SHORT_TIME = 10;
-    public static final String SHORT_TIME_PATTERN = "HHmm";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyy-MM-dd
-     */
-    public static final int YMR_SLASH = 11;
-    public static final String YMR_SLASH_PATTERN = "yyyy-MM-dd";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyy-MM-dd HH:mm:ss
-     */
-    public static final int DATE_TIME_LINE = 12;
-    public static final String DATE_TIME_LINE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyy-MM-dd'T'HH:mm:ss.SSS
-     */
-    public static final int DATETIME_ZONE_FORMAT = 13;
-    public static final String DATETIME_ZONE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-
-    /**
-     * 变量：日期格式化类型 - 格式:yyyyMMddHHmmssSSS
-     */
-    public static final int LONG_DATETIME_FORMAT = 14;
-    public static final String LONG_DATETIME_FORMAT_PATTERN = "yyyyMMddHHmmssSSS";
-
-    /**
-     * 返回指定格式的日期字符串
-     * @param date
-     * @param type
+     * 使用预设格式提取字符串日期，默认格式yyyy-MM-dd HH:mm:ss
+     * @param strDate 日期字符串
      * @return
      */
-     public static String dateToStr(Date date, int type) {
-        switch (type) {
-            case DEFAULT:
-                return defaultDateToStr(date);
-            case YM:
-                return dateToStr(date, YM_PATTERN);
-            case NO_SLASH:
-                return dateToStr(date, NO_SLASH_PATTERN);
-            case YM_NO_SLASH:
-                return dateToStr(date, YM_NO_SLASH_PATTERN);
-            case DATE_TIME:
-                return dateToStr(date, DATE_TIME_PATTERN);
-            case DATE_TIME_NO_SLASH:
-                return dateToStr(date, DATE_TIME_NO_SLASH_PATTERN);
-            case DATE_HM:
-                return dateToStr(date, DATE_HM_PATTERN);
-            case TIME:
-                return dateToStr(date, TIME_PATTERN);
-            case HM:
-                return dateToStr(date, HM_PATTERN);
-            case LONG_TIME:
-                return dateToStr(date, LONG_TIME_PATTERN);
-            case SHORT_TIME:
-                return dateToStr(date, SHORT_TIME_PATTERN);
-            case YMR_SLASH:
-                return dateToStr(date, YMR_SLASH_PATTERN);
-            case DATE_TIME_LINE:
-                return dateToStr(date, DATE_TIME_LINE_PATTERN);
-            case DATETIME_ZONE_FORMAT:
-                return dateToStr(date, DATETIME_ZONE_FORMAT_PATTERN);
-            case LONG_DATETIME_FORMAT:
-                return dateToStr(date, LONG_DATETIME_FORMAT_PATTERN);
-            default:
-                throw new IllegalArgumentException("Type undefined : " + type);
+    public static Date parse(String strDate) {
+        return parse(strDate,DATE_FULL_STR);
+    }
+
+    /**
+     * 使用用户格式提取字符串日期
+     * @param dateStr 日期字符串
+     * @param pattern 日期格式
+     * @return
+     */
+    public static Date parse(String dateStr, String pattern) {
+        SimpleDateFormat df = new SimpleDateFormat(pattern);
+        try {
+            return df.parse(dateStr);
+        } catch (ParseException e) {
+            return null;
         }
     }
 
-    public static String getSimpleTime(){
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATETIME_ZONE_FORMAT_PATTERN);
-        String simpleTime = dateFormat.format(new Date());
-        return simpleTime;
-    }
-
-    public static String currentTimestamp2String(Date date, String format) {
-        if (StringUtils.isEmpty(format)) {
-            format = DATE_TIME_LINE_PATTERN;
-        }
-
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
+    /**
+     * 格式化日期返回执行格式的字符串
+     * @param date 日期
+     * @param pattern 格式
+     * @return
+     */
+    public static String format(Date date, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.format(date);
     }
 
-    public static Date String2Date(String sourceTime) {
-        return string2Date(sourceTime, YMR_SLASH_PATTERN);
+    /**
+     * 按照默认格式格式化日期
+     * @param date 日期
+     * @return yyyy-MM-dd HH:mm:ss
+     */
+    public static String format(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FULL_STR);
+        return sdf.format(date);
     }
 
-    public static Date string2Date(String sourceTime, String format) {
-        SimpleDateFormat sdf = new SimpleDateFormat(format);
-        Date date = null;
-        try {
-            date = sdf.parse(sourceTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
+    /**
+     * 两个日期类型时间比较
+     * @param date
+     * @return
+     */
+    public static int compareDateWithNow(Date date){
+        Date now = new Date();
+        return date.compareTo(now);
     }
 
-    public static String date2String(Date date) {
-        if (null != date) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-            return sdf.format(date);
+    /**
+     * 两个时间比较(时间戳比较)
+     * @param date
+     * @return
+     */
+    public static int compareDateWithNow(long date) {
+        long now = dateToUnixTimestamp();
+        if (date > now) {
+            return 1;
+        } else if (date < now) {
+            return -1;
         } else {
-            return null;
+            return 0;
         }
     }
 
+
     /**
-     * 获得前几天的时间
-     *
-     * @param now
-     * @param day
-     * @return
+     * 获取系统当前时间
+     * @return yyyy-MM-dd HH:mm:ss
      */
-    public static Date getDateBefore(Date now, int day) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(now);
-        c.set(Calendar.DATE, c.get(Calendar.DATE) - day);
-        return c.getTime();
+    public static String getNowTime() {
+        SimpleDateFormat df = new SimpleDateFormat(DATE_FULL_STR);
+        return df.format(new Date());
     }
 
     /**
-     * 获得后几天的时间
-     *
-     * @param now
-     * @param day
+     * 获取系统当前时间
      * @return
      */
-    public static Date getDateAfter(Date now, int day) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(now);
-        c.set(Calendar.DATE, c.get(Calendar.DATE) + day);
-        return c.getTime();
+    public static String getNowTime(String format) {
+        SimpleDateFormat df = new SimpleDateFormat(format);
+        return df.format(new Date());
     }
 
     /**
-     * 获取两个日期之间的天数
-     *
-     * @param before
-     * @param after
+     * 获取系统当前计费期
      * @return
      */
-    public static int getDaysBetween(Date before, Date after) {
-        long beforeTime = before.getTime();
-        long afterTime = after.getTime();
-        return (int) ((afterTime - beforeTime) / (1000 * 60 * 60 * 24));
+    public static String getJFPTime() {
+        SimpleDateFormat df = new SimpleDateFormat(DATE_JFP_STR);
+        return df.format(new Date());
     }
 
-    public static String defaultDateToStr(Date date) {
-        return dateToStr(date, "yyyy/MM/dd");
-    }
-
-    public static String dateToStr(Date date, String pattern) {
-        if (date == null)
-            return null;
-        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-        return formatter.format(date);
-    }
-
-    public static Date getMonthFirstDay(String dateStr) {
-        Date firstDay = null;
+    /**
+     * 将指定的日期转换成Unix时间戳
+     * @param date 需要转换的日期 yyyy-MM-dd HH:mm:ss
+     * @return long 时间戳
+     */
+    public static long dateToUnixTimestamp(String date) {
+        long timestamp = 0;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            Date date = sdf.parse(dateStr);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.set(Calendar.DATE, 1);
-            firstDay = cal.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
+            timestamp = new SimpleDateFormat(DATE_FULL_STR).parse(date).getTime();
+        } catch (ParseException ignored) {
         }
-        return firstDay;
+        return timestamp;
     }
 
-    public static Date getMonthLastDay(String dateStr) {
-        Date firstDay = null;
+    /**
+     * 将指定的日期转换成Unix时间戳
+     * @param date 需要转换的日期 yyyy-MM-dd
+     * @return long 时间戳
+     */
+    public static long dateToUnixTimestamp(String date, String dateFormat) {
+        long timestamp = 0;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月");
-            Date date = sdf.parse(dateStr);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.set(Calendar.DATE, 1);
-            cal.add(Calendar.MONTH, 1);
-            cal.add(Calendar.DATE, -1);
-            firstDay = cal.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
+            timestamp = new SimpleDateFormat(dateFormat).parse(date).getTime();
+        } catch (ParseException ignored) {
         }
-        return firstDay;
+        return timestamp;
     }
+
+    /**
+     * 将当前日期转换成Unix时间戳
+     * @return long 时间戳
+     */
+    public static long dateToUnixTimestamp() {
+        return new Date().getTime();
+    }
+
+
+    /**
+     * 将Unix时间戳转换成日期
+     * @param timestamp 时间戳
+     * @return String 日期字符串
+     */
+    public static String unixTimestampToDate(long timestamp) {
+        SimpleDateFormat sd = new SimpleDateFormat(DATE_FULL_STR);
+        sd.setTimeZone(TimeZone.getTimeZone("GMT+8"));
+        return sd.format(new Date(timestamp));
+    }
+
+    /**
+     * 对日期进行天数加减
+     * @param date 要加减的日期
+     * @param amount 加的天数（负数表示减）
+     * @return
+     */
+    public static Date addDay(Date date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, amount);
+        return calendar.getTime();
+    }
+
+    /**
+     * 对日期进行月份加减
+     * @param date 要加减的日期
+     * @param amount 加的月数（负数表示减）
+     * @return
+     */
+    public static Date addMonth(Date date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, amount);
+        return calendar.getTime();
+    }
+
+    /**
+     * 对日期进行年份加减
+     * @param date 要加减的日期
+     * @param amount 加的年数（负数表示减）
+     * @return
+     */
+    public static Date addYear(Date date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.YEAR, amount);
+        return calendar.getTime();
+    }
+
+    /**
+     * 对日期进行秒数加减
+     * @param date 日期
+     * @param amount 秒数
+     * @return
+     */
+    public static Date addSecond(Date date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.SECOND, amount);
+        return calendar.getTime();
+    }
+
+    /**
+     * 对日期进行分钟加减
+     * @param date 日期
+     * @param amount 分钟数
+     * @return
+     */
+    public static Date addMinute(Date date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MINUTE, amount);
+        return calendar.getTime();
+    }
+
+    /**
+     * 对日期进行分钟加减
+     * @param date 日期
+     * @param amount 小时数
+     * @return
+     */
+    public static Date addHour(Date date, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, amount);
+        return calendar.getTime();
+    }
+
+    /**
+     * 计算日期相差天数(不计时分秒)
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return 返回负数表示前边日期大于后边日期
+     */
+    public static int getIntervalDays(Date startDate, Date endDate) throws NullPointerException{
+        if (null == startDate || null == endDate) {
+            throw new NullPointerException("日期为空");
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_SMALL_STR);
+        try {
+            startDate = sdf.parse(sdf.format(startDate));
+            endDate = sdf.parse(sdf.format(endDate));
+            return (int) ((endDate.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000));
+        } catch (ParseException e) {
+            throw new NullPointerException();
+        }
+    }
+
+    /**
+     * 根据所给日期获取指定月份的第一天时间，返回yyyy-MM-dd格式字符串
+     * @param month 月份时间
+     * @return
+     * @throws ParseException
+     */
+    public static String getFirstDayOfMonth(Date month) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(month);
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        return new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+    }
+
+    /**
+     * 根据所给日期获取指定月份的最后一天时间，返回yyyy-MM-dd格式字符串
+     * @param month 月份时间
+     * @return
+     * @throws ParseException
+     */
+    public static String getLastDayOfMonth(Date month) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(month);
+        calendar.set(Calendar.DAY_OF_MONTH, 0);
+        return new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
+    }
+
 }

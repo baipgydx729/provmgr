@@ -65,6 +65,29 @@ public class DBUtil {
         return result;
     }
 
+    public Map<String, Object> query(String sql, Object[] params) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            PreparedStatement statement = conn.prepareStatement(sql);
+            if (params != null && params.length > 0) {
+                for (int i = 0; i < params.length; i++) {
+                    statement.setObject(i + 1, params[i]);
+                }
+            }
+            ResultSet rs = statement.executeQuery();
+            List<Map<String, Object>> resultList = convertList(rs);
+            if (resultList != null && resultList.size() > 0) {
+                return resultList.get(0);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(conn);
+        }
+        return null;
+    }
+
     private List<Map<String, Object>> convertList(ResultSet resultSet) {
         if (resultSet == null) {
             return Collections.EMPTY_LIST;

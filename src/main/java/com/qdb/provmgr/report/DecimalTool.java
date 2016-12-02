@@ -1,4 +1,4 @@
-package com.qdb.provmgr.report.pbc;
+package com.qdb.provmgr.report;
 
 import java.math.BigDecimal;
 

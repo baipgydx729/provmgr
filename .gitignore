@@ -6,6 +6,7 @@ target/
 *.properties
 *.cer/
 *.pfx/
+*.log
 .classpath
 .settings/
 

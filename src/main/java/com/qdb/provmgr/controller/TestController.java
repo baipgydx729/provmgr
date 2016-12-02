@@ -20,7 +20,7 @@ import com.google.common.base.Preconditions;
  * 获取请求和参数并返回处理结果
  * @author fangaobo
  */
-//@Controller
+@Controller
 public class TestController {
 	
 	private static Logger log = LoggerFactory.getLogger(TestController.class);

@@ -13,8 +13,9 @@
 		http://www.springframework.org/schema/aop
 		http://www.springframework.org/schema/aop/spring-aop-4.1.xsd"
 	default-lazy-init="false">
-
-	<!--<context:property-placeholder location="classpath*:db.properties" />-->
+	<!--加载db.properties文件 -->
+	<context:property-placeholder
+			location="classpath:db.properties" ignore-unresolvable="true" system-properties-mode="FALLBACK" />
 
 	<bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
 		<property name="slowSqlMillis" value="3000" />

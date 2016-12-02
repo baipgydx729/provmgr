@@ -1,16 +1,5 @@
 package com.qdb.provmgr.util;
 
-import net.sf.jxls.transformer.XLSTransformer;
-import org.apache.commons.jexl2.internal.ArrayListWrapper;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -21,6 +10,16 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.jxls.transformer.XLSTransformer;
 
 /**
  * Created by yuwenzhong on 2016-11-23.
@@ -36,6 +35,7 @@ public class ExcelUtils {
 
 //    @Value("${excel.template.path}")
     private static String templatePath = "excelTemplate";
+
 
     //按月份到处excel表格
     public static void excelDownLoad(HttpServletRequest request, HttpServletResponse response,
