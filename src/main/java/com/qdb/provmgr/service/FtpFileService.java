@@ -3,10 +3,14 @@ package com.qdb.provmgr.service;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +24,8 @@ import com.qdb.provmgr.util.ZipUtil;
  * @author mashengli
  */
 @Service
-public class FileService {
-    private Logger log = LoggerFactory.getLogger(FileService.class);
+public class FtpFileService {
+    private Logger log = LoggerFactory.getLogger(FtpFileService.class);
 
     @Value("${ftp.ip}")
     private String ftp_ip;
@@ -31,6 +35,8 @@ public class FileService {
     private String ftp_user;
     @Value("${ftp.pwd}")
     private String ftp_pwd;
+    @Value("${db.user}")
+    private String db_user;
 
     /**
      * 上传文件至ftp服务器
@@ -105,6 +111,70 @@ public class FileService {
                 IOUtils.closeQuietly(fis);
             }
         }
+    }
+
+    /**
+     * 判断ftp是否存在指定文件
+     * @param ftpPath 目录
+     * @param fileNames 文件名
+     * @return 数组第一列为文件名，第二列为1/0
+     */
+    public String[][] checkFileStatus(String ftpPath, String[] fileNames) {
+        if (fileNames == null || fileNames.length <= 0) {
+            return new String[][]{};
+        }
+        String[][] result = null;
+        FTPClient ftpClient = null;
+        try {
+            ftpClient = FTPUtil.login(ftp_ip, ftp_port, ftp_user, ftp_pwd);
+            if (ftpClient == null || !ftpClient.isConnected()) {
+                log.error("ftp登录失败");
+                throw new IOException("登录失败");
+            }
+            result = new String[fileNames.length][3];
+            List<String> names = Arrays.asList(ftpClient.listNames(ftpPath));
+            if (names.size() <= 0) {
+                return result;
+            }
+            for (int i = 0; i < fileNames.length; i++) {
+                result[i][0] = fileNames[i];
+                if (containsValue(names, fileNames[i])) {
+                    result[i][1] = "1";
+                } else {
+                    result[i][1] = "0";
+                }
+            }
+            return result;
+        } catch (IOException e) {
+            log.error("登录异常", e);
+        } finally {
+            FTPUtil.close(ftpClient);
+        }
+        return result;
+    }
+
+    /**
+     * 文件是否存在
+     * @param ftpPath ftp路径
+     * @param fileNames 文件名
+     * @return
+     */
+    public boolean isFileExists(String ftpPath, String fileNames) {
+        try {
+            return FTPUtil.isFileExists(ftp_ip, ftp_port, ftp_user, ftp_pwd, ftpPath + fileNames);
+        } catch (Exception e) {
+            log.error("出现异常", e);
+        }
+        return false;
+    }
+
+    private boolean containsValue(Collection<String> collection, String value) {
+        for (String t : collection) {
+            if (t.equals(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

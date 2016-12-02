@@ -61,7 +61,7 @@ public class FTPUtil {
     /**
      * 释放FTP
      */
-    private static void close(FTPClient ftp) {
+    public static void close(FTPClient ftp) {
         if (ftp.isAvailable()) {
             try {
                 // 退出FTP
@@ -276,6 +276,7 @@ public class FTPUtil {
                 log.error("无法登录，上传失败");
                 return;
             }
+
             log.info("用户登录成功，准备开始下载文件...");
             ftp.changeWorkingDirectory(remoteDir);
             FTPFile[] files = ftp.listFiles();
@@ -292,6 +293,85 @@ public class FTPUtil {
             IOUtils.closeQuietly(os);
             close(ftp);
         }
+    }
+
+    /**
+     * 判断文件是否存在
+     * @param url ftp地址
+     * @param port ftp端口
+     * @param username ftp登录名
+     * @param password ftp登录密码
+     * @param remotePath 文件全路径
+     * @return
+     */
+    public static boolean isFileExists(String url, int port, String username, String password,
+                                       String remotePath) throws Exception {
+        if (StringUtils.isBlank(remotePath)) {
+            return false;
+        }
+        String remoteDir = remotePath.substring(0, remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        String remoteFileName = remotePath.substring(remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        FTPClient ftp = null;
+        try {
+            ftp = login(url, port, username, password);
+            if (ftp == null || !ftp.isConnected()) {
+                log.error("无法登录");
+                throw new Exception("无法登录");
+            }
+            log.info("用户登录成功，准备开始下载文件...");
+            boolean changeSuccess = ftp.changeWorkingDirectory(remoteDir);
+            if (!changeSuccess) {
+                return false;
+            }
+            if (StringUtils.isBlank(remoteFileName)) {
+                return true;
+            } else {
+                String[] fileNames = ftp.listNames();
+                for (String fileName : fileNames) {
+                    if (fileName.equals(remoteFileName)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            log.error("下载文件异常:" + e.getMessage());
+        } finally {
+            close(ftp);
+        }
+        return false;
+    }
+
+    /**
+     * 判断文件是否存在
+     * @param ftpClient ftp
+     * @param remotePath 文件全路径
+     * @return
+     */
+    public static boolean isFileExists(FTPClient ftpClient, String remotePath) {
+        if (StringUtils.isBlank(remotePath) || ftpClient == null) {
+            return false;
+        }
+        String remoteDir = remotePath.substring(0, remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        String remoteFileName = remotePath.substring(remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        try {
+            boolean changeSuccess = ftpClient.changeWorkingDirectory(remoteDir);
+            if (!changeSuccess) {
+                return false;
+            }
+            if (StringUtils.isBlank(remoteFileName)) {
+                return true;
+            } else {
+                String[] fileNames = ftpClient.listNames();
+                for (String fileName : fileNames) {
+                    if (fileName.equals(remoteFileName)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            log.error("下载文件异常:" + e.getMessage());
+        }
+        return false;
     }
 
     public static void main(String[] args) {
