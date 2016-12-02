@@ -69,7 +69,7 @@ GET /report/:bank\_type/list?bank\_name={bankName}&account\_id={accountId}&start
 - cib —— 兴业银行（备付金存管银行）  
 以下为合作银行  
 - ccb —— 中国建设银行  
-- pbc —— 平安银行  
+- pab —— 平安银行  
 - spdb —— 浦发银行  
 - bojs —— 江苏银行  
 
@@ -157,7 +157,7 @@ POST /report/:bank\_type/create -d {
 - cib —— 兴业银行（备付金存管银行）  
 以下为合作银行
 - ccb —— 中国建设银行
-- pbc —— 平安银行
+- pab —— 平安银行
 - spdb —— 浦发银行
 - bojs —— 江苏银行
 
@@ -187,7 +187,7 @@ POST /report/:bank\_type/submit?start\_day={startDay}&end\_day={endDay}
 - cib —— 兴业银行（备付金存管银行）  
 以下为合作银行  
 - ccb —— 中国建设银行  
-- pbc —— 平安银行  
+- pab —— 平安银行  
 - spdb —— 浦发银行  
 - bojs —— 江苏银行
 
@@ -214,7 +214,7 @@ GET /report/:bank\_type/download?bank\_name={bankId}&account\_id={accountId}&sta
 - cib —— 兴业银行（备付金存管银行）  
 以下为合作银行  
 - ccb —— 中国建设银行  
-- pbc —— 平安银行  
+- pab —— 平安银行  
 - spdb —— 浦发银行  
 - bojs —— 江苏银行
   
@@ -249,7 +249,7 @@ GET /report/:bank\_type/download-all?start\_day={startDay}&end\_day={endDay}
 - cib —— 兴业银行（备付金存管银行）  
 以下为合作银行  
 - ccb —— 中国建设银行  
-- pbc —— 平安银行  
+- pab —— 平安银行  
 - spdb —— 浦发银行  
 - bojs —— 江苏银行
 
