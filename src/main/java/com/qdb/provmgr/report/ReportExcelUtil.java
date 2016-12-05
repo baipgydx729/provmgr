@@ -57,7 +57,7 @@ public class ReportExcelUtil {
     private static Logger log = LoggerFactory.getLogger(ReportExcelUtil.class);
 
     public static File createExcelFile(TableModeEnum tableMode, String templateFile, String targetFileName, PresetContent presetContent, List<BaseReportEntity> dataList) throws Exception {
-        File tempFile = FileUtil.getTempExcelFile(targetFileName);
+        File tempFile = FileUtil.createTempFile(targetFileName);
         InputStream is = null;
         OutputStream os = null;
         try {

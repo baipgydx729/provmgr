@@ -17,7 +17,7 @@
         <slf4j.version>1.7.2</slf4j.version>
         <jetty.version>9.0.0.RC2</jetty.version>
         <druid.version>1.0.9</druid.version>
-        <sqqlserver.jdbc.version>4.0</sqqlserver.jdbc.version>
+        <sqlserver.jdbc.version>4.0</sqlserver.jdbc.version>
         <fastjson.version>1.2.12</fastjson.version>
         <spring.amqp>1.5.0.RELEASE</spring.amqp>
         <servlet-api.version>3.0.1</servlet-api.version>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
-            <version>${sqqlserver.jdbc.version}</version>
+            <version>${sqlserver.jdbc.version}</version>
         </dependency>
 
         <!-- 数据库连接池 -->

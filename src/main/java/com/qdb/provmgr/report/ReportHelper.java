@@ -18,7 +18,9 @@ public class ReportHelper {
 
     public static final String REPORT_ROOT_PATH = "/备付金报表";
 
-    public static final String PBC_REPORT_ROOT_PATH = "/备付金报表/中国人民银行/";
+    static final String PBC_REPORT_ROOT_PATH = "/备付金报表/中国人民银行/";
+
+    private String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("/").getPath() + "../";
 
     @Value("${report.company.name}")
     private String companyName;
@@ -95,7 +97,7 @@ public class ReportHelper {
      */
     public String getPbcFileNameDP(Date startDate, Date endDate, TableModeEnum tableMode, String companyName) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName;
+        return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + ".xls";
     }
 
     /**
@@ -110,7 +112,7 @@ public class ReportHelper {
      */
     public String getPbcFileNameCorp(Date startDate, Date endDate, TableModeEnum tableMode, String companyName, String bankName, String AD) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + "_" + bankName + AD.substring(AD.length() - 6);
+        return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + "_" + bankName + AD.substring(AD.length() - 6) + ".xls";
     }
 
     /**
@@ -149,54 +151,54 @@ public class ReportHelper {
         return result;
     }
 
-    public String getTemplateFileName(TableModeEnum tableModeEnum) {
+    public String getTemplateFile(TableModeEnum tableModeEnum) {
         if (TableModeEnum.Table1_1.equals(tableModeEnum)) {
-            return "template_1_1.xls";
+            return ROOT_PATH + "excelTemplate/pbc/template_1_1.xls";
         }
         if (TableModeEnum.Table1_1_2.equals(tableModeEnum)) {
-            return "template_1_1_2.xls";
+            return ROOT_PATH + "excelTemplate/pbc/template_1_1_2.xls";
         }
         if (TableModeEnum.Table1_2.equals(tableModeEnum)) {
-            return "template_1_2.xls";
+            return ROOT_PATH + "excelTemplate/pbc/template_1_2.xls";
         }
         if (TableModeEnum.Table1_2_1.equals(tableModeEnum)) {
-            return "template_1_2_1.xls";
+            return ROOT_PATH + "excelTemplate/pbc/template_1_2_1.xls";
         }
         if (TableModeEnum.Table1_3.equals(tableModeEnum)) {
-            return "template_1_3.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_3.xls";
         }
         if (TableModeEnum.Table1_4.equals(tableModeEnum)) {
-            return "template_1_4.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_4.xls";
         }
         if (TableModeEnum.Table1_5.equals(tableModeEnum)) {
-            return "template_1_5.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_5.xls";
         }
         if (TableModeEnum.Table1_6.equals(tableModeEnum)) {
-            return "template_1_6.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_6.xls";
         }
         if (TableModeEnum.Table1_6_2.equals(tableModeEnum)) {
-            return "template_1_6_2.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_6_2.xls";
         }
         if (TableModeEnum.Table1_9.equals(tableModeEnum)) {
-            return "template_1_9.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_9.xls";
         }
         if (TableModeEnum.Table1_9_2.equals(tableModeEnum)) {
-            return "template_1_9_2.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_9_2.xls";
         }
         if (TableModeEnum.Table1_10.equals(tableModeEnum)) {
-            return "template_1_10.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_10.xls";
         }
         if (TableModeEnum.Table1_10_2.equals(tableModeEnum)) {
-            return "template_1_10_2.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_10_2.xls";
         }
         if (TableModeEnum.Table1_11.equals(tableModeEnum)) {
-            return "template_1_11.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_11.xls";
         }
         if (TableModeEnum.Table1_12.equals(tableModeEnum)) {
-            return "template_1_12.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_12.xls";
         }
         if (TableModeEnum.Table1_13.equals(tableModeEnum)) {
-            return "template_1_13.xls";
+            return ROOT_PATH + "excelTemplate/pbc/_1_13.xls";
         }
         return "";
     }

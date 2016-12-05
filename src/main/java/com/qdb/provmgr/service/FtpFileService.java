@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.qdb.provmgr.util.FTPUtil;
+import com.qdb.provmgr.util.FileUtil;
 import com.qdb.provmgr.util.ZipUtil;
 
 /**
@@ -49,16 +49,6 @@ public class FtpFileService {
     }
 
     /**
-     * 将ftp远程文件取回到本地路径
-     * @param remotePath 远程文件路径或文件夹
-     * @param localPath 本地路径
-     * @return
-     */
-    public boolean retrieveFileFromFtp(String remotePath, String localPath) {
-        return FTPUtil.retrieveFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, localPath);
-    }
-
-    /**
      * 通过网络下载ftp文件
      * @param remotePath 远程文件路径
      * @param response http请求
@@ -73,9 +63,9 @@ public class FtpFileService {
      * @param targetZipFilePath 目标压缩文件路径
      * @return
      */
-    public boolean retrieveAndCompressFromFtp(String remotePath, String targetZipFilePath) {
-        String tempDir = System.getProperty("java.io.tmpdir") + UUID.randomUUID().toString() + "/";
-        boolean result = FTPUtil.retrieveFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, tempDir);
+    public boolean retrieveAndCompressFromFtp(String remotePath, String targetZipFilePath, String fileSuffix) {
+        String tempDir = FileUtil.getTempPath();
+        boolean result = FTPUtil.retrieveDir(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, tempDir, fileSuffix);
         if (!result) {
             log.error("下载文件异常！请重新下载");
             return false;
@@ -91,13 +81,13 @@ public class FtpFileService {
      * @param targetFileName 下载显示的默认文件名
      * @param response http请求
      */
-    public void downloadAndCompressFromFtp(String remotePath, String targetFileName, HttpServletResponse response) {
+    public void downloadAndCompressFromFtp(String remotePath, String targetFileName, String fileSuffix, HttpServletResponse response) {
         if (!targetFileName.endsWith(ZipUtil.FILE_SUFFIX)) {
             targetFileName = targetFileName + ZipUtil.FILE_SUFFIX;
         }
         FileInputStream fis = null;
-        String tempZipFilePath = System.getProperty("java.io.tmpdir") + UUID.randomUUID().toString() + "/" + targetFileName;
-        if (retrieveAndCompressFromFtp(remotePath, tempZipFilePath)) {
+        String tempZipFilePath = FileUtil.getTempFilePath(targetFileName);
+        if (retrieveAndCompressFromFtp(remotePath, tempZipFilePath, fileSuffix)) {
             File file = new File(tempZipFilePath);
             try {
                 fis = new FileInputStream(file);
@@ -132,7 +122,12 @@ public class FtpFileService {
                 throw new IOException("登录失败");
             }
             result = new String[fileNames.length][3];
-            List<String> names = Arrays.asList(ftpClient.listNames(ftpPath));
+            String[] listNames = ftpClient.listNames(ftpPath);
+            if (listNames == null || listNames.length == 0) {
+                log.info("目录为空");
+                return result;
+            }
+            List<String> names = Arrays.asList(listNames);
             if (names.size() <= 0) {
                 return result;
             }

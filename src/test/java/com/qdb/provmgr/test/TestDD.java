@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.qdb.provmgr.service.FtpFileService;
+import com.qdb.provmgr.util.FTPUtil;
 
 /**
  * @author mashengli
@@ -19,6 +20,6 @@ public class TestDD {
 
     @Test
     public void test2(){
-        System.out.println("*****----**");
+        FTPUtil.retrieveSingleFile("172.18.198.201", 21, "mashengli", "mslV1234", "/备付金报表/中国人民银行/201611/兴业银行/20161101_20161130表1_1[BJ0000004]北京钱袋宝支付技术有限公司.xls", "/Users/mashengli/Desktop/ftp/");
     }
 }
