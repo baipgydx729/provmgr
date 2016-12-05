@@ -176,31 +176,32 @@ public class ExcelUtils {
      * @throws InvalidFormatException
      * @throws IOException
      */
-    public static void down(HttpServletRequest request, HttpServletResponse response, String filePath,String destFileName) throws InvalidFormatException, IOException {
-        BufferedReader reader = null;
-        BufferedWriter writer = null;
+    public static void download(HttpServletRequest request, HttpServletResponse response, String filePath, String destFileName) throws InvalidFormatException, IOException {
+        InputStream is = null;
+        OutputStream os = null;
         try {
+            String sep = System.getProperty("file.separator");
+            filePath = filePath.endsWith(sep)? filePath + destFileName : filePath + sep + destFileName;
             File tempFile = new File(filePath);
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(tempFile), "gb2312"));
-            writer = new BufferedWriter((new OutputStreamWriter(response.getOutputStream(), "UTF-8")));
+            is = new FileInputStream(tempFile);
+            os = response.getOutputStream();
 
             // 设置response的编码方式
             response.setHeader("Cache-Control", "private");
             response.setHeader("Pragma", "private");
-            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.setContentType("application/octet-stream;charset=utf-8");
             response.setHeader("Content-Type", "application/force-download");
 
             // 解决中文乱码
             destFileName = processFileName(request, destFileName);
             response.setHeader("Content-Disposition", "attachment;filename=" + destFileName);
 
-            String line = null;
-            while ((line= reader.readLine()) != null){
-                writer.write(line);
-                writer.newLine();
+            byte[] buffer = new byte[1024];
+            int r = 0;
+            while ((r= is.read(buffer)) != -1){
+                os.write(buffer, 0, r);
             }
             // 将写入到客户端的内存的数据刷新到磁盘
-            writer.flush();
         } catch (IOException e) {
             logger.error("**********下载报表{}出现异常, 异常信息:{}", destFileName + e.getMessage());
             throw e;
@@ -208,16 +209,16 @@ public class ExcelUtils {
             logger.error("**********下载报表{}出现异常, 异常信息:{}", destFileName + e.getMessage());
             throw e;
         } finally {
-            if (writer != null) {
+            if (os != null) {
                 try {
-                    writer.close();
+                    os.close();
                 } catch (IOException e) {
                     logger.error(e.getMessage());
                 }
             }
-            if (reader != null) {
+            if (is != null) {
                 try {
-                    reader.close();
+                    is.close();
                 } catch (IOException e) {
                     logger.error(e.getMessage());
                 }
