@@ -6,7 +6,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable3Entity;
 import com.qdb.provmgr.service.FtpFileService;
 import com.qdb.provmgr.service.ccb.CCBReportService;
 import com.qdb.provmgr.util.DateUtils;
-import com.qdb.provmgr.util.ExcelUtils;
+import com.qdb.provmgr.report.ccb.ExcelUtils;
 import com.qdb.provmgr.util.StringUtils;
 import com.qdb.provmgr.util.ZipUtil;
 import org.slf4j.Logger;
@@ -66,6 +66,7 @@ public class CcbReportController {
     @Autowired
     private FtpFileService ftpFileService;
 
+
     /**
      * 获取报表列表
      *
@@ -97,7 +98,6 @@ public class CcbReportController {
     @ResponseBody
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createExcels(HttpServletRequest request, @RequestBody String jsonStr) {
-        long startTime = System.currentTimeMillis();
         Map<String, Object> resultMap = new HashMap<>();
         int code = 200;
         String message = "成功";
@@ -162,8 +162,8 @@ public class CcbReportController {
                     logger.error("建设银行备付金报表创建失败! 报表名称:{},失败原因:{}", destFileName, e.getMessage());
                     return JSONObject.toJSONString(resultMap);
                 }
-/*
-                String remotePath = null;
+
+                String remotePath = sep + "备付金报表" + sep + "建设银行" + sep + dateDir + sep;
                 boolean isSuccess = ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
                 if (!isSuccess) {
                     logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
@@ -177,7 +177,6 @@ public class CcbReportController {
 
                     return JSONObject.toJSONString(resultMap);
                 }
-*/
                 this.updateCreateStatus(tableType, createStatus);
             }
             logger.info("************建设银行备付金报表创建并上传至FTP全部完成!************");
@@ -189,8 +188,6 @@ public class CcbReportController {
         resultMap.put(CODE, code);
         resultMap.put(MESSAGE, message);
         logger.info("**************" + JSONObject.toJSONString(resultMap) + "**************");
-        long endTime = System.currentTimeMillis();
-        System.out.println((endTime - startTime) / 1000 + "------------------------------");
         return JSONObject.toJSONString(resultMap);
     }
 
@@ -297,8 +294,8 @@ public class CcbReportController {
             String zipName = "form_" + heYueHao + "_" + dataMonthDir + dateStr + ".zip";
 
             String sep = System.getProperty("file.separator");
-            String targetZipPath = System.getProperty("java.io.tmpdir") + sep + "ccb" + sep;
-            String resourcePath = targetZipPath + dataMonthDir + sep;
+            String targetZipPath = sep + "备付金报表" + sep + "建设银行" + sep ;
+            String resourcePath = targetZipPath+ dataMonthDir + sep;
 
             File resourceFile = new File(resourcePath);
             File[] files = resourceFile.listFiles();
@@ -420,7 +417,7 @@ public class CcbReportController {
      */
     private void buildReportStatusList(String tableType, boolean createStatus) {
         Map<String, Object> rowMap = new HashMap<>();
-        rowMap.put("report_name", "表" + tableType);
+        rowMap.put("report_name", tableType);
         rowMap.put("report_status", createStatus ? 1 : 0);
         statusList.add(rowMap);
 

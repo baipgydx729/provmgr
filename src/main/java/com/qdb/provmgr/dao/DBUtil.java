@@ -58,7 +58,7 @@ public class DBUtil {
             ResultSet rs = statement.executeQuery();
             result = convertList(rs);
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("*************SQL异常, sql语句:{}************", sql);
         } finally {
             close(conn);
         }
