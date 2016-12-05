@@ -286,6 +286,7 @@ public class DateUtils {
     public static String getLastDayOfMonth(Date month) throws ParseException {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(month);
+        calendar.add(Calendar.MONTH, 1);
         calendar.set(Calendar.DAY_OF_MONTH, 0);
         return new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime());
     }

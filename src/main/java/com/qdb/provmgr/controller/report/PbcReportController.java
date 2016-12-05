@@ -44,6 +44,7 @@ import com.qdb.provmgr.service.FtpFileService;
 import com.qdb.provmgr.service.ReportService;
 import com.qdb.provmgr.service.pbc.PbcReportService;
 import com.qdb.provmgr.util.DateUtils;
+import com.qdb.provmgr.util.FileUtil;
 
 /**
  * @author mashengli
@@ -105,7 +106,7 @@ public class PbcReportController {
             String bankName = request.getParameter("bank_name");
             String account_id = request.getParameter("account_id");
             List<Integer> adids = null;
-            if (StringUtils.isBlank(account_id)) {
+            if (!StringUtils.isBlank(account_id)) {
                 adids = new ArrayList<>();
                 adids.add(Integer.valueOf(account_id));
             }
@@ -149,8 +150,17 @@ public class PbcReportController {
         int total = 0;
         if ("0".equals(reportType)) {
             //汇总行报表，对应存管行特殊表
+            Map<String, String> data = new HashMap<>();
+            data.put("report_name", "表1_1");
             List<Map<String, String>> reportList = (List<Map<String, String>>) JSONObject.parseObject(request
                     .getParameter("report_list"));
+            if (CollectionUtils.isEmpty(reportList)) {
+//                resultMap.put("code", 400);
+//                resultMap.put("message", "列表参数不能为空");
+//                return resultMap;
+                reportList = new ArrayList<>();
+                reportList.add(data);
+            }
             for (Map<String, String> map : reportList) {
                 total++;
                 TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
@@ -162,7 +172,7 @@ public class PbcReportController {
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
                 try {
-                    File tempFile = reportExcelUtil.createExcelFile(tableMode, reportHelper.getTemplateFileName(tableMode),
+                    File tempFile = reportExcelUtil.createExcelFile(tableMode, reportHelper.getTemplateFile(tableMode),
                             reportHelper.getPbcFileNameDP(startDate, endDate, tableMode, reportHelper.getCompanyName()),
                             presetContent,
                             getDataList(tableMode, startDate, endDate));
@@ -203,7 +213,7 @@ public class PbcReportController {
                 presetContent.setLegalPerson(map.get("bank_name"));
 
                 try {
-                    File tempFile = reportExcelUtil.createExcelFile(tableMode, reportHelper.getTemplateFileName(tableMode),
+                    File tempFile = reportExcelUtil.createExcelFile(tableMode, reportHelper.getTemplateFile(tableMode),
                             reportHelper.getPbcFileNameCorp(startDate, endDate, tableMode, reportHelper
                                     .getCompanyName(), presetContent.getBankName(), presetContent.getAccount()),
                             presetContent,
@@ -251,8 +261,7 @@ public class PbcReportController {
             e.printStackTrace();
         }
         String ftpPath = reportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
-        File tempFile = new File(System.getProperty("java.io.tmpdir") + reportHelper.getPbcZipFileName(startDate,
-                endDate, reportHelper.getCompanyName()));
+        File tempFile = FileUtil.createTempFile(reportHelper.getPbcZipFileName(startDate, endDate, reportHelper.getCompanyName()));
         ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath());
 
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
@@ -283,6 +292,11 @@ public class PbcReportController {
         }
 
         TableModeEnum tableModeEnum = TableModeEnum.getEnumByTableName(request.getParameter("report_name"));
+        if (tableModeEnum == null) {
+            request.setAttribute("code", 400);
+            request.setAttribute("message", "请选择报表");
+            return;
+        }
         String ftpPath;
         String fileName;
         if ("0".equals(reportType)) {
@@ -314,7 +328,7 @@ public class PbcReportController {
 
         String ftpPath = reportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
         String fileName = reportHelper.getPbcZipFileName(startDate, endDate, reportHelper.getCompanyName());
-        ftpFileService.downloadFileFromFtp(ftpPath + fileName, response);
+        ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, response);
     }
 
     private Map<String, Object> getTotalReportList(Date startDate, Date endDate) {
@@ -346,11 +360,11 @@ public class PbcReportController {
         List<BaseReportEntity> baseReportEntityList = reportService.getBankList(bankName, ADIDs, startDate, endDate);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         for (BaseReportEntity baseReportEntity : baseReportEntityList) {
-            String dir = reportHelper.getPbcFtpDirCorp(sdf.format(startDate), bankName, baseReportEntity.getAD());
+            String dir = reportHelper.getPbcFtpDirCorp(sdf.format(startDate), baseReportEntity.getBankName(), baseReportEntity.getAD());
             String[] fileNames = new String[tables.size()];
             for (int i = 0; i < tables.size(); i++) {
                 fileNames[i] = reportHelper.getPbcFileNameCorp(startDate, endDate, tables.get(i), reportHelper
-                        .getCompanyName(), bankName, baseReportEntity.getAD());
+                        .getCompanyName(), baseReportEntity.getBankName(), baseReportEntity.getAD());
             }
             String[][] status = ftpFileService.checkFileStatus(dir, fileNames);
             for (int i = 0; i < fileNames.length; i++) {

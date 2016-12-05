@@ -29,13 +29,19 @@ public class ZipUtil {
         ZipOutputStream out = null;
         try {
             File resourcesFile = new File(resourcePath);
-            String targetName = targetPath;
             if (StringUtils.isBlank(targetZipName)) {
-                targetName = targetName + resourcesFile.getName() + FILE_SUFFIX;
+                targetZipName = resourcesFile.getName() + FILE_SUFFIX;
             } else {
-                targetName = targetPath + targetZipName + (targetZipName.endsWith(FILE_SUFFIX) ? "" : FILE_SUFFIX);
+                targetZipName = targetZipName + (targetZipName.endsWith(FILE_SUFFIX) ? "" : FILE_SUFFIX);
             }
-            File targetFile = new File(targetName);
+            File targetFile = new File(targetPath);
+            if (!targetFile.exists()) {
+                targetFile.mkdir();
+            }
+            targetFile = new File(targetPath, targetZipName);
+            if (!targetFile.exists()) {
+                targetFile.createNewFile();
+            }
             FileOutputStream fileOutputStream = new FileOutputStream(targetFile);
             out = new ZipOutputStream(new BufferedOutputStream(fileOutputStream));
 

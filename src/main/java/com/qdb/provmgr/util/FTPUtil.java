@@ -17,6 +17,7 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
 
@@ -28,6 +29,9 @@ public class FTPUtil {
     private static Logger log = LoggerFactory.getLogger(FTPUtil.class);
 
     public static final String FTP_FILE_SEPARATOR = "/";
+
+    @Value("${ftp.encoding}")
+    static String SERVER_CHARSET = "ISO-8859-1";
 
     /**
      * 用户FTP账号登录
@@ -43,8 +47,7 @@ public class FTPUtil {
         FTPClient ftp = new FTPClient();
         int reply;
         ftp.connect(url, port);
-        // 2. 设置编码为UTF-8
-        ftp.setControlEncoding("UTF-8");
+        ftp.enterLocalPassiveMode();// 设置被动模式
         FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
         conf.setServerLanguageCode("zh");
         ftp.login(username, password);
@@ -89,6 +92,7 @@ public class FTPUtil {
             //目录不为空，防止出现//分割的目录路径
             if (!StringUtils.isBlank(dir)) {
                 //目录不存在则创建
+                dir = new String(dir.getBytes(), SERVER_CHARSET);
                 if (!ftp.changeWorkingDirectory(dir)) {
                     ftp.makeDirectory(dir);
                     ftp.changeWorkingDirectory(dir);
@@ -96,6 +100,35 @@ public class FTPUtil {
             }
         }
         return true;
+    }
+
+    private static boolean changeWorkingDirectory(FTPClient ftpClient, String dir) throws IOException {
+        if (StringUtils.isBlank(dir)) {
+            return true;
+        }
+        String[] paths = dir.split(FTPUtil.FTP_FILE_SEPARATOR);
+        for (String path : paths) {
+            if (StringUtils.isNotEmpty(path)) {
+                if (!ftpClient.changeWorkingDirectory(path) && !ftpClient.changeWorkingDirectory(new String(path.getBytes(), SERVER_CHARSET))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean isFileNameExists(FTPClient ftpClient, String remoteFileName) throws IOException {
+        if (StringUtils.isBlank(remoteFileName)) {
+            return true;
+        } else {
+            String[] fileNames = ftpClient.listNames();
+            for (String fileName : fileNames) {
+                if (new String(fileName.getBytes(SERVER_CHARSET)).equals(remoteFileName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -137,7 +170,7 @@ public class FTPUtil {
             }
             //执行文件上传
             input = new FileInputStream(new File(localPath));
-            boolean success = ftp.storeFile(remoteFileName, input);
+            boolean success = ftp.storeFile(new String(remoteFileName.getBytes(), SERVER_CHARSET), input);
             log.info("保存标识>>>" + success + "文件名称:" + localPath + (success ? "上传成功!" :
                     "上传失败!"));
             return success;
@@ -191,22 +224,24 @@ public class FTPUtil {
             //单文件
             if (!remotePath.endsWith(FTP_FILE_SEPARATOR)) {
                 retrieveSingleFile(ftp, remotePath, localPath);
+                return;
             }
             // 转到指定下载目录
-            ftp.changeWorkingDirectory(remotePath);
+            changeWorkingDirectory(ftp, remotePath);
             FTPFile[] files = ftp.listFiles();
             for (FTPFile file : files) {
+                String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
                 if (file.isDirectory()) {
-                    retrieveFile(ftp, remotePath + file.getName() + FTP_FILE_SEPARATOR, localPath + FTP_FILE_SEPARATOR + file.getName() + FTP_FILE_SEPARATOR);
+                    retrieveFile(ftp, remotePath + fileName + FTP_FILE_SEPARATOR, localPath + FTP_FILE_SEPARATOR + fileName + FTP_FILE_SEPARATOR);
                 } else {
-                    File localFile = new File(localPath + FTP_FILE_SEPARATOR + file.getName());
+                    File localFile = new File(localPath + FTP_FILE_SEPARATOR + fileName);
                     if (!localFile.getParentFile().exists()) {
                         localFile.getParentFile().mkdirs();
                     }
                     OutputStream is = null;
                     try {
                         is = new FileOutputStream(localFile);
-                        ftp.retrieveFile(file.getName(), is);
+                        ftp.retrieveFile(fileName, is);
                     } finally {
                         IOUtils.closeQuietly(is);
                     }
@@ -225,19 +260,24 @@ public class FTPUtil {
      */
     private static boolean retrieveSingleFile(FTPClient ftp, String remotePath, String localPath) {
         if (StringUtils.isBlank(localPath) || StringUtils.isBlank(remotePath)) {
-            log.error("文件路径为空不能上传");
+            log.error("文件路径为空下载失败");
             return false;
         }
+
         String remoteDir = remotePath.substring(0, remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
         String remoteFileName = remotePath.substring(remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        if (localPath.endsWith(FTPUtil.FTP_FILE_SEPARATOR)) {
+            localPath = localPath + remoteFileName;
+        }
         OutputStream os = null;
         try {
-            ftp.changeWorkingDirectory(remoteDir);
+            changeWorkingDirectory(ftp, remoteDir);
             FTPFile[] files = ftp.listFiles();
             for (FTPFile ftpFile : files) {
-                if (ftpFile.getName().equals(remoteFileName)) {
+                String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
+                if (ftpFileName.equals(remoteFileName)) {
                     os = new FileOutputStream(new File(localPath));
-                    ftp.retrieveFile(ftpFile.getName(), os);
+                    ftp.retrieveFile(ftpFileName, os);
                     os.flush();
                 }
             }
@@ -278,12 +318,13 @@ public class FTPUtil {
             }
 
             log.info("用户登录成功，准备开始下载文件...");
-            ftp.changeWorkingDirectory(remoteDir);
+            changeWorkingDirectory(ftp, remoteDir);
             FTPFile[] files = ftp.listFiles();
             for (FTPFile ftpFile : files) {
-                if (ftpFile.getName().equals(remoteFileName)) {
+                String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
+                if (ftpFileName.equals(remoteFileName)) {
                     os = response.getOutputStream();
-                    ftp.retrieveFile(ftpFile.getName(), os);
+                    ftp.retrieveFile(ftpFileName, os);
                     os.flush();
                 }
             }
@@ -319,20 +360,11 @@ public class FTPUtil {
                 throw new Exception("无法登录");
             }
             log.info("用户登录成功，准备开始下载文件...");
-            boolean changeSuccess = ftp.changeWorkingDirectory(remoteDir);
+            boolean changeSuccess = changeWorkingDirectory(ftp, remoteDir);
             if (!changeSuccess) {
                 return false;
             }
-            if (StringUtils.isBlank(remoteFileName)) {
-                return true;
-            } else {
-                String[] fileNames = ftp.listNames();
-                for (String fileName : fileNames) {
-                    if (fileName.equals(remoteFileName)) {
-                        return true;
-                    }
-                }
-            }
+            return isFileNameExists(ftp, remoteFileName);
         } catch (IOException e) {
             log.error("下载文件异常:" + e.getMessage());
         } finally {
@@ -340,6 +372,7 @@ public class FTPUtil {
         }
         return false;
     }
+
 
     /**
      * 判断文件是否存在
@@ -358,16 +391,7 @@ public class FTPUtil {
             if (!changeSuccess) {
                 return false;
             }
-            if (StringUtils.isBlank(remoteFileName)) {
-                return true;
-            } else {
-                String[] fileNames = ftpClient.listNames();
-                for (String fileName : fileNames) {
-                    if (fileName.equals(remoteFileName)) {
-                        return true;
-                    }
-                }
-            }
+            return isFileNameExists(ftpClient, remoteFileName);
         } catch (IOException e) {
             log.error("下载文件异常:" + e.getMessage());
         }
@@ -375,10 +399,10 @@ public class FTPUtil {
     }
 
     public static void main(String[] args) {
-        String ip = "172.18.53.214";
+        String ip = "172.18.198.201";
         int port = 21;
-        String user = "provreport";
-        String pwd = "provreport.9818";
+        String user = "mashengli";
+        String pwd = "mslV1234";
 //        try {
 //            System.out.println("1111111" + ftpUtils.login(ip, port, user, pwd));
 //        } catch (IOException e) {
@@ -400,26 +424,66 @@ public class FTPUtil {
 //
 //        }
 //
+//        try {
+//            FTPUtil.retrieveFile(ip, port, user, pwd, "/a/b/", System.getProperty("java.io.tmpdir"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            FTPUtil.retrieveFile(ip, port, user, pwd, "/a/b/c/测试.docx", System.getProperty("java.io.tmpdir"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(System.getProperty("file.separator"));
+//        System.out.println(File.separator);
+//
+//        File file1 = new File(System.getProperty("java.io.tmpdir") + FTP_FILE_SEPARATOR + "test1.txt");
+//        File file2 = new File(System.getProperty("java.io.tmpdir") + FTP_FILE_SEPARATOR + "test2.txt");
+//
+//
+//        System.out.println(file1.getAbsolutePath());
+//        System.out.println(file2.getAbsolutePath());
+
+        String path = "/备付金报表/中国人民银行/201611/";
         try {
-            FTPUtil.retrieveFile(ip, port, user, pwd, "/a/b/", System.getProperty("java.io.tmpdir"));
-        } catch (Exception e) {
+            FTPClient ftpClient = FTPUtil.login(ip, port, user, pwd);
+            ftpClient.makeDirectory("备付金报表");
+            ftpClient.changeWorkingDirectory("备付金报表");
+            ftpClient.makeDirectory("中国人民银行");
+            ftpClient.changeWorkingDirectory("中国人民银行");
+            ftpClient.makeDirectory("201611");
+            ftpClient.changeWorkingDirectory("201611");
+
+            FTPClient ftpClient1 = FTPUtil.login(ip, port, user, pwd);
+            ftpClient1.makeDirectory(new String("备付金报表".getBytes(), "ISO-8859-1"));
+            ftpClient1.changeWorkingDirectory(new String("备付金报表".getBytes(), "ISO-8859-1"));
+            ftpClient1.makeDirectory(new String("中国人民银行".getBytes(), "ISO-8859-1"));
+            ftpClient1.changeWorkingDirectory(new String("中国人民银行".getBytes(), "ISO-8859-1"));
+            ftpClient1.makeDirectory(new String("201611".getBytes(), "ISO-8859-1"));
+            ftpClient1.changeWorkingDirectory(new String("201611".getBytes(), "ISO-8859-1"));
+
+            FTPClient ftpClient3 = FTPUtil.login(ip, port, user, pwd);
+            boolean result = ftpClient3.changeWorkingDirectory(path);
+            String[] paths = path.split("/");
+            for (String patha : paths) {
+                if (StringUtils.isNotEmpty(patha)) {
+                    System.out.println(ftpClient3.changeWorkingDirectory(patha));
+                }
+            }
+
+            FTPClient ftpClient2 = FTPUtil.login(ip, port, user, pwd);
+            boolean result2 = ftpClient2.changeWorkingDirectory(new String(path.getBytes(), "ISO-8859-1"));
+            String[] paths2 = path.split("/");
+            for (String patha : paths2) {
+                if (StringUtils.isNotEmpty(patha)) {
+                    System.out.println(ftpClient2.changeWorkingDirectory(patha));
+                }
+            }
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            FTPUtil.retrieveFile(ip, port, user, pwd, "/a/b/c/测试.docx", System.getProperty("java.io.tmpdir"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(System.getProperty("file.separator"));
-        System.out.println(File.separator);
-
-        File file1 = new File(System.getProperty("java.io.tmpdir") + FTP_FILE_SEPARATOR + "test1.txt");
-        File file2 = new File(System.getProperty("java.io.tmpdir") + FTP_FILE_SEPARATOR + "test2.txt");
-
-
-        System.out.println(file1.getAbsolutePath());
-        System.out.println(file2.getAbsolutePath());
     }
 
 }
