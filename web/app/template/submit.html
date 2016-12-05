@@ -1,10 +1,18 @@
 <div ms-controller="submit-controller">
     <div class="modal-content">
         <div class="modal-message error-message">
-            <div class="modal-message-left">确定要报送？</div>
+            <div>报送之前请先下载所有报表，并仔细检查数据是否正确</div>
+        </div>
+        <div class="modal-message error-message">
+            <div>
+                <input name="check-report" type="checkbox" ms-click="@checkReport()"/>&nbsp;&nbsp;检查无误，确认报送
+            </div>
         </div>
         <div class="modal-button">
-            <a href="#close-modal" rel="modal:close"><button ms-click="@submit()">确定</button></a>
+            <a href="#close-modal" rel="modal:close">
+                <button ms-if="@checkReportFlag==0" disabled>确定</button>
+                <button ms-if="@checkReportFlag==1" ms-click="@submit()">确定</button>
+            </a>
             <a href="#close-modal" rel="modal:close"><button href="#close-modal" rel="modal:close">取消</button></a>
         </div>
     </div>

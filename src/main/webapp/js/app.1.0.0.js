@@ -23496,9 +23496,17 @@
 	
 						var submitVm = avalon.define({
 							$id: 'submit-controller',
+	                        checkReportFlag: 0,
 							submit: function () {
 	                            pbcModule.submitReport($('#datetime-start').val(), $('#datetime-end').val());
-							}
+							},
+	                        checkReport: function () {
+	                            if (document.getElementsByName("check-report")[0].checked) {
+	                                submitVm.checkReportFlag=1;
+	                            } else {
+	                                submitVm.checkReportFlag=0;
+	                            }
+	                        }
 						});
 	
 						var submitTemplate = __webpack_require__(21);
@@ -23941,7 +23949,7 @@
 /* 21 */
 /***/ function(module, exports) {
 
-	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div class=\"modal-message-left\">确定要报送？</div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button ms-click=\"@submit()\">确定</button></a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div>报送之前请先下载所有报表，并仔细检查数据是否正确</div>\r\n        </div>\r\n        <div class=\"modal-message error-message\">\r\n            <div>\r\n                <input name=\"check-report\" type=\"checkbox\" ms-click=\"@checkReport()\"/>&nbsp;&nbsp;检查无误，确认报送\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\">\r\n                <button ms-if=\"@checkReportFlag==0\" disabled>确定</button>\r\n                <button ms-if=\"@checkReportFlag==1\" ms-click=\"@submit()\">确定</button>\r\n            </a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 22 */
@@ -24079,12 +24087,20 @@
 	
 	                    var submitVm = avalon.define({
 	                        $id: 'submit-controller',
+	                        checkReportFlag: 0,
 	                        submit: function () {
 	                            cooperativeBankModule.submitReport(
 	                                mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 	                                $('#datetime-start').val(),
 	                                $('#datetime-end').val()
 	                            );
+	                        },
+	                        checkReport: function () {
+	                            if (document.getElementsByName("check-report")[0].checked) {
+	                                submitVm.checkReportFlag=1;
+	                            } else {
+	                                submitVm.checkReportFlag=0;
+	                            }
 	                        }
 	                    });
 	

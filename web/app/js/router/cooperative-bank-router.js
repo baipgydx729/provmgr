@@ -90,12 +90,20 @@ module.exports = {
 
                     var submitVm = avalon.define({
                         $id: 'submit-controller',
+                        checkReportFlag: 0,
                         submit: function () {
                             cooperativeBankModule.submitReport(
                                 mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                                 $('#datetime-start').val(),
                                 $('#datetime-end').val()
                             );
+                        },
+                        checkReport: function () {
+                            if (document.getElementsByName("check-report")[0].checked) {
+                                submitVm.checkReportFlag=1;
+                            } else {
+                                submitVm.checkReportFlag=0;
+                            }
                         }
                     });
 
