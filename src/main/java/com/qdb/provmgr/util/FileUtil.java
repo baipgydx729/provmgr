@@ -1,7 +1,6 @@
 package com.qdb.provmgr.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -15,17 +14,9 @@ public class FileUtil {
      * @return 文件
      */
     public static File createTempFile(String fileName) {
-        String tempPath = System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString() + File.separator;
-        File file = new File(tempPath);
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        file = new File(tempPath + fileName);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ignored) {
-            }
+        File file = new File(System.getProperty("java.io.tmpdir") + File.separator + UUID.randomUUID().toString() + File.separator + fileName);
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdir();
         }
         return file;
     }
