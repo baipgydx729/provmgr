@@ -3,7 +3,7 @@
 target/
 .idea/
 .svn/
-*.properties
+
 *.cer/
 *.pfx/
 *.log

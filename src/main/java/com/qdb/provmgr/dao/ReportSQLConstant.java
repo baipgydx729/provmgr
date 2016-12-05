@@ -8,7 +8,7 @@ public interface ReportSQLConstant {
     public static final String TABLE1_1_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_1 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
     public static final String TABLE1_1_COLUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.A01 a01,t1.A02 a02,t1.A03 a03,t1.A04 a04,t1.A05 a05,t1.A06 a06,t1.A07 a07,t1.A08 a08,t1.A09 a09,t1.A10 a10,t1.A11 a11,t1.A12 a12,t1.A13 a13,t1.A14 a14 ";
 
-    public static final String TABLE1_2_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_2 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
+    public static final String TABLE1_2_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_2_1 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
     public static final String TABLE1_2_COLUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.B01 b01,t1.B02 b02,t1.B03 b03,t1.B04 b04,t1.B05 b05,t1.B06 b06,t1.B07 b07,t1.B08 b08,t1.B09 b09 ";
 
     public static final String TABLE1_3_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_3 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
