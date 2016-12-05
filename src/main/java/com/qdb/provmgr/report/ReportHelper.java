@@ -20,8 +20,8 @@ public class ReportHelper {
 
     static final String PBC_REPORT_ROOT_PATH = "/备付金报表/中国人民银行/";
 
-//    private String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("/").getPath() + "../";
-    private String ROOT_PATH = "/Users/mashengli/Desktop/workspace/provmgr/src/main/webapps/WEB-INF/excelTemplate/template_1_1.xls";
+    private String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("/").getPath() + "../";
+
     @Value("${report.company.name}")
     private String companyName;
     @Value("${report.writetable.name}")

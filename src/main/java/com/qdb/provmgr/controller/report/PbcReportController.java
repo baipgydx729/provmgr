@@ -55,6 +55,8 @@ public class PbcReportController {
 
     private Logger log = LoggerFactory.getLogger(PbcReportController.class);
 
+    private String FILE_SUFFIX = ".xls";
+
     @Autowired
     private ReportService reportService;
     @Autowired
@@ -262,7 +264,7 @@ public class PbcReportController {
         }
         String ftpPath = reportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
         File tempFile = FileUtil.createTempFile(reportHelper.getPbcZipFileName(startDate, endDate, reportHelper.getCompanyName()));
-        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath());
+        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), FILE_SUFFIX);
 
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
         if (!result) {
@@ -328,7 +330,7 @@ public class PbcReportController {
 
         String ftpPath = reportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
         String fileName = reportHelper.getPbcZipFileName(startDate, endDate, reportHelper.getCompanyName());
-        ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, response);
+        ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, FILE_SUFFIX, response);
     }
 
     private Map<String, Object> getTotalReportList(Date startDate, Date endDate) {
