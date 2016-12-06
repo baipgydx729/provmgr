@@ -23896,7 +23896,7 @@
 	                $id: 'main',
 	                template: __webpack_require__(28),
 	                data: {
-	                    bankList: pbcModule.getBankList(),
+	                    bankList: [],
 	                    selectedBankIndex: 0,
 	                    selectedAccountIndex: 0,
 	                    reportList: [],
@@ -24009,8 +24009,24 @@
 	                            }
 	                        }
 	                    }
+	                },
+	                getOKBankList: function () {
+	                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "浦发"];
+	                    var okBankList = [];
+	
+	                    var allBankList = pbcModule.getBankList();
+	
+	                    for (var i=0; i<allBankList.length; i++){
+	                        if (okBankNameList.indexOf(allBankList[i].bank_name)>=0){
+	                            okBankList.push(allBankList[i]);
+	                        }
+	                    }
+	
+	                    return okBankList;
 	                }
 	            });
+	
+	            mainVm.data.bankList = mainVm.getOKBankList();
 	
 	            mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
 	
@@ -24088,34 +24104,7 @@
 	            endDay = year+"-"+month+"-"+day;
 	        }
 	
-	        cooperativeBankService.getReportList(bankName, startDay, endDay);
-	
-	        return [
-	            {
-	                report_name: "表1-1",
-	                report_status: 1
-	            },
-	            {
-	                report_name: "表1-2",
-	                report_status: 0
-	            },
-	            {
-	                report_name: "表1-3",
-	                report_status: 1
-	            },
-	            {
-	                report_name: "表1-6",
-	                report_status: 0
-	            },
-	            {
-	                report_name: "表1-9",
-	                report_status: 1
-	            },
-	            {
-	                report_name: "表1-10",
-	                report_status: 0
-	            }
-	        ];
+	        return cooperativeBankService.getReportList(bankName, startDay, endDay);
 	    },
 	    generateReport: function(bankName, reportList){
 	        cooperativeBankService.generateReport(bankName, reportList);

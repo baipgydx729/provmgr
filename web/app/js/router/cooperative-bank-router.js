@@ -13,7 +13,7 @@ module.exports = {
                 $id: 'main',
                 template: require('../../template/cooperative-bank.html'),
                 data: {
-                    bankList: pbcModule.getBankList(),
+                    bankList: [],
                     selectedBankIndex: 0,
                     selectedAccountIndex: 0,
                     reportList: [],
@@ -126,8 +126,24 @@ module.exports = {
                             }
                         }
                     }
+                },
+                getOKBankList: function () {
+                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "浦发"];
+                    var okBankList = [];
+
+                    var allBankList = pbcModule.getBankList();
+
+                    for (var i=0; i<allBankList.length; i++){
+                        if (okBankNameList.indexOf(allBankList[i].bank_name)>=0){
+                            okBankList.push(allBankList[i]);
+                        }
+                    }
+
+                    return okBankList;
                 }
             });
+
+            mainVm.data.bankList = mainVm.getOKBankList();
 
             mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
 
