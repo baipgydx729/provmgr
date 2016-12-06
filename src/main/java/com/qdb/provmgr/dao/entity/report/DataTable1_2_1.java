@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * @author mashengli
  */
-public class DataTable1_2 extends BaseReportEntity {
+public class DataTable1_2_1 extends BaseReportEntity {
     private BigDecimal b01;
     private BigDecimal b02;
     private BigDecimal b03;

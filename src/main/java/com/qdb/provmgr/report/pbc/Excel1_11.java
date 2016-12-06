@@ -9,12 +9,12 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_11;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.report.ReportExcelUtil;
+import com.qdb.provmgr.report.ReportHelper;
 
 /**
  * @author mashengli
  */
-public class Excel1_11 extends ReportExcelUtil {
+public class Excel1_11 extends ReportHelper {
     /**
      * 数据起始行数下标（下标从0开始）
      */

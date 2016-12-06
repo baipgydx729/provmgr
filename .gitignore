@@ -1,14 +1,11 @@
 *.iml
-*.iml/
 target/
 .idea/
 .svn/
-
-*.cer/
-*.pfx/
 *.log
 .classpath
 .settings/
+*.DS_Store
 
 web/dist
 web/generate

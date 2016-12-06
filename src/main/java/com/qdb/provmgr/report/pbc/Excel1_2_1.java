@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
-import com.qdb.provmgr.dao.entity.report.DataTable1_2;
+import com.qdb.provmgr.dao.entity.report.DataTable1_2_1;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.report.ReportExcelUtil;
+import com.qdb.provmgr.report.ReportHelper;
 
 /**
  * @author mashengli
@@ -62,12 +62,12 @@ public class Excel1_2_1 {
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
         Collections.sort(dataList);
         int size = dataList.size();
-        DataTable1_2 total = new DataTable1_2();
+        DataTable1_2_1 total = new DataTable1_2_1();
         for (int i = 0; i < size; i++) {
-            DataTable1_2 dataTable1_2 = (DataTable1_2)dataList.get(i);
-            total = ReportExcelUtil.addData(total, dataTable1_2);
+            DataTable1_2_1 dataTable1_21 = (DataTable1_2_1)dataList.get(i);
+            total = ReportHelper.addData(total, dataTable1_21);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_2, j);
+                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_21, j);
                 sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
             }
         }
@@ -80,30 +80,30 @@ public class Excel1_2_1 {
 
     /**
      * 获取数据
-     * @param dataTable1_2 数据
+     * @param dataTable1_21 数据
      * @param index 下标
      * @return
      */
-    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_2 dataTable1_2, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_2_1 dataTable1_21, int index) {
         switch (index) {
             case 1:
-                return dataTable1_2.getB01();
+                return dataTable1_21.getB01();
             case 2:
-                return dataTable1_2.getB02();
+                return dataTable1_21.getB02();
             case 3:
-                return dataTable1_2.getB03();
+                return dataTable1_21.getB03();
             case 4:
-                return dataTable1_2.getB04();
+                return dataTable1_21.getB04();
             case 5:
-                return dataTable1_2.getB05();
+                return dataTable1_21.getB05();
             case 6:
-                return dataTable1_2.getB06();
+                return dataTable1_21.getB06();
             case 7:
-                return dataTable1_2.getB07();
+                return dataTable1_21.getB07();
             case 8:
-                return dataTable1_2.getB08();
+                return dataTable1_21.getB08();
             case 9:
-                return dataTable1_2.getB09();
+                return dataTable1_21.getB09();
             default:
                 return new BigDecimal("0");
         }
