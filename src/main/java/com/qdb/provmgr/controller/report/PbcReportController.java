@@ -189,14 +189,14 @@ public class PbcReportController {
                 presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
                 presetContent.setAuthCompanyName(pbcReportHelper.getCompanyName());
-
+                presetContent.setAccountId(map.get("account_id"));
                 presetContent.setBankName(map.get("bank_name"));
                 presetContent.setAccount(map.get("account_no"));
                 presetContent.setAccountName(map.get("account_name"));
                 presetContent.setLegalPerson(map.get("bank_name"));
 
                 List<Integer> ADIDs = new ArrayList<>();
-                ADIDs.add(Integer.valueOf(String.valueOf(jsonObject.get("account_id"))));
+                ADIDs.add(Integer.valueOf(presetContent.getAccountId()));
                 List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
                 try {
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
