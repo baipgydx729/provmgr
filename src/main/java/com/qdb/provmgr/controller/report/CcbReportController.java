@@ -80,15 +80,20 @@ public class CcbReportController {
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String reportList(String start_day, String end_day) {
+        String jsonString = null;
         if (!CollectionUtils.isEmpty(reportMap)){
-            return JSONObject.toJSONString(reportMap);
+            jsonString = JSONObject.toJSONString(reportMap);
+            logger.info("************" + jsonString + "************");
+            return jsonString;
         }
 
         String[] tableTypes = StringUtils.split(ccbReportList, ',');
         for (String tableType : tableTypes) {
             this.buildReportStatusList(tableType, false);
         }
-        return JSONObject.toJSONString(reportMap);
+        jsonString = JSONObject.toJSONString(reportMap);
+        logger.info("************" + jsonString + "************");
+        return jsonString;
     }
 
     /**
@@ -445,9 +450,9 @@ public class CcbReportController {
             throw new Exception("暂无该银行报表列表!");
         }
         for (Map<String, Object> rowMap : statusList) {
-            boolean isContains = rowMap.containsValue("表" + tableType);
+            boolean isContains = rowMap.containsValue(tableType);
             if (isContains) {
-                rowMap.put("report_status", createStatus);
+                rowMap.put("report_status", createStatus ? 1 : 0);
             }
         }
     }
