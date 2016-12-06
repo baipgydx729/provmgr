@@ -57,7 +57,9 @@ module.exports = {
             }
         });
     },
-    download: function(bankName, startDay, endDay, reportName){
+    downloadable: function(bankName, startDay, endDay, reportName){
+        var result = true;
+
         $.ajax({
             url: "/report/"+commonModule.getBankAbbreviation(bankName)
                     +"/download?start_day="+startDay
@@ -65,14 +67,39 @@ module.exports = {
                     +"&report_name="+reportName,
             type: 'GET',
             dataType: 'json',
+            async: false,
+            timeout : 5000,
             success: function (response) {
                 if (response.code == 400) {
-                    commonModule.errorModal(data.message);
+                    commonModule.errorModal(response.message);
+
+                    result=false;
                 }
-            },
-            error: function () {
-                commonModule.errorModal("接口错误！");
             }
         });
+
+        return result;
+    },
+    downloadableAll: function(bankName, startDay, endDay){
+        var result = true;
+
+        $.ajax({
+            url: "/report/"+commonModule.getBankAbbreviation(bankName)
+                    +"/download?start_day="+startDay
+                    +"&end_day="+endDay,
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            timeout : 5000,
+            success: function (response) {
+                if (response.code == 400) {
+                    commonModule.errorModal(response.message);
+
+                    result=false;
+                }
+            }
+        });
+
+        return result;
     }
 }
