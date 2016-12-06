@@ -42,7 +42,11 @@ public class CcbReportController {
 
     private Map<String, String> tableNameMap = TableNameConstant.map;
 
+    String sep = System.getProperty("file.separator");
+
     private final String BANKNAME = "中国建设银行";
+    private final String AGENT_CODE = "20161130";
+    private final String FTP_BANK_PATH = "/备付金报表/建设银行/";
 
     private final String CODE = "code";
     private final String DATA = "data";
@@ -69,7 +73,6 @@ public class CcbReportController {
     @Autowired
     private FtpFileService ftpFileService;
 
-
     /**
      * 获取报表列表
      *
@@ -80,20 +83,67 @@ public class CcbReportController {
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String reportList(String start_day, String end_day) {
-        String jsonString = null;
-        if (!CollectionUtils.isEmpty(reportMap)){
-            jsonString = JSONObject.toJSONString(reportMap);
-            logger.info("************" + jsonString + "************");
-            return jsonString;
+        start_day = DateUtils.format(new Date(), DateUtils.DATE_SMALL_STR);
+        try {
+            if (CollectionUtils.isEmpty(reportMap)){
+                //初始化报表生成状态
+                String[] tableTypes = StringUtils.split(ccbReportList, ',');
+                for (String tableType : tableTypes) {
+                    this.buildReportStatusList(tableType, 0);
+                }
+            }
+            //更新生成状态
+            this.getLatestReportStatus(start_day);
+        }catch (Exception e){
+            logger.error(e.getMessage());
         }
-
-        String[] tableTypes = StringUtils.split(ccbReportList, ',');
-        for (String tableType : tableTypes) {
-            this.buildReportStatusList(tableType, false);
-        }
-        jsonString = JSONObject.toJSONString(reportMap);
+        String jsonString = JSONObject.toJSONString(reportMap);
         logger.info("************" + jsonString + "************");
         return jsonString;
+    }
+
+    /**
+     * 获取最新的报表生成状态
+     * @param start_day
+     */
+    private String getLatestReportStatus(String start_day) throws Exception {
+        String[] tableTypeList = StringUtils.split(ccbReportList, ',');
+
+        Map<String, String> tableTypeMap = new HashMap<>();
+        List<String> fileNameList = new ArrayList<>();
+
+        for (String tableType: tableTypeList) {
+            String destExcelName = this.getDestExcelName(tableType);
+            fileNameList.add(destExcelName);
+            tableTypeMap.put(destExcelName, tableType);
+        }
+
+        String ccbFtpDir = FTP_BANK_PATH + start_day.substring(0, 7).replace("-", "") + sep;
+        String[] fileNames = new String[fileNameList.size()];
+        fileNames = fileNameList.toArray(fileNames);
+        String[][] fileStatus = ftpFileService.checkFileStatus(ccbFtpDir, fileNames);
+
+        for (String[] arr: fileStatus) {
+            String fileName = arr[0];
+            if(StringUtils.isEmpty(fileName)){
+                continue;
+            }
+            String reportStatus = arr[1];
+            String tableType = tableTypeMap.get(fileName);
+            this.updateCreateStatus(tableType, Integer.parseInt(reportStatus));
+        }
+        return JSONObject.toJSONString(reportMap);
+    }
+
+    /**
+     * 根据生成表格式规则,拼接文件名称
+     * @param tableType
+     * @return
+     */
+    private String getDestExcelName(String tableType) {
+        String tableNo = tableNameMap.get(tableType);
+        String destExcelName = AGENT_CODE + "_" + tableNo + "_0.xls";
+        return destExcelName;
     }
 
     /**
@@ -109,14 +159,13 @@ public class CcbReportController {
         Map<String, Object> resultMap = new HashMap<>();
         int code = 200;
         String message = "成功";
-        boolean createStatus = true;
+        int createStatus = 1;
         try {
             JSONObject jsonObject = JSONObject.parseObject(jsonStr);
             String beginDate = (String) jsonObject.get("start_day");
             String endDate = (String) jsonObject.get("end_day");
             List<Map<String, String>> reportList = (List<Map<String, String>>) jsonObject.get("report_list");
 
-            String sep = System.getProperty("file.separator");
             String dateDir = null;
             if (StringUtils.isNotEmpty(beginDate)){
                 dateDir = beginDate.substring(0, 7).replace("-", "");
@@ -134,12 +183,10 @@ public class CcbReportController {
 
             for (Map<String, String> map : reportList) {
                 String tableType = map.get("report_name");
-
-                String agentCode = "20161130";
                 String tableNo = tableNameMap.get(tableType);
                 String templateName = "agentCode_" + tableNo + "_n.xls";
 
-                String destFileName = agentCode + "_" + tableNo + "_0.xls";
+                String destFileName = AGENT_CODE + "_" + tableNo + "_0.xls";
                 String destExcelPath = destDir + destFileName;
                 String sheetName = "sheet";
 
@@ -164,7 +211,7 @@ public class CcbReportController {
                     }
                     logger.info("建设银行备付金报表创建完成! 报表名称:{}", destFileName);
                 } catch (Exception e) {
-                    createStatus = false;
+                    createStatus = 0;
                     code = 400;
                     message = destFileName + "创建失败!";
                     resultMap.put(CODE, code);
@@ -176,11 +223,11 @@ public class CcbReportController {
                     return JSONObject.toJSONString(resultMap);
                 }
 
-                String remotePath = "/备付金报表/建设银行/" + dateDir + "/" + destFileName;
+                String remotePath = FTP_BANK_PATH + dateDir + "/" + destFileName;
                 boolean isSuccess = ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
                 if (!isSuccess) {
                     logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
-                    createStatus = false;
+                    createStatus = 0;
                     code = 400;
                     message = destFileName + "上传至FTP失败!";
                     resultMap.put(CODE, code);
@@ -252,7 +299,6 @@ public class CcbReportController {
 
         String agentCode = "20161130";
         String sheetName = "sheet";
-        String sep = System.getProperty("file.separator");
 
         //模板相对于WEB-INF的路径
         String tempRelativePath = templatePath + sep + "ccb" + sep + templateName;
@@ -306,7 +352,6 @@ public class CcbReportController {
             String dateStr = df.format(new Date()); //当前时间戳, 日时分秒
             String zipName = "form_" + heYueHao + "_" + dataMonthDir + dateStr + ".zip";
 
-            String sep = System.getProperty("file.separator");
             String targetZipPath = sep + "备付金报表" + sep + "建设银行" + sep ;
             String resourcePath = targetZipPath+ dataMonthDir + sep;
 
@@ -367,7 +412,6 @@ public class CcbReportController {
             String dateStr = df.format(new Date()); //当前时间戳, 日时分秒
             String zipName = "form_" + heYueHao + "_" + dataMonthDir + dateStr + ".zip";
 
-            String sep = System.getProperty("file.separator");
             String targetPath = System.getProperty("java.io.tmpdir") + sep + "ccb" + sep;
             String resourcePath = targetPath + dataMonthDir + sep;
 
@@ -428,10 +472,10 @@ public class CcbReportController {
      * @param tableType
      * @param createStatus
      */
-    private void buildReportStatusList(String tableType, boolean createStatus) {
+    private void buildReportStatusList(String tableType, int createStatus) {
         Map<String, Object> rowMap = new HashMap<>();
         rowMap.put("report_name", tableType);
-        rowMap.put("report_status", createStatus ? 1 : 0);
+        rowMap.put("report_status",  createStatus);
         statusList.add(rowMap);
 
         reportMap.put(CODE, 200);
@@ -444,7 +488,7 @@ public class CcbReportController {
      * @param tableType
      * @param createStatus
      */
-    private void updateCreateStatus(String tableType, boolean createStatus) throws Exception {
+    private void updateCreateStatus(String tableType, int createStatus) throws Exception {
         List<Map<String, Object>> statusList = (List<Map<String, Object>>) reportMap.get(DATA);
         if (CollectionUtils.isEmpty(statusList)) {
             throw new Exception("暂无该银行报表列表!");
@@ -452,7 +496,7 @@ public class CcbReportController {
         for (Map<String, Object> rowMap : statusList) {
             boolean isContains = rowMap.containsValue(tableType);
             if (isContains) {
-                rowMap.put("report_status", createStatus ? 1 : 0);
+                rowMap.put("report_status", createStatus);
             }
         }
     }

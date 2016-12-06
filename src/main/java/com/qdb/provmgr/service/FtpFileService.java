@@ -134,13 +134,17 @@ public class FtpFileService {
         String[][] result = null;
         FTPClient ftpClient = null;
         try {
+            result = new String[fileNames.length][2];
+            for (int i = 0; i < fileNames.length; i++) {
+                result[i][0] = fileNames[i];
+                result[i][1] = "0";
+            }
             ftpClient = FTPUtil.login(ftp_ip, ftp_port, ftp_user, ftp_pwd);
             if (ftpClient == null || !ftpClient.isConnected()) {
                 log.error("ftp登录失败");
                 throw new IOException("登录失败");
             }
-            result = new String[fileNames.length][3];
-            String[] listNames = ftpClient.listNames(dir);
+            String[] listNames = ftpClient.listNames(new String(dir.getBytes(), "ISO-8859-1"));
             if (listNames == null || listNames.length == 0) {
                 log.info("目录为空");
                 return result;
@@ -151,7 +155,7 @@ public class FtpFileService {
             }
             for (int i = 0; i < fileNames.length; i++) {
                 result[i][0] = fileNames[i];
-                if (containsValue(names, fileNames[i])) {
+                if (containsValue(names, new String(fileNames[i].getBytes(), "ISO-8859-1"))) {
                     result[i][1] = "1";
                 } else {
                     result[i][1] = "0";
