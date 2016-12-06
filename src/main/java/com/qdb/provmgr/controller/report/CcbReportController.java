@@ -169,7 +169,7 @@ public class CcbReportController {
                 }
 
                 String remotePath = sep + "备付金报表" + sep + "建设银行" + sep + dateDir + sep;
-                boolean isSuccess = true;// ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
+                boolean isSuccess = true;ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
                 if (!isSuccess) {
                     logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
                     createStatus = false;
