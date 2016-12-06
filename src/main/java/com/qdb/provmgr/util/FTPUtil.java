@@ -65,20 +65,22 @@ public class FTPUtil {
      * 释放FTP
      */
     public static void close(FTPClient ftp) {
-        if (ftp.isAvailable()) {
-            try {
-                // 退出FTP
-                ftp.logout();
-            } catch (IOException e) {
-                log.error("FTP登录退出异常:" + e.getMessage());
+        if (ftp != null) {
+            if (ftp.isAvailable()) {
+                try {
+                    // 退出FTP
+                    ftp.logout();
+                } catch (IOException e) {
+                    log.error("FTP登录退出异常:" + e.getMessage());
+                }
             }
-        }
-        if (ftp.isConnected()) {
-            try {
-                // 断开连接
-                ftp.disconnect();
-            } catch (IOException e) {
-                log.error("FTP断开连接异常:" + e.getMessage());
+            if (ftp.isConnected()) {
+                try {
+                    // 断开连接
+                    ftp.disconnect();
+                } catch (IOException e) {
+                    log.error("FTP断开连接异常:" + e.getMessage());
+                }
             }
         }
     }
