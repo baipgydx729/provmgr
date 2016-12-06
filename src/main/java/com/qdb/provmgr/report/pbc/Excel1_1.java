@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_1;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.report.ReportExcelUtil;
+import com.qdb.provmgr.report.ReportHelper;
 
 /**
  * @author mashengli
@@ -65,7 +65,7 @@ public class Excel1_1 {
         DataTable1_1 total = new DataTable1_1();
         for (int i = 0; i < size; i++) {
             DataTable1_1 dataTable1_1 = (DataTable1_1)dataList.get(i);
-            total = ReportExcelUtil.addData(total, dataTable1_1);
+            total = ReportHelper.addData(total, dataTable1_1);
             for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                 BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
                 sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);

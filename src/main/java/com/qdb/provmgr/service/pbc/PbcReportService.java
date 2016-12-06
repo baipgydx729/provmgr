@@ -14,7 +14,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_10;
 import com.qdb.provmgr.dao.entity.report.DataTable1_11;
 import com.qdb.provmgr.dao.entity.report.DataTable1_12;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
-import com.qdb.provmgr.dao.entity.report.DataTable1_2;
+import com.qdb.provmgr.dao.entity.report.DataTable1_2_1;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
 import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
@@ -37,8 +37,8 @@ public class PbcReportService {
         return list;
     }
 
-    public List<DataTable1_2> queryForTable1_2(String startDate, String endDate, List<Integer> ADIDs) {
-        List<DataTable1_2> list = reportDao.queryForList(TableModeEnum.Table1_2, startDate, endDate, ADIDs);
+    public List<DataTable1_2_1> queryForTable1_2(String startDate, String endDate, List<Integer> ADIDs) {
+        List<DataTable1_2_1> list = reportDao.queryForList(TableModeEnum.Table1_2, startDate, endDate, ADIDs);
         return list;
     }
 
