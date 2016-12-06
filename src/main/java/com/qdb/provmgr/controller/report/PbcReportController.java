@@ -38,9 +38,8 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.report.ReportHelper;
-import com.qdb.provmgr.report.pbc.PbcReportHelper;
 import com.qdb.provmgr.report.pbc.PbcExcelUtil;
+import com.qdb.provmgr.report.pbc.PbcReportHelper;
 import com.qdb.provmgr.service.FtpFileService;
 import com.qdb.provmgr.service.ReportService;
 import com.qdb.provmgr.service.pbc.PbcReportService;
@@ -64,8 +63,6 @@ public class PbcReportController {
     private PbcReportService pbcReportService;
     @Autowired
     private FtpFileService ftpFileService;
-    @Autowired
-    private ReportHelper reportHelper;
     @Autowired
     private PbcReportHelper pbcReportHelper;
 
@@ -370,7 +367,7 @@ public class PbcReportController {
             String[][] status = ftpFileService.checkFileStatus(dir, fileNames);
             for (int i = 0; i < fileNames.length; i++) {
                 Map<String, Object> element = new HashMap<>();
-                element.put("bankName", baseReportEntity.getBankName());
+                element.put("bank_name", baseReportEntity.getBankName());
                 element.put("account_id", baseReportEntity.getADID());
                 element.put("account_no", baseReportEntity.getAD());
                 element.put("account_name", baseReportEntity.getName());
