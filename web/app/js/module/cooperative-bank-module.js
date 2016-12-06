@@ -25,5 +25,8 @@ module.exports = {
     },
     submitReport: function(bankName, startDay, endDay){
         cooperativeBankService.submitReport(bankName, startDay, endDay);
+    },
+    download: function (bankName, startDay, endDay, reportName) {
+        cooperativeBankService.download(bankName, startDay, endDay, reportName);
     }
 };
