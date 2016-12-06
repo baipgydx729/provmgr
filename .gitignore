@@ -6,13 +6,10 @@ target/
 .classpath
 .settings/
 *.DS_Store
+*.properties
 
 web/dist
 web/generate
 web/node_modules
 web/npm-debug.log
 web/server.json
-
-.DS_Store
-*/.DS_Store
-src/main/resources/application.properties
