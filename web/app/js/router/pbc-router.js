@@ -100,6 +100,7 @@ module.exports = {
 					var reportList={
                         start_day: $('#datetime-start').val(),
                         end_day: $('#datetime-end').val(),
+                        report_type: mainVm.data.selectedReportTypeIndex,
                         report_list: []
 					};
 
@@ -107,7 +108,6 @@ module.exports = {
                         reportList.report_list.push({
                             bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                             account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-                            report_type: mainVm.data.selectedReportTypeIndex,
                             report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
                         });
 					}
