@@ -166,6 +166,40 @@ public class FTPUtil {
     }
 
     /**
+     * 获取文件名列表
+     * @param url ftp地址
+     * @param port ftp端口
+     * @param username ftp登录名
+     * @param password ftp密码
+     * @param dir ftp路径
+     * @return
+     */
+    public static String[] listNames(String url, int port, String username, String password, String dir) {
+        FTPClient ftp = null;
+        String[] names = null;
+        try {
+            ftp = login(url, port, username, password);
+            if (ftp == null || !ftp.isConnected()) {
+                log.error("无法登录");
+                return null;
+            }
+            changeWorkingDirectory(ftp, dir);
+            String[] listNames = ftp.listNames();
+            if (listNames != null && listNames.length > 0) {
+                names = new String[listNames.length];
+                for (int i = 0; i < listNames.length; i++) {
+                    names[i] = new String(listNames[i].getBytes(SERVER_CHARSET));
+                }
+            }
+            return names;
+        } catch (Exception ignored) {
+        } finally {
+            close(ftp);
+        }
+        return null;
+    }
+
+    /**
      * FTP单文件上传
      *
      * @param url       FTP地址

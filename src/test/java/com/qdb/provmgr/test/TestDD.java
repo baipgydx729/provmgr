@@ -19,5 +19,9 @@ public class TestDD {
 
     @Test
     public void test2(){
+        String[] filenames = new String[]{"20161101_20161130表1_1[BJ0000004]北京钱袋宝支付技术有限公司.xls"};
+        String[][] list = ftpFileService.checkFileStatus("/备付金报表/中国人民银行/201611/兴业银行/", filenames);
+        System.out.println();
+
     }
 }
