@@ -218,18 +218,19 @@ public class FTPUtil {
     }
 
     /**
-     * 下载文件到本地路径
+     * 下载文件到本地:
+     * 若下载远程文件夹，请保证路径以分隔符"/"结尾否则将视为下载单文件
      * @param url ftp连接
      * @param port ftp端口号
      * @param username ftp登录名
      * @param password ftp登录密码
-     * @param remotePath 远程文件路径，必须以文件分隔符"/"结尾
+     * @param remotePath 远程文件路径
      * @param localPath 要下载的本地路径
      * @param fileSuffix 要下载的文件后缀，若为空则下载所有文件
      * @return
      */
-    public static boolean retrieveDir(String url, int port, String username, String password,
-                                String remotePath, String localPath, String fileSuffix) {
+    public static boolean retrieveFile(String url, int port, String username, String password,
+                                      String remotePath, String localPath, String fileSuffix) {
         if (StringUtils.isBlank(localPath) || StringUtils.isBlank(remotePath)) {
             log.error("文件路径为空不能上传");
             return false;
@@ -244,9 +245,9 @@ public class FTPUtil {
             log.info("用户登录成功，准备开始下载文件...");
             ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
             if (!remotePath.endsWith(FTP_FILE_SEPARATOR)) {
-                throw new IOException("文件路径不正确");
+                retrieveSingleFile(ftp, remotePath, localPath);
             } else {
-                retrieveFile(ftp, remotePath, localPath, fileSuffix);
+                retrieveDir(ftp, remotePath, localPath, fileSuffix);
             }
             return true;
         } catch (IOException e) {
@@ -257,7 +258,7 @@ public class FTPUtil {
         }
     }
 
-    private static void retrieveFile(FTPClient ftp, String remotePath, String localPath, String fileSuffix) {
+    private static void retrieveDir(FTPClient ftp, String remotePath, String localPath, String fileSuffix) {
         try {
             // 转到指定下载目录
             FTPFile[] files = getFileList(ftp, remotePath);
@@ -265,7 +266,7 @@ public class FTPUtil {
                 for (FTPFile file : files) {
                     String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
                     if (file.isDirectory()) {
-                        retrieveFile(ftp, remotePath + fileName + FTP_FILE_SEPARATOR, localPath + fileName + FTP_FILE_SEPARATOR, fileSuffix);
+                        retrieveDir(ftp, remotePath + fileName + FTP_FILE_SEPARATOR, localPath + fileName + FTP_FILE_SEPARATOR, fileSuffix);
                     } else if (StringUtils.isBlank(fileSuffix) || (!StringUtils.isBlank(fileSuffix) && fileName.endsWith(fileSuffix))) {
                         File localFile = new File(localPath + FTP_FILE_SEPARATOR + fileName);
                         if (!localFile.getParentFile().exists()) {
@@ -286,34 +287,14 @@ public class FTPUtil {
         }
     }
 
-    /**
-     * 下载FTP单文件
-     * @param remotePath 远程文件路径
-     * @param localPath 要下载的文件位置全路径
-     * @return
-     */
-    public static boolean retrieveSingleFile(String url, int port, String username, String password,
-                                             String remotePath, String localPath) {
-        if (StringUtils.isBlank(localPath) || StringUtils.isBlank(remotePath)) {
-            log.error("文件路径为空下载失败");
-            return false;
-        }
-
+    private static boolean retrieveSingleFile(FTPClient ftp, String remotePath, String localPath) {
         String remoteDir = remotePath.substring(0, remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
         String remoteFileName = remotePath.substring(remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
         if (localPath.endsWith(FTPUtil.FTP_FILE_SEPARATOR)) {
             localPath = localPath + remoteFileName;
         }
         OutputStream os = null;
-        FTPClient ftp = null;
         try {
-            ftp = login(url, port, username, password);
-            if (ftp == null || !ftp.isConnected()) {
-                log.error("无法登录，上传失败");
-                return false;
-            }
-            log.info("用户登录成功，准备开始下载文件...");
-            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
             changeWorkingDirectory(ftp, remoteDir);
             FTPFile[] files = ftp.listFiles();
             for (FTPFile ftpFile : files) {
@@ -330,7 +311,6 @@ public class FTPUtil {
             return false;
         } finally {
             IOUtils.closeQuietly(os);
-            close(ftp);
         }
     }
 
@@ -340,7 +320,7 @@ public class FTPUtil {
      * @param port 端口
      * @param username ftp登录用户名
      * @param password ftp登录密码
-     * @param remotePath 远程文件全路径
+     * @param remotePath 远程文件全路径,不支持下载文件夹或多文件
      * @param response http请求
      * @return
      */

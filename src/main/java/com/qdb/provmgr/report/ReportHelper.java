@@ -31,6 +31,8 @@ public class ReportHelper {
 
     public static final String REPORT_FTP_ROOT_PATH = "/备付金报表";
 
+    public static final String FILEPATH_SEPRATOR = "/";
+
     /**
      * 将原始数据按照账户分割成N个数组
      * @param dataList 源数据

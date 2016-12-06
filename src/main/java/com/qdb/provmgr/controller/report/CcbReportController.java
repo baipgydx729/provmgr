@@ -171,7 +171,7 @@ public class CcbReportController {
                     return JSONObject.toJSONString(resultMap);
                 }
 
-                String remotePath = "/备付金报表/建设银行/" + dateDir + "/";
+                String remotePath = "/备付金报表/建设银行/" + dateDir + "/" + destFileName;
                 boolean isSuccess = ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
                 if (!isSuccess) {
                     logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
