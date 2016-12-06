@@ -85,7 +85,7 @@ module.exports = {
 
         $.ajax({
             url: "/report/"+commonModule.getBankAbbreviation(bankName)
-                    +"/download?start_day="+startDay
+                    +"/download-all?start_day="+startDay
                     +"&end_day="+endDay,
             type: 'GET',
             dataType: 'json',
