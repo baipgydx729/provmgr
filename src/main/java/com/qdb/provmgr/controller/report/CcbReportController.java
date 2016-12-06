@@ -120,11 +120,11 @@ public class CcbReportController {
             File file = new File(destDir);
             if (!file.exists()){
                 file.mkdir();
-                destDir += dateDir + sep;
-                File childFile = new File(destDir);
-                if (!childFile.exists()){
-                    childFile.mkdir();
-                }
+            }
+            destDir += dateDir + sep;
+            File childFile = new File(destDir);
+            if (!childFile.exists()){
+                childFile.mkdir();
             }
 
             for (Map<String, String> map : reportList) {
