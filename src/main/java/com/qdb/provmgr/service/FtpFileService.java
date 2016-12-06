@@ -40,8 +40,8 @@ public class FtpFileService {
 
     /**
      * 上传文件至ftp服务器
-     * @param localPath 待上传的文件路径
-     * @param remotePath 远程ftp路径
+     * @param localPath 待上传的文件全路径
+     * @param remotePath 远程ftp路径(若路径以/结尾，怎文件名取上传文件的文件名)
      * @return
      */
     public boolean uploadFileToFtp(String localPath, String remotePath) {
@@ -50,7 +50,7 @@ public class FtpFileService {
 
     /**
      * 通过网络下载ftp文件
-     * @param remotePath 远程文件路径
+     * @param remotePath 远程文件全路径
      * @param response http请求
      */
     public void downloadFileFromFtp(String remotePath, HttpServletResponse response) {
@@ -58,14 +58,15 @@ public class FtpFileService {
     }
 
     /**
-     * 将ftp远程文件取回并压缩
-     * @param remotePath 远程文件路径或文件夹
-     * @param targetZipFilePath 目标压缩文件路径
+     * 将ftp远程文件夹取回并压缩
+     * @param remoteDir 远程文件夹路径
+     * @param targetZipFilePath 目标压缩文件全路径
+     * @param fileSuffix 包含的文件后缀名,可为空默认全部文件
      * @return
      */
-    public boolean retrieveAndCompressFromFtp(String remotePath, String targetZipFilePath, String fileSuffix) {
+    public boolean retrieveAndCompressFromFtp(String remoteDir, String targetZipFilePath, String fileSuffix) {
         String tempDir = FileUtil.getTempPath();
-        boolean result = FTPUtil.retrieveDir(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, tempDir, fileSuffix);
+        boolean result = FTPUtil.retrieveDir(ftp_ip, ftp_port, ftp_user, ftp_pwd, remoteDir, tempDir, fileSuffix);
         if (!result) {
             log.error("下载文件异常！请重新下载");
             return false;
@@ -77,17 +78,18 @@ public class FtpFileService {
 
     /**
      * 将ftp文件压缩并下载
-     * @param remotePath 远程文件路径或文件夹
+     * @param remoteDir 远程文件路径或文件夹
      * @param targetFileName 下载显示的默认文件名
+     * @param fileSuffix 包含的文件后缀名,可为空默认全部文件
      * @param response http请求
      */
-    public void downloadAndCompressFromFtp(String remotePath, String targetFileName, String fileSuffix, HttpServletResponse response) {
+    public void downloadAndCompressFromFtp(String remoteDir, String targetFileName, String fileSuffix, HttpServletResponse response) {
         if (!targetFileName.endsWith(ZipUtil.FILE_SUFFIX)) {
             targetFileName = targetFileName + ZipUtil.FILE_SUFFIX;
         }
         FileInputStream fis = null;
         String tempZipFilePath = FileUtil.getTempFilePath(targetFileName);
-        if (retrieveAndCompressFromFtp(remotePath, tempZipFilePath, fileSuffix)) {
+        if (retrieveAndCompressFromFtp(remoteDir, tempZipFilePath, fileSuffix)) {
             File file = new File(tempZipFilePath);
             try {
                 fis = new FileInputStream(file);
@@ -105,11 +107,11 @@ public class FtpFileService {
 
     /**
      * 判断ftp是否存在指定文件
-     * @param ftpPath 目录
+     * @param dir 目录
      * @param fileNames 文件名
-     * @return 数组第一列为文件名，第二列为1/0
+     * @return 数组第一列为文件名，第二列为1存在/0不存在
      */
-    public String[][] checkFileStatus(String ftpPath, String[] fileNames) {
+    public String[][] checkFileStatus(String dir, String[] fileNames) {
         if (fileNames == null || fileNames.length <= 0) {
             return new String[][]{};
         }
@@ -122,7 +124,7 @@ public class FtpFileService {
                 throw new IOException("登录失败");
             }
             result = new String[fileNames.length][3];
-            String[] listNames = ftpClient.listNames(ftpPath);
+            String[] listNames = ftpClient.listNames(dir);
             if (listNames == null || listNames.length == 0) {
                 log.info("目录为空");
                 return result;
@@ -150,13 +152,13 @@ public class FtpFileService {
 
     /**
      * 文件是否存在
-     * @param ftpPath ftp路径
+     * @param dir ftp路径
      * @param fileNames 文件名
      * @return
      */
-    public boolean isFileExists(String ftpPath, String fileNames) {
+    public boolean isFileExists(String dir, String fileNames) {
         try {
-            return FTPUtil.isFileExists(ftp_ip, ftp_port, ftp_user, ftp_pwd, ftpPath + fileNames);
+            return FTPUtil.isFileExists(ftp_ip, ftp_port, ftp_user, ftp_pwd, dir + fileNames);
         } catch (Exception e) {
             log.error("出现异常", e);
         }
