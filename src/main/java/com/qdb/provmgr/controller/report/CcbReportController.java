@@ -60,6 +60,9 @@ public class CcbReportController {
     @Value("${excel.template.path}")
     private String templatePath;
 
+    @Value("${CCB.report.list}")
+    private String ccbReportList;
+
     @Autowired
     private CCBReportService reportService;
 
@@ -81,7 +84,7 @@ public class CcbReportController {
             return JSONObject.toJSONString(reportMap);
         }
 
-        String[] tableTypes = {"1_1", "1_2", "1_3", "1_6", "1_9", "1_10"};
+        String[] tableTypes = StringUtils.split(ccbReportList, ',');
         for (String tableType : tableTypes) {
             this.buildReportStatusList(tableType, false);
         }
@@ -168,7 +171,7 @@ public class CcbReportController {
                     return JSONObject.toJSONString(resultMap);
                 }
 
-                String remotePath = sep + "备付金报表" + sep + "建设银行" + sep + dateDir + sep;
+                String remotePath = "/备付金报表/建设银行/" + dateDir + "/";
                 boolean isSuccess = ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
                 if (!isSuccess) {
                     logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
