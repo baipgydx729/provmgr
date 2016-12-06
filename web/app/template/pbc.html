@@ -37,7 +37,7 @@
 				<select name="account" ms-on-change="@selectAccount()">
 					<option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
 							ms-attr="{'value': index}">
-						{{account.account_name}}
+						{{account.account_name+account.account_no}}
 					</option>
 				</select>
 			</div>
@@ -72,7 +72,7 @@
 							   ms-click="@checkOne()"/>
 					</td>
 					<td>{{report.bank_name}}</td>
-					<td>{{report.account_no}}</td>
+					<td>{{report.account_no ? report.account_no : '--'}}</td>
 					<td>{{report.report_name}}</td>
 					<td ms-if="report.report_status==1">
 						<img class="icon" src="../image/round_check_fill.png">已生成
@@ -81,7 +81,7 @@
 						<img class="icon" src="../image/round_close_fill.png">未生成
 					</td>
 					<td>
-						<button ms-if="report.report_status==0">生成</button>
+						<button>生成</button>
 						<button ms-if="report.report_status==1">下载</button>
 					</td>
 				</tr>
