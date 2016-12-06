@@ -150,8 +150,6 @@ public class PbcReportController {
         int total = 0;
         if ("0".equals(reportType)) {
             //汇总行报表，对应存管行特殊表
-            Map<String, String> data = new HashMap<>();
-            data.put("report_name", "表1_1");
             for (Map<String, String> map : reportListParam) {
                 total++;
                 TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
