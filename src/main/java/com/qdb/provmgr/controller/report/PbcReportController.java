@@ -128,20 +128,20 @@ public class PbcReportController {
         String reportType = null;
         Date startDate = null;
         Date endDate = null;
-        List<Map<String, String>> reportListPatam = null;
+        List<Map<String, String>> reportListParam = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             jsonObject = JSONObject.parseObject(jsonData);
             reportType = (String) jsonObject.get("report_type");
             startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse((String) jsonObject.get("start_day"))));
             endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse((String) jsonObject.get("end_day"))));
-            reportListPatam = (List<Map<String, String>>) jsonObject.get("report_list");
+            reportListParam = (List<Map<String, String>>) jsonObject.get("report_list");
         } catch (Exception e) {
             resultMap.put("code", 400);
             resultMap.put("message", "数据格式有误");
             return resultMap;
         }
-        if (StringUtils.isBlank(reportType) || CollectionUtils.isEmpty(reportListPatam)) {
+        if (StringUtils.isBlank(reportType) || CollectionUtils.isEmpty(reportListParam)) {
             resultMap.put("code", 400);
             resultMap.put("message", "参数不全");
             return resultMap;
@@ -152,7 +152,7 @@ public class PbcReportController {
             //汇总行报表，对应存管行特殊表
             Map<String, String> data = new HashMap<>();
             data.put("report_name", "表1_1");
-            for (Map<String, String> map : reportListPatam) {
+            for (Map<String, String> map : reportListParam) {
                 total++;
                 TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
                 PresetContent presetContent = new PresetContent();
@@ -179,7 +179,7 @@ public class PbcReportController {
         } else {
             //合作行表
             //汇总行报表，对应存管行特殊表
-            for (Map<String, String> map : reportListPatam) {
+            for (Map<String, String> map : reportListParam) {
                 total++;
                 TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
                 PresetContent presetContent = new PresetContent();
