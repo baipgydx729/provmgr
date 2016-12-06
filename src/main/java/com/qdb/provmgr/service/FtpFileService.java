@@ -153,12 +153,12 @@ public class FtpFileService {
     /**
      * 文件是否存在
      * @param dir ftp路径
-     * @param fileNames 文件名
+     * @param fileName 文件名
      * @return
      */
-    public boolean isFileExists(String dir, String fileNames) {
+    public boolean isFileExists(String dir, String fileName) {
         try {
-            return FTPUtil.isFileExists(ftp_ip, ftp_port, ftp_user, ftp_pwd, dir + fileNames);
+            return FTPUtil.isFileExists(ftp_ip, ftp_port, ftp_user, ftp_pwd, dir + fileName);
         } catch (Exception e) {
             log.error("出现异常", e);
         }
