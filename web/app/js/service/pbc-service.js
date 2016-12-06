@@ -52,7 +52,7 @@ module.exports = {
             type: "POST",
             dataType: 'json',
             contentType: "application/json;charset=utf-8",
-            data: JSON.stringify(reportList),
+            data: reportList,
             success: function (data) {
                 if (data.code == 200) {
                     commonModule.infoModal(data.message);
