@@ -18,3 +18,4 @@ web/server.json
 
 .DS_Store
 */.DS_Store
+src/main/resources/application.properties
