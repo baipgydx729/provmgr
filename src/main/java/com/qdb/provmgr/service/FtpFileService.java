@@ -144,7 +144,7 @@ public class FtpFileService {
                 log.error("ftp登录失败");
                 throw new IOException("登录失败");
             }
-            String[] listNames = ftpClient.listNames(new String(dir.getBytes(), "ISO-8859-1"));
+            String[] listNames = ftpClient.listNames(dir);
             if (listNames == null || listNames.length == 0) {
                 log.info("目录为空");
                 return result;
@@ -155,7 +155,7 @@ public class FtpFileService {
             }
             for (int i = 0; i < fileNames.length; i++) {
                 result[i][0] = fileNames[i];
-                if (containsValue(names, new String(fileNames[i].getBytes(), "ISO-8859-1"))) {
+                if (containsValue(names, fileNames[i])) {
                     result[i][1] = "1";
                 } else {
                     result[i][1] = "0";
