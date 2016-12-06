@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.qdb.provmgr.util.FTPUtil;
 import com.qdb.provmgr.util.FileUtil;
 import com.qdb.provmgr.util.ZipUtil;
@@ -58,6 +59,21 @@ public class FtpFileService {
     }
 
     /**
+     * 将文件下载至本地路径
+     * @param remotePath 远程文件路径
+     * @param localPath 本地路径
+     * @param fileSuffix 指定要下载的文件后缀，可为空默认所有文件
+     * @return
+     */
+    public boolean retriveFile(String remotePath, String localPath, String fileSuffix) {
+        if (StringUtils.isBlank(remotePath) || StringUtils.isBlank(localPath)) {
+            log.info("路径为空，下载失败");
+            return false;
+        }
+        return FTPUtil.retrieveFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, localPath, fileSuffix);
+    }
+
+    /**
      * 将ftp远程文件夹取回并压缩
      * @param remoteDir 远程文件夹路径
      * @param targetZipFilePath 目标压缩文件全路径
@@ -66,7 +82,7 @@ public class FtpFileService {
      */
     public boolean retrieveAndCompressFromFtp(String remoteDir, String targetZipFilePath, String fileSuffix) {
         String tempDir = FileUtil.getTempPath();
-        boolean result = FTPUtil.retrieveDir(ftp_ip, ftp_port, ftp_user, ftp_pwd, remoteDir, tempDir, fileSuffix);
+        boolean result = FTPUtil.retrieveFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remoteDir, tempDir, fileSuffix);
         if (!result) {
             log.error("下载文件异常！请重新下载");
             return false;
