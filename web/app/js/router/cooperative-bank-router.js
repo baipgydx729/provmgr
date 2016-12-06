@@ -156,7 +156,7 @@ module.exports = {
                     }
                 },
                 getOKBankList: function () {
-                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "浦发"];
+                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "上海浦东发展银行"];
                     var okBankList = [];
 
                     var allBankList = pbcModule.getBankList();
