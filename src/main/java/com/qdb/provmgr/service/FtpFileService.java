@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,36 +131,25 @@ public class FtpFileService {
             return new String[][]{};
         }
         String[][] result = null;
-        FTPClient ftpClient = null;
-        try {
-            ftpClient = FTPUtil.login(ftp_ip, ftp_port, ftp_user, ftp_pwd);
-            if (ftpClient == null || !ftpClient.isConnected()) {
-                log.error("ftp登录失败");
-                throw new IOException("登录失败");
-            }
-            result = new String[fileNames.length][3];
-            String[] listNames = ftpClient.listNames(dir);
-            if (listNames == null || listNames.length == 0) {
-                log.info("目录为空");
-                return result;
-            }
-            List<String> names = Arrays.asList(listNames);
-            if (names.size() <= 0) {
-                return result;
-            }
-            for (int i = 0; i < fileNames.length; i++) {
-                result[i][0] = fileNames[i];
-                if (containsValue(names, fileNames[i])) {
-                    result[i][1] = "1";
-                } else {
-                    result[i][1] = "0";
-                }
-            }
+        result = new String[fileNames.length][2];
+        for (int i = 0; i < fileNames.length; i++) {
+            result[i][0] = fileNames[i];
+            result[i][1] = "0";
+        }
+        String[] listNames = FTPUtil.listNames(ftp_ip, ftp_port, ftp_user, ftp_pwd, dir);
+        if (listNames == null || listNames.length == 0) {
+            log.info("目录为空");
             return result;
-        } catch (IOException e) {
-            log.error("登录异常", e);
-        } finally {
-            FTPUtil.close(ftpClient);
+        }
+        List<String> names = Arrays.asList(listNames);
+        if (names.size() <= 0) {
+            return result;
+        }
+        for (int i = 0; i < fileNames.length; i++) {
+            result[i][0] = fileNames[i];
+            if (containsValue(names, fileNames[i])) {
+                result[i][1] = "1";
+            }
         }
         return result;
     }

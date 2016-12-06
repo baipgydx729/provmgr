@@ -35,7 +35,10 @@ public class ReportDao {
         StringBuilder SQL = new StringBuilder();
         SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
                 .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
-                .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
+                .append(ReportSQLConstant.SQL_WHERE);
+        if (!TableModeEnum.Table1_2.equals(tableMode)) {
+            SQL.append(ReportSQLConstant.ADINFO_PLACEHOLDER);
+        }
         try {
             return MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), tableMode.getEntityClass());
         } catch (InstantiationException e) {
@@ -56,7 +59,10 @@ public class ReportDao {
         StringBuilder SQL = new StringBuilder();
         SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
                 .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
-                .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
+                .append(ReportSQLConstant.SQL_WHERE);
+        if (!TableModeEnum.Table1_2.equals(tableMode)) {
+            SQL.append(ReportSQLConstant.ADINFO_PLACEHOLDER);
+        }
         if (CollectionUtils.isNotEmpty(ADIDs)) {
             int size = ADIDs.size();
             params = new Object[2 + size];
@@ -94,7 +100,10 @@ public class ReportDao {
         StringBuilder SQL = new StringBuilder();
         SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
                 .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
-                .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
+                .append(ReportSQLConstant.SQL_WHERE);
+        if (!TableModeEnum.Table1_2.equals(tableMode)) {
+            SQL.append(ReportSQLConstant.ADINFO_PLACEHOLDER);
+        }
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
         if (null != params.getADID()) {
@@ -138,7 +147,7 @@ public class ReportDao {
         SQL.append(" SELECT DISTINCT t1.bankName_S bankName,t1.ADID,t1.AD, t1.name ")
                 .append(ReportSQLConstant.SQL_FROM)
                 .append(ReportSQLConstant.TABLE1_3_NAME)
-                .append(ReportSQLConstant.SQL_WHERE).append(ReportSQLConstant.NATUDATE_PLACEHOLDER);
+                .append(ReportSQLConstant.SQL_WHERE);
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
         if (null != params.getADID()) {
