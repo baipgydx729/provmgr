@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -121,30 +122,29 @@ public class PbcReportController {
      */
     @RequestMapping(value = "create")
     @ResponseBody
-    public Map createReport(HttpServletRequest request, HttpServletResponse response) {
+    public Map createReport(HttpServletRequest request, @RequestBody String jsonData) {
         Map<String, Object> resultMap = new HashMap<>();
-        String startDateStr = request.getParameter("start_day");
-        String endDateStr = request.getParameter("end_day");
-        String reportType = request.getParameter("report_type");
-
-        if (StringUtils.isBlank(startDateStr)) {
-            resultMap.put("code", 400);
-            resultMap.put("message", "日期不能为空");
-            return resultMap;
-        }
-        if (StringUtils.isBlank(reportType)) {
-            resultMap.put("code", 400);
-            resultMap.put("message", "报表类型不能为空");
-            return resultMap;
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        JSONObject jsonObject = null;
+        String reportType = null;
         Date startDate = null;
         Date endDate = null;
+        List<Map<String, String>> reportListPatam = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
-            startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
-            endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(endDateStr)));
-        } catch (ParseException e) {
-            e.printStackTrace();
+            jsonObject = JSONObject.parseObject(jsonData);
+            reportType = (String) jsonObject.get("report_type");
+            startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse((String) jsonObject.get("start_day"))));
+            endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse((String) jsonObject.get("end_day"))));
+            reportListPatam = (List<Map<String, String>>) jsonObject.get("report_list");
+        } catch (Exception e) {
+            resultMap.put("code", 400);
+            resultMap.put("message", "数据格式有误");
+            return resultMap;
+        }
+        if (StringUtils.isBlank(reportType) || CollectionUtils.isEmpty(reportListPatam)) {
+            resultMap.put("code", 400);
+            resultMap.put("message", "参数不全");
+            return resultMap;
         }
         int success = 0;
         int total = 0;
@@ -152,14 +152,7 @@ public class PbcReportController {
             //汇总行报表，对应存管行特殊表
             Map<String, String> data = new HashMap<>();
             data.put("report_name", "表1_1");
-            List<Map<String, String>> reportList = (List<Map<String, String>>) JSONObject.parseObject(request
-                    .getParameter("report_list"));
-            if (CollectionUtils.isEmpty(reportList)) {
-                resultMap.put("code", 400);
-                resultMap.put("message", "列表参数不能为空");
-                return resultMap;
-            }
-            for (Map<String, String> map : reportList) {
+            for (Map<String, String> map : reportListPatam) {
                 total++;
                 TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
                 PresetContent presetContent = new PresetContent();
@@ -186,9 +179,7 @@ public class PbcReportController {
         } else {
             //合作行表
             //汇总行报表，对应存管行特殊表
-            List<Map<String, String>> reportList = (List<Map<String, String>>) JSONObject.parseObject(request
-                    .getParameter("report_list"));
-            for (Map<String, String> map : reportList) {
+            for (Map<String, String> map : reportListPatam) {
                 total++;
                 TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
                 PresetContent presetContent = new PresetContent();
