@@ -37,7 +37,7 @@
 				<select name="account" ms-on-change="@selectAccount()">
 					<option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
 							ms-attr="{'value': index}">
-						{{account.account_name+account.account_no}}
+						{{account.account_no}}
 					</option>
 				</select>
 			</div>
@@ -81,8 +81,8 @@
 						<img class="icon" src="../image/round_close_fill.png">未生成
 					</td>
 					<td>
-						<button>生成</button>
-						<button>下载</button>
+						<button ms-click="@generate(index)">生成</button>
+						<button ms-click="@download(report.report_name)">下载</button>
 					</td>
 				</tr>
 				</tbody>

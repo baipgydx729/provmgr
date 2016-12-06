@@ -53,6 +53,22 @@ module.exports = {
                         }
                     }
                 },
+                generate: function (index) {
+                    var reportList={
+                        start_day: $('#datetime-start').val(),
+                        end_day: $('#datetime-end').val(),
+                        report_list: []
+                    };
+
+                    reportList.report_list.push({
+                        report_name: mainVm.data.reportList[index].report_name
+                    });
+
+                    cooperativeBankModule.generateReport(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        reportList
+                    );
+                },
                 batchGenerate: function () {
                     if (mainVm.data.checkedReportIndexList.length==0){
                         commonModule.errorModal("请选择您要生成的报表!");
@@ -121,7 +137,11 @@ module.exports = {
                     );
                 },
                 downloadAll: function () {
-
+                    cooperativeBankModule.downloadAll(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        $('#datetime-start').val(),
+                        $('#datetime-end').val()
+                    );
                 },
                 filter: function () {
                     //此处需要调用接口重新获取列表
@@ -152,7 +172,6 @@ module.exports = {
             });
 
             mainVm.data.bankList = mainVm.getOKBankList();
-
             mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
 
             mainVm.$watch('onReady', function(){
@@ -167,6 +186,7 @@ module.exports = {
                 $('#datetime-start').datetimepicker({
                     timepicker:false,
                     format:'Y-m-d',
+                    maxDate:'+1970/01/01',
                     onShow:function(){
                         this.setOptions({
                             maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
