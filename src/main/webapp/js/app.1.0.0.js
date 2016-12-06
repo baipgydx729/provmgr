@@ -23496,9 +23496,17 @@
 	
 						var submitVm = avalon.define({
 							$id: 'submit-controller',
+	                        checkReportFlag: 0,
 							submit: function () {
 	                            pbcModule.submitReport($('#datetime-start').val(), $('#datetime-end').val());
-							}
+							},
+	                        checkReport: function () {
+	                            if (document.getElementsByName("check-report")[0].checked) {
+	                                submitVm.checkReportFlag=1;
+	                            } else {
+	                                submitVm.checkReportFlag=0;
+	                            }
+	                        }
 						});
 	
 						var submitTemplate = __webpack_require__(21);
@@ -23592,78 +23600,15 @@
 	module.exports = {
 		getBankList: function () {
 		    if ($("#datetime-start").val()!=undefined && $("#datetime-end").val()!=undefined){
-	            pbcService.getBankList($("#datetime-start").val(), $("#datetime-end").val());
+	            return pbcService.getBankList($("#datetime-start").val(), $("#datetime-end").val());
 	        } else {
 	            var dateObj = new Date();
 	            var year = dateObj.getFullYear();
 	            var month = dateObj.getMonth()+1;
 	            var day = dateObj.getDate();
 	
-	            pbcService.getBankList(year+"-"+month+"-01", year+"-"+month+"-"+day);
+	            return pbcService.getBankList(year+"-"+month+"-01", year+"-"+month+"-"+day);
 	        }
-	
-	        return [
-	            {
-	                bank_name: "中国建设银行",
-	                account_list:[
-	                    {
-	                        account_id: "1000001",
-	                        account_no: "1000001",
-	                        account_name: "账户1"
-	                    },
-	                    {
-	                        account_id: "1000002",
-	                        account_no: "1000001",
-	                        account_name: "账户2"
-	                    }
-	                ]
-	            },
-	            {
-	                bank_name: "平安银行",
-	                account_list:[
-	                    {
-	                        account_id: "1000001",
-	                        account_no: "1000001",
-	                        account_name: "账户3"
-	                    },
-	                    {
-	                        account_id: "1000002",
-	                        account_no: "1000001",
-	                        account_name: "账户4"
-	                    }
-	                ]
-	            },
-	            {
-	                bank_name: "江苏银行",
-	                account_list:[
-	                    {
-	                        account_id: "1000001",
-	                        account_no: "1000001",
-	                        account_name: "账户3"
-	                    },
-	                    {
-	                        account_id: "1000002",
-	                        account_no: "1000001",
-	                        account_name: "账户4"
-	                    }
-	                ]
-	            },
-	            {
-	                bank_name: "浦发银行",
-	                account_list:[
-	                    {
-	                        account_id: "1000001",
-	                        account_no: "1000001",
-	                        account_name: "账户3"
-	                    },
-	                    {
-	                        account_id: "1000002",
-	                        account_no: "1000001",
-	                        account_name: "账户4"
-	                    }
-	                ]
-	            }
-	        ];
 	    },
 	    getReportList: function (reportType, bankName, accountId) {
 	        var startDay;
@@ -23683,65 +23628,14 @@
 	        }
 	
 		    if (reportType==0){
-	            pbcService.getReportList(reportType, startDay, endDay);
+	            return pbcService.getReportList(reportType, startDay, endDay);
 	        } else {
 		        if (bankName==undefined || accountId==undefined){
 	                return [];
 	            }
 	
-	            pbcService.getReportList(reportType, startDay, endDay, bankName, accountId);
+	            return pbcService.getReportList(reportType, startDay, endDay, bankName, accountId);
 	        }
-	
-	        return [
-	            {
-	                bank_name: "中国工商银行",
-	                account_id: "1000001",
-	                account_no: "1000001",
-	                account_name: "账户1",
-	                report_name: "表1-1",
-	                report_status: 1
-	            },
-	            {
-	                bank_name: "中国工商银行",
-	                account_id: "1000001",
-	                account_no: "1000001",
-	                account_name: "账户1",
-	                report_name: "表1-2",
-	                report_status: 0
-	            },
-	            {
-	                bank_name: "中国工商银行",
-	                account_id: "1000001",
-	                account_no: "1000001",
-	                account_name: "账户1",
-	                report_name: "表1-3",
-	                report_status: 1
-	            },
-	            {
-	                bank_name: "中国工商银行",
-	                account_id: "1000001",
-	                account_no: "1000001",
-	                account_name: "账户1",
-	                report_name: "表1-6",
-	                report_status: 0
-	            },
-	            {
-	                bank_name: "中国工商银行",
-	                account_id: "1000001",
-	                account_no: "1000001",
-	                account_name: "账户1",
-	                report_name: "表1-9",
-	                report_status: 1
-	            },
-	            {
-	                bank_name: "中国工商银行",
-	                account_id: "1000001",
-	                account_no: "1000001",
-	                account_name: "账户1",
-	                report_name: "表1-10",
-	                report_status: 0
-	            }
-	        ];
 	    },
 	    generateReport: function(reportList){
 	        pbcService.generateReport(reportList);
@@ -23929,7 +23823,7 @@
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>时间区间</label>\r\n\t\t\t\t<input id=\"datetime-start\" class=\"datetime-picker\" type=\"text\" readonly>\r\n\t\t\t\t<hr class=\"datetime-separator\"/>\r\n\t\t\t\t<input id=\"datetime-end\" class=\"datetime-picker\" type=\"text\" readonly>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.reportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(18) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>时间区间</label>\r\n\t\t\t\t<input id=\"datetime-start\" class=\"datetime-picker\" type=\"text\" readonly>\r\n\t\t\t\t<hr class=\"datetime-separator\"/>\r\n\t\t\t\t<input id=\"datetime-end\" class=\"datetime-picker\" type=\"text\" readonly>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_name+account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.reportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(18) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button>生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
 
 /***/ },
 /* 20 */
@@ -23941,7 +23835,7 @@
 /* 21 */
 /***/ function(module, exports) {
 
-	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div class=\"modal-message-left\">确定要报送？</div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button ms-click=\"@submit()\">确定</button></a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div>报送之前请先下载所有报表，并仔细检查数据是否正确</div>\r\n        </div>\r\n        <div class=\"modal-message error-message\">\r\n            <div>\r\n                <input name=\"check-report\" type=\"checkbox\" ms-click=\"@checkReport()\"/>&nbsp;&nbsp;检查无误，确认报送\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\">\r\n                <button ms-if=\"@checkReportFlag==0\" disabled>确定</button>\r\n                <button ms-if=\"@checkReportFlag==1\" ms-click=\"@submit()\">确定</button>\r\n            </a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ },
 /* 22 */
@@ -24002,7 +23896,7 @@
 	                $id: 'main',
 	                template: __webpack_require__(28),
 	                data: {
-	                    bankList: pbcModule.getBankList(),
+	                    bankList: [],
 	                    selectedBankIndex: 0,
 	                    selectedAccountIndex: 0,
 	                    reportList: [],
@@ -24079,12 +23973,20 @@
 	
 	                    var submitVm = avalon.define({
 	                        $id: 'submit-controller',
+	                        checkReportFlag: 0,
 	                        submit: function () {
 	                            cooperativeBankModule.submitReport(
 	                                mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 	                                $('#datetime-start').val(),
 	                                $('#datetime-end').val()
 	                            );
+	                        },
+	                        checkReport: function () {
+	                            if (document.getElementsByName("check-report")[0].checked) {
+	                                submitVm.checkReportFlag=1;
+	                            } else {
+	                                submitVm.checkReportFlag=0;
+	                            }
 	                        }
 	                    });
 	
@@ -24107,8 +24009,24 @@
 	                            }
 	                        }
 	                    }
+	                },
+	                getOKBankList: function () {
+	                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "浦发"];
+	                    var okBankList = [];
+	
+	                    var allBankList = pbcModule.getBankList();
+	
+	                    for (var i=0; i<allBankList.length; i++){
+	                        if (okBankNameList.indexOf(allBankList[i].bank_name)>=0){
+	                            okBankList.push(allBankList[i]);
+	                        }
+	                    }
+	
+	                    return okBankList;
 	                }
 	            });
+	
+	            mainVm.data.bankList = mainVm.getOKBankList();
 	
 	            mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
 	
@@ -24186,34 +24104,7 @@
 	            endDay = year+"-"+month+"-"+day;
 	        }
 	
-	        cooperativeBankService.getReportList(bankName, startDay, endDay);
-	
-	        return [
-	            {
-	                report_name: "表1-1",
-	                report_status: 1
-	            },
-	            {
-	                report_name: "表1-2",
-	                report_status: 0
-	            },
-	            {
-	                report_name: "表1-3",
-	                report_status: 1
-	            },
-	            {
-	                report_name: "表1-6",
-	                report_status: 0
-	            },
-	            {
-	                report_name: "表1-9",
-	                report_status: 1
-	            },
-	            {
-	                report_name: "表1-10",
-	                report_status: 0
-	            }
-	        ];
+	        return cooperativeBankService.getReportList(bankName, startDay, endDay);
 	    },
 	    generateReport: function(bankName, reportList){
 	        cooperativeBankService.generateReport(bankName, reportList);
