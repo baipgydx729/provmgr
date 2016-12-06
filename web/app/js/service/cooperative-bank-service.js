@@ -56,5 +56,23 @@ module.exports = {
                 commonModule.errorModal("接口错误！");
             }
         });
+    },
+    download: function(bankName, startDay, endDay, reportName){
+        $.ajax({
+            url: "/report/"+commonModule.getBankAbbreviation(bankName)
+                    +"/download?start_day="+startDay
+                    +"&end_day="+endDay
+                    +"&report_name="+reportName,
+            type: 'GET',
+            dataType: 'json',
+            success: function (response) {
+                if (response.code == 400) {
+                    commonModule.errorModal(data.message);
+                }
+            },
+            error: function () {
+                commonModule.errorModal("接口错误！");
+            }
+        });
     }
 }

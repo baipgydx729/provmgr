@@ -39,6 +39,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 import com.qdb.provmgr.report.PresetContent;
+import com.qdb.provmgr.report.ReportHelper;
 import com.qdb.provmgr.report.pbc.PbcExcelUtil;
 import com.qdb.provmgr.report.pbc.PbcReportHelper;
 import com.qdb.provmgr.service.FtpFileService;
@@ -132,7 +133,7 @@ public class PbcReportController {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             jsonObject = JSONObject.parseObject(jsonData);
-            reportType = (String) jsonObject.get("report_type");
+            reportType = String.valueOf(jsonObject.get("report_type"));
             startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse((String) jsonObject.get("start_day"))));
             endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse((String) jsonObject.get("end_day"))));
             reportListParam = (List<Map<String, String>>) jsonObject.get("report_list");
@@ -161,10 +162,11 @@ public class PbcReportController {
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
                 try {
+                    List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST);
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
                             pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, pbcReportHelper.getCompanyName()),
                             presetContent,
-                            getDataList(tableMode, startDate, endDate));
+                            ReportHelper.mergeAndSumByDate(dataList));
                     boolean uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), pbcReportHelper
                             .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate)) + tempFile.getName());
                     if (uploadResult) {
@@ -186,19 +188,16 @@ public class PbcReportController {
                 presetContent.setCheckUserName(pbcReportHelper.getCheckUserName());
                 presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
-
-                List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate);
-                if (CollectionUtils.isEmpty(dataList)) {
-                    resultMap.put("code", 400);
-                    resultMap.put("message", "请选择报表");
-                    return resultMap;
-                }
                 presetContent.setAuthCompanyName(pbcReportHelper.getCompanyName());
-                presetContent.setBankName(dataList.get(0).getBankName());
-                presetContent.setAccount(dataList.get(0).getAD());
-                presetContent.setAccountName(dataList.get(0).getName());
+                presetContent.setAccountId(map.get("account_id"));
+                presetContent.setBankName(map.get("bank_name"));
+                presetContent.setAccount(map.get("account_no"));
+                presetContent.setAccountName(map.get("account_name"));
                 presetContent.setLegalPerson(map.get("bank_name"));
 
+                List<Integer> ADIDs = new ArrayList<>();
+                ADIDs.add(Integer.valueOf(presetContent.getAccountId()));
+                List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
                 try {
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
                             pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode, pbcReportHelper
@@ -370,64 +369,64 @@ public class PbcReportController {
         return resultMap;
     }
 
-    public List<BaseReportEntity> getDataList(TableModeEnum tableMode, Date startDate, Date endDate) {
+    private List<BaseReportEntity> getDataList(TableModeEnum tableMode, Date startDate, Date endDate, List<Integer> ADIDs) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        List<BaseReportEntity> resultList = new ArrayList();
+        List<BaseReportEntity> resultList = new ArrayList<>();
         if (TableModeEnum.Table1_1.equals(tableMode) || TableModeEnum.Table1_1_2.equals(tableMode)) {
-            List<DataTable1_1> list = pbcReportService.<DataTable1_1>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_1> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_2.equals(tableMode) || TableModeEnum.Table1_2_1.equals(tableMode)) {
-            List<DataTable1_2_1> list = pbcReportService.<DataTable1_2_1>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_2_1> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_3.equals(tableMode)) {
-            List<DataTable1_3> list = pbcReportService.<DataTable1_3>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_3> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_4.equals(tableMode)) {
-            List<DataTable1_4> list = pbcReportService.<DataTable1_4>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_4> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_5.equals(tableMode)) {
-            List<DataTable1_5> list = pbcReportService.<DataTable1_5>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_5> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_6.equals(tableMode) || TableModeEnum.Table1_6_2.equals(tableMode)) {
-            List<DataTable1_6> list = pbcReportService.<DataTable1_6>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_6> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_9.equals(tableMode) || TableModeEnum.Table1_9_2.equals(tableMode)) {
-            List<DataTable1_9> list = pbcReportService.<DataTable1_9>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_9> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_10.equals(tableMode) || TableModeEnum.Table1_10_2.equals(tableMode)) {
-            List<DataTable1_10> list = pbcReportService.<DataTable1_10>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_10> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_11.equals(tableMode)) {
-            List<DataTable1_11> list = pbcReportService.<DataTable1_11>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_11> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_12.equals(tableMode)) {
-            List<DataTable1_12> list = pbcReportService.<DataTable1_12>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_12> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_13.equals(tableMode)) {
-            List<DataTable1_13> list = pbcReportService.<DataTable1_13>queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), null);
+            List<DataTable1_13> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+                    sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
-        return Collections.EMPTY_LIST;
+        return resultList;
     }
 }
