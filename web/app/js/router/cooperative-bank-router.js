@@ -112,6 +112,14 @@ module.exports = {
                     $('#modal').html(submitTemplate).modal({fadeDuration: 100});
                     avalon.scan(document.getElementById("modal").firstChild);
                 },
+                download: function (reportName) {
+                    cooperativeBankModule.download(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        $('#datetime-start').val(),
+                        $('#datetime-end').val(),
+                        reportName
+                    );
+                },
                 downloadAll: function () {
 
                 },

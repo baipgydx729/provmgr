@@ -23704,7 +23704,7 @@
 	            type: "POST",
 	            dataType: 'json',
 	            contentType: "application/json;charset=utf-8",
-	            data: reportList,
+	            data: JSON.stringify(reportList),
 	            success: function (data) {
 	                if (data.code == 200) {
 	                    commonModule.infoModal(data.message);
@@ -23995,6 +23995,14 @@
 	                    $('#modal').html(submitTemplate).modal({fadeDuration: 100});
 	                    avalon.scan(document.getElementById("modal").firstChild);
 	                },
+	                download: function (reportName) {
+	                    cooperativeBankModule.download(
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                        $('#datetime-start').val(),
+	                        $('#datetime-end').val(),
+	                        reportName
+	                    );
+	                },
 	                downloadAll: function () {
 	
 	                },
@@ -24111,6 +24119,9 @@
 	    },
 	    submitReport: function(bankName, startDay, endDay){
 	        cooperativeBankService.submitReport(bankName, startDay, endDay);
+	    },
+	    download: function (bankName, startDay, endDay, reportName) {
+	        cooperativeBankService.download(bankName, startDay, endDay, reportName);
 	    }
 	};
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
@@ -24177,6 +24188,24 @@
 	                commonModule.errorModal("接口错误！");
 	            }
 	        });
+	    },
+	    download: function(bankName, startDay, endDay, reportName){
+	        $.ajax({
+	            url: "/report/"+commonModule.getBankAbbreviation(bankName)
+	                    +"/download?start_day="+startDay
+	                    +"&end_day="+endDay
+	                    +"&report_name="+reportName,
+	            type: 'GET',
+	            dataType: 'json',
+	            success: function (response) {
+	                if (response.code == 400) {
+	                    commonModule.errorModal(data.message);
+	                }
+	            },
+	            error: function () {
+	                commonModule.errorModal("接口错误！");
+	            }
+	        });
 	    }
 	}
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
@@ -24185,7 +24214,7 @@
 /* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>时间区间</label>\r\n                <input id=\"datetime-start\" class=\"datetime-picker\" type=\"text\" readonly>\r\n                <hr class=\"datetime-separator\"/>\r\n                <input id=\"datetime-end\" class=\"datetime-picker\" type=\"text\" readonly>\r\n                <button ms-click=\"@submit()\">报送</button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <!--<div class=\"report-head-item\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_name}}\r\n                    </option>\r\n                </select>\r\n            </div>-->\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(18) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button>生成</button>\r\n                            <button>下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>时间区间</label>\r\n                <input id=\"datetime-start\" class=\"datetime-picker\" type=\"text\" readonly>\r\n                <hr class=\"datetime-separator\"/>\r\n                <input id=\"datetime-end\" class=\"datetime-picker\" type=\"text\" readonly>\r\n                <button ms-click=\"@submit()\">报送</button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <!--<div class=\"report-head-item\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_name}}\r\n                    </option>\r\n                </select>\r\n            </div>-->\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(18) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button>生成</button>\r\n                            <button ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }
 /******/ ]);
