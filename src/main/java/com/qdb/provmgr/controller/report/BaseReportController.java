@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.qdb.provmgr.controller.report.view.Account;
 import com.qdb.provmgr.controller.report.view.BankAccountView;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
-import com.qdb.provmgr.report.ReportExcelUtil;
 import com.qdb.provmgr.report.ReportHelper;
+import com.qdb.provmgr.report.pbc.PbcReportHelper;
 import com.qdb.provmgr.service.ReportService;
 
 /**
@@ -35,9 +35,9 @@ public class BaseReportController {
     @Autowired
     private ReportService reportService;
     @Autowired
-    private ReportHelper reportHelper;
+    private PbcReportHelper pbcReportHelper;
     @Autowired
-    private ReportExcelUtil reportExcelUtil;
+    private ReportHelper reportHelper;
 
     @RequestMapping(value = "bank-account")
     @ResponseBody
@@ -62,7 +62,7 @@ public class BaseReportController {
         List<BankAccountView> resultList = new ArrayList<>();
 
         //将数据按照银行分割成多个列表，每个列表表示一个银行的账户列表
-        List<List<BaseReportEntity>> splitData = reportExcelUtil.splitByBankName(dataList);
+        List<List<BaseReportEntity>> splitData = reportHelper.splitByBankName(dataList);
         for (List<BaseReportEntity> baseReportEntityList : splitData) {
             BankAccountView bankAccountView = new BankAccountView();
             bankAccountView.setBank_name(baseReportEntityList.get(0).getBankName());

@@ -9,14 +9,14 @@ import org.springframework.stereotype.Repository;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_10;
-import com.qdb.provmgr.report.ReportExcelUtil;
+import com.qdb.provmgr.report.ReportHelper;
 import com.qdb.provmgr.report.PresetContent;
 
 /**
  * @author mashengli
  */
 @Repository
-public class Excel1_10 extends ReportExcelUtil {
+public class ReportHelper extends ReportHelper {
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
