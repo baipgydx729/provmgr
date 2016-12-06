@@ -5,18 +5,15 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.springframework.stereotype.Repository;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_10;
-import com.qdb.provmgr.report.ReportHelper;
 import com.qdb.provmgr.report.PresetContent;
 
 /**
  * @author mashengli
  */
-@Repository
-public class ReportHelper extends ReportHelper {
+public class Excel1_10 {
     /**
      * 数据区域起始行数下标（下标从0开始）
      */

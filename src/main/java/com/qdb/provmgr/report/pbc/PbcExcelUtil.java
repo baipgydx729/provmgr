@@ -103,7 +103,7 @@ public class PbcExcelUtil {
             return;
         }
         if (TableModeEnum.Table1_10.equals(tableMode)) {
-            ReportHelper.writeData(sheet, presetContent, dataList);
+            Excel1_10.writeData(sheet, presetContent, dataList);
             return;
         }
         if (TableModeEnum.Table1_10_2.equals(tableMode)) {
