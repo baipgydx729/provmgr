@@ -49,6 +49,7 @@ import com.qdb.provmgr.service.ReportService;
 import com.qdb.provmgr.service.pbc.PbcReportService;
 import com.qdb.provmgr.util.DateUtils;
 import com.qdb.provmgr.util.FileUtil;
+import com.qdb.provmgr.util.HttpRequestUtil;
 
 /**
  * @author mashengli
@@ -312,7 +313,7 @@ public class PbcReportController {
             response.setHeader("Pragma", "private");
             response.setContentType("application/vnd.ms-excel;charset=UTF-8");
             response.setHeader("Content-Type", "application/force-download");
-            response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes(), "UTF-8"));
+            response.setHeader("Content-Disposition", "attachment;filename=" + HttpRequestUtil.getAttachFileName(request, fileName));
             ftpFileService.downloadFileFromFtp(ftpPath + fileName, response);
             resultMap.put("code", 200);
             resultMap.put("message", "SUCCESS");
@@ -341,7 +342,7 @@ public class PbcReportController {
             Date endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(startDateStr)));
             String ftpPath = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
             String fileName = pbcReportHelper.getPbcZipFileName(startDate, endDate, pbcReportHelper.getCompanyName());
-            ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, FILE_SUFFIX, response);
+            ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, FILE_SUFFIX);
         } catch (Exception e) {
             log.error("下载异常", e);
         }
