@@ -106,8 +106,8 @@ module.exports = {
                         reportList.report_list.push({
                             bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                             account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
-                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+                            account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+                            account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
                             report_name: mainVm.data.reportList[index].report_name
                         });
 					}
@@ -139,8 +139,8 @@ module.exports = {
                             reportList.report_list.push({
                                 bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                                 account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
-                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+                                account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+                                account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
                                 report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
                             });
                         }

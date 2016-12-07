@@ -2,7 +2,7 @@ var commonModule = require("../module/common-module");
 
 module.exports = {
     getReportList: function (bankName, startDay, endDay) {
-        var data = null;
+        var data = [];
         $.ajax({
             url: "/report/"+commonModule.getBankAbbreviation(bankName)+"/list?start_day="+startDay+"&end_day="+endDay,
             type: 'GET',
