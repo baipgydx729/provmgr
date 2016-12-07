@@ -46,15 +46,25 @@ module.exports = {
     submitReport: function(startDay, endDay){
         pbcService.submitReport(startDay, endDay);
     },
-    download: function (bankName, accountId, startDay, endDay, reportName) {
-        if (pbcService.downloadable(bankName, accountId, startDay, endDay, reportName)){
-            window.open(
-                "/report/pbc/download?bank_name="+bankName
-                +"&account_id="+accountId
-                +"&start_day="+startDay
-                +"&end_day="+endDay
-                +"&report_name="+reportName
-            );
+    download: function (reportType, bankName, accountId, startDay, endDay, reportName) {
+        if (pbcService.downloadable(reportType, bankName, accountId, startDay, endDay, reportName)){
+            if (reportType==0) {
+                window.open(
+                    "/report/pbc/download?report_type=" + reportType
+                    + "&start_day=" + startDay
+                    + "&end_day=" + endDay
+                    + "&report_name=" + reportName
+                );
+            } else {
+                window.open(
+                    "/report/pbc/download?report_type=" + reportType
+                    +"&bank_name=" + bankName
+                    + "&account_id=" + accountId
+                    + "&start_day=" + startDay
+                    + "&end_day=" + endDay
+                    + "&report_name=" + reportName
+                );
+            }
         }
     },
     downloadAll: function (startDay, endDay) {
