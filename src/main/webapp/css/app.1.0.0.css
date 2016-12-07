@@ -1455,5 +1455,7 @@ html, body {
                 border: none;
                 cursor: pointer;
                 color: #fff; }
+                .content .main-content .main-content-body .report-body table tbody tr td button:disabled {
+                  background-color: #999; }
 
 /*# sourceMappingURL=app.1.0.0.css.map*/

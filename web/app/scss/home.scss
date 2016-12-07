@@ -207,6 +207,10 @@
                                     border: none;
                                     cursor: pointer;
                                     color: #fff;
+
+                                    &:disabled {
+                                        background-color: #999;
+                                    }
                                 }
                             }
                         }

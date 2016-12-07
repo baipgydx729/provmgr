@@ -68,7 +68,8 @@
                         </td>
                         <td>
                             <button ms-click="@generate(index)">生成</button>
-                            <button ms-click="@download(report.report_name)">下载</button>
+                            <button ms-if="report.report_status==0" disabled>下载</button>
+                            <button ms-if="report.report_status==1" ms-click="@download(report.report_name)">下载</button>
                         </td>
                     </tr>
                 </tbody>
