@@ -41,13 +41,13 @@ public class ReportDao {
                 .append(" WHERE t1.natuDate >= ? and t1.natuDate <= ? ");
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
-        if (null != params.getIsTotalCount() && !params.getIsTotalCount()) {
-            SQL.append(" AND t1.ADID!=99999 ");
-        } else {
-            SQL.append(" AND t1.ADID=99999 ");
-        }
         if (!TableModeEnum.Table1_2.equals(tableMode)) {
             SQL.append(" and t1.ADID = t2.ADID and t2.isProvision=1 ");
+            if (null != params.getIsTotalCount() && !params.getIsTotalCount()) {
+                SQL.append(" AND t1.ADID!=99999 ");
+            } else {
+                SQL.append(" AND t1.ADID=99999 ");
+            }
         }
         if (null != params.getADID()) {
             SQL.append(" AND t1.ADID = ? ");

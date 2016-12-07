@@ -34,14 +34,13 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_10;
 import com.qdb.provmgr.dao.entity.report.DataTable1_11;
 import com.qdb.provmgr.dao.entity.report.DataTable1_12;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
-import com.qdb.provmgr.dao.entity.report.DataTable1_2_1;
+import com.qdb.provmgr.dao.entity.report.DataTable1_2;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
 import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.report.ReportHelper;
 import com.qdb.provmgr.report.pbc.PbcExcelUtil;
 import com.qdb.provmgr.report.pbc.PbcReportHelper;
 import com.qdb.provmgr.service.FtpFileService;
@@ -165,11 +164,10 @@ public class PbcReportController {
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
                 try {
-                    List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST);
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
                             pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, pbcReportHelper.getCompanyName()),
                             presetContent,
-                            ReportHelper.mergeAndSumByDate(dataList));
+                            getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
                     boolean uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), pbcReportHelper
                             .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate)) + tempFile.getName());
                     if (uploadResult) {
@@ -218,8 +216,13 @@ public class PbcReportController {
                 }
             }
         }
-        resultMap.put("code", 200);
-        resultMap.put("message", "共记" + total + "张报表，创建成功" + success + "张，创建失败" + (total - success) + "张");
+        if (success < total) {
+            resultMap.put("code", 400);
+            resultMap.put("message", "共记" + total + "张报表，创建成功" + success + "张，创建失败" + (total - success) + "张");
+        } else {
+            resultMap.put("code", 200);
+            resultMap.put("message", "成功生成" + total + "张报表");
+        }
         return resultMap;
     }
 
@@ -412,7 +415,7 @@ public class PbcReportController {
             resultList.addAll(list);
         }
         if (TableModeEnum.Table1_2.equals(tableMode) || TableModeEnum.Table1_2_1.equals(tableMode)) {
-            List<DataTable1_2_1> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
+            List<DataTable1_2> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }

@@ -5,7 +5,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_10;
 import com.qdb.provmgr.dao.entity.report.DataTable1_11;
 import com.qdb.provmgr.dao.entity.report.DataTable1_12;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
-import com.qdb.provmgr.dao.entity.report.DataTable1_2_1;
+import com.qdb.provmgr.dao.entity.report.DataTable1_2;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
 import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
@@ -26,11 +26,11 @@ public enum TableModeEnum {
             "表1_1_2"),
     Table1_2(ReportSQLConstant.TABLE1_2_NAME,
             ReportSQLConstant.TABLE1_2_COLUMNS,
-            DataTable1_2_1.class,
+            DataTable1_2.class,
             "表1_2"),
     Table1_2_1(ReportSQLConstant.TABLE1_2_1_NAME,
             ReportSQLConstant.TABLE1_2_1_COLUMNS,
-            DataTable1_2_1.class,
+            DataTable1_2.class,
             "表1_2_1"),
     Table1_3(ReportSQLConstant.TABLE1_3_NAME,
             ReportSQLConstant.TABLE1_3_COLUMNS,

@@ -16,7 +16,8 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_10;
 import com.qdb.provmgr.dao.entity.report.DataTable1_11;
 import com.qdb.provmgr.dao.entity.report.DataTable1_12;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
-import com.qdb.provmgr.dao.entity.report.DataTable1_2_1;
+import com.qdb.provmgr.dao.entity.report.DataTable1_2;
+import com.qdb.provmgr.dao.entity.report.DataTable1_3;
 import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
@@ -132,8 +133,11 @@ public class ReportHelper {
         if (data1 instanceof DataTable1_1) {
             return addData((DataTable1_1)data1, (DataTable1_1)data2);
         }
-        if (data1 instanceof DataTable1_2_1) {
-            return addData((DataTable1_2_1)data1, (DataTable1_2_1)data2);
+        if (data1 instanceof DataTable1_2) {
+            return addData((DataTable1_2)data1, (DataTable1_2)data2);
+        }
+        if (data1 instanceof DataTable1_3) {
+            return addData((DataTable1_3)data1, (DataTable1_3)data2);
         }
         if (data1 instanceof DataTable1_4) {
             return addData((DataTable1_4)data1, (DataTable1_4)data2);
@@ -206,7 +210,7 @@ public class ReportHelper {
      * @param data2
      * @return
      */
-    public static DataTable1_2_1 addData(DataTable1_2_1 data1, DataTable1_2_1 data2) {
+    public static DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -222,6 +226,23 @@ public class ReportHelper {
         data1.setB07(DecimalTool.add(data1.getB07(), data2.getB07()));
         data1.setB08(DecimalTool.add(data1.getB08(), data2.getB08()));
         data1.setB09(DecimalTool.add(data1.getB09(), data2.getB09()));
+        return data1;
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    public static DataTable1_3 addData(DataTable1_3 data1, DataTable1_3 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setC01(DecimalTool.add(data1.getC01(), data2.getC01()));
         return data1;
     }
 
