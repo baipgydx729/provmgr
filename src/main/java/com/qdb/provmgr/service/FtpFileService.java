@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.util.IOUtils;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.qdb.provmgr.util.FTPUtil;
 import com.qdb.provmgr.util.FileUtil;
+import com.qdb.provmgr.util.HttpRequestUtil;
 import com.qdb.provmgr.util.ZipUtil;
 
 /**
@@ -53,7 +55,7 @@ public class FtpFileService {
      * @param remotePath 远程文件全路径
      * @param response http请求
      */
-    public void downloadFileFromFtp(String remotePath, HttpServletResponse response) {
+    public void downloadFileFromFtp(String remotePath, HttpServletResponse response) throws Exception {
         FTPUtil.downloadFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, response);
     }
 
@@ -98,7 +100,7 @@ public class FtpFileService {
      * @param fileSuffix 包含的文件后缀名,可为空默认全部文件
      * @param response http请求
      */
-    public void downloadAndCompressFromFtp(String remoteDir, String targetFileName, String fileSuffix, HttpServletResponse response) {
+    public void downloadAndCompressFromFtp(HttpServletRequest request, HttpServletResponse response, String remoteDir, String targetFileName, String fileSuffix) throws IOException {
         if (!targetFileName.endsWith(ZipUtil.FILE_SUFFIX)) {
             targetFileName = targetFileName + ZipUtil.FILE_SUFFIX;
         }
@@ -109,11 +111,16 @@ public class FtpFileService {
             try {
                 fis = new FileInputStream(file);
                 response.reset();
+                // 设置response的编码方式
+                response.setHeader("Cache-Control", "private");
+                response.setHeader("Pragma", "private");
+                response.setHeader("Content-Type", "application/force-download");
                 response.setContentType("application/octet-stream");
-                response.setHeader("Content-Disposition","attachment; filename=" + targetFileName);
+                response.setHeader("Content-Disposition","attachment; filename=" + HttpRequestUtil.getAttachFileName(request, targetFileName));
                 IOUtils.copy(fis, response.getOutputStream());
+
             } catch (IOException e) {
-                e.printStackTrace();
+                throw e;
             } finally {
                 IOUtils.closeQuietly(fis);
             }

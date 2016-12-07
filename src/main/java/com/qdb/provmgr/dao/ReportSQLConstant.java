@@ -41,13 +41,7 @@ public interface ReportSQLConstant {
     public static final String TABLE1_13_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_13 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
     public static final String TABLE1_13_COLUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.N01 n01,t1.N02 n02,t1.N03 n03,t1.N04 n04,t1.N05 n05,t1.N06 n06 ";
 
-    public static final String ADINFO_PLACEHOLDER = " and t1.ADID = t2.ADID AND t2.isProvision = 1 ";
-
-    public static final String SQL_SELECT = " SELECT ";
-
-    public static final String SQL_WHERE = " WHERE t1.natuDate >= ? and t1.natuDate <= ? ";
-
-    public static final String SQL_FROM = " FROM ";
-
+    public static final String TABLE_ACCOUNT_INFO_NAME = "UacAutoCheck.ProvMgr.info_ADInfo t1 ";
+    public static final String TABLE_ACCOUNT_INFO_COLUMNS = " t1.bankName_S bankName,t1.ADID,t1.AD,t1.name,t1.branch,t1.currency,t1.accType,t1.accState,t1.isProvision,t1.isReport ";
 
 }

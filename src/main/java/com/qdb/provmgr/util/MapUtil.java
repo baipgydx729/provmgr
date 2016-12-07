@@ -4,133 +4,72 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.cglib.beans.BeanMap;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.map.HashedMap;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.qdb.provmgr.dao.entity.report.AccountInfoEntity;
 
 /**
  * @author mashengli
  */
 public class MapUtil {
-    /**
-     * 将一个 JavaBean 对象转化为一个  Map
-     *
-     * @param bean 要转化的JavaBean 对象
-     * @return 转化出来的  Map 对象
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static <T> Map convertFromBean(T bean) {
-        Class type = bean.getClass();
-        Map returnMap = new HashMap();
-        BeanInfo beanInfo;
-        try {
-            beanInfo = Introspector.getBeanInfo(type);
-            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor descriptor : propertyDescriptors) {
-                String propertyName = descriptor.getName();
-                if (!propertyName.equals("class")) {
-                    Method readMethod = descriptor.getReadMethod();
-                    Object result = readMethod.invoke(bean);
-                    if (result != null) {
-                        returnMap.put(propertyName, result);
-                    } else {
-                        returnMap.put(propertyName, "");
-                    }
-                }
-            }
-        } catch (Exception ignored) {
-        }
-        return returnMap;
-    }
 
     /**
-     * 将一个 Map 对象转化为一个 JavaBean
-     *
-     * @param type 要转化的类型
-     * @param map  包含属性值的 map
-     * @return 转化出来的 JavaBean 对象
+     * 将map转为object对象
+     * @param map map
+     * @param beanClass beanclass
+     * @return
+     * @throws Exception
      */
-    @SuppressWarnings("rawtypes")
-    public static Object convertToBean(Class type, Map map) {
-        BeanInfo beanInfo; // 获取类属性
-        Object obj = null;
-        try {
-            beanInfo = Introspector.getBeanInfo(type);
-            obj = type.newInstance(); // 创建 JavaBean 对象
-
-            // 给 JavaBean 对象的属性赋值
-            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor descriptor : propertyDescriptors) {
-                String propertyName = descriptor.getName();
-
-                if (map.containsKey(propertyName)) {
-                    Object value = map.get(propertyName);
-                    Object[] args = new Object[1];
-                    args[0] = value;
-                    descriptor.getWriteMethod().invoke(obj, args);
-                }
-            }
-        } catch (Exception ignored) {
+    public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass) throws Exception {
+        if (map == null || map.size() <= 0) {
+            return null;
         }
+        T obj = beanClass.newInstance();
+//        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass, Object.class);
+//        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+//        for (PropertyDescriptor property : propertyDescriptors) {
+//            Method setter = property.getWriteMethod();
+//            if (setter != null) {
+//                setter.invoke(obj, map.get(property.getName()));
+//            }
+//        }
+
+        BeanUtils.copyProperties(obj, map);
+//        PropertyUtils.copyProperties(obj, map);
+
         return obj;
     }
 
     /**
-     * 将一个 Map数组 对象转化为一个 JavaBean数组
-     *
-     * @param type    要转化的类型
-     * @param mapList 包含属性值的 map数组
-     * @return 转化出来的 JavaBean 对象数组
-     */
-    @SuppressWarnings("rawtypes")
-    public static List<Object> convertToBean(Class type, List<Map> mapList) {
-        if (type == null || CollectionUtils.isEmpty(mapList)) {
-            return Collections.EMPTY_LIST;
-        }
-        List<Object> result = new ArrayList<>();
-        for (Map map : mapList) {
-            result.add(convertToBean(type, map));
-        }
-        return result;
-    }
-
-
-    /**
-     * 将对象装换为map
-     *
-     * @param bean
+     * 将object转为map
+     * @param obj bean对象
      * @return
+     * @throws Exception
      */
-    public static <T> Map<String, Object> beanToMap(T bean) {
-        Map<String, Object> map = Maps.newHashMap();
-        if (bean != null) {
-            BeanMap beanMap = BeanMap.create(bean);
-            for (Object key : beanMap.keySet()) {
-                map.put(key + "", beanMap.get(key));
+    public static Map<String, Object> objectToMap(Object obj) throws Exception {
+        if (obj == null)
+            return null;
+
+        Map<String, Object> map = new HashMap<>();
+
+        BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass(), Object.class);
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        for (PropertyDescriptor property : propertyDescriptors) {
+            String key = property.getName();
+            if (key.compareToIgnoreCase("class") == 0) {
+                continue;
             }
+            Method getter = property.getReadMethod();
+            Object value = getter != null ? getter.invoke(obj) : null;
+            map.put(key, value);
         }
         return map;
-    }
-
-    /**
-     * 将map装换为javabean对象
-     *
-     * @param map
-     * @param bean
-     * @return
-     */
-    public static <T> T mapToBean(Map<String, Object> map, T bean) {
-        BeanMap beanMap = BeanMap.create(bean);
-        beanMap.putAll(map);
-        return bean;
     }
 
     /**
@@ -139,15 +78,12 @@ public class MapUtil {
      * @param objList
      * @return
      */
-    public static <T> List<Map<String, Object>> objectsToMaps(List<T> objList) {
+    public static List<Map<String, Object>> objectsToMaps(List<Object> objList) throws Exception {
         List<Map<String, Object>> list = Lists.newArrayList();
         if (objList != null && objList.size() > 0) {
             Map<String, Object> map = null;
-            T bean = null;
-            for (int i = 0, size = objList.size(); i < size; i++) {
-                bean = objList.get(i);
-                map = beanToMap(bean);
-                list.add(map);
+            for (Object obj : objList) {
+                list.add(objectToMap(obj));
             }
         }
         return list;
@@ -162,19 +98,36 @@ public class MapUtil {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static <T> List<T> mapsToObjects(List<Map<String, Object>> maps, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    public static <T> List<T> mapsToObjects(List<Map<String, Object>> maps, Class<T> clazz) throws
+            Exception {
         List<T> list = Lists.newArrayList();
         if (maps != null && maps.size() > 0) {
-            Map<String, Object> map = null;
-            T bean = null;
-            for (int i = 0, size = maps.size(); i < size; i++) {
-                map = maps.get(i);
-                bean = clazz.newInstance();
-                mapToBean(map, bean);
-                list.add(bean);
-                list.add((T) convertToBean(clazz, map));
+            for (Map<String, Object> map : maps) {
+                list.add(mapToObject(map, clazz));
             }
         }
         return list;
+    }
+
+    public static void main(String[] args) {
+        AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
+        accountInfoEntity.setAD("12");
+        accountInfoEntity.setADID(123);
+        accountInfoEntity.setBankName("中国银行");
+        accountInfoEntity.setIsProvision(true);
+        try {
+            Map map = objectToMap(accountInfoEntity);
+            System.out.println(map.values());
+
+            Map<String, Object> map2 = new HashedMap();
+            map2.put("AD", "123");
+            map2.put("ADID", 12);
+            map2.put("isProvision", true);
+            map2.put("accState", 1);
+            AccountInfoEntity accountInfoEntity2 = mapToObject(map2, AccountInfoEntity.class);
+            System.out.println(accountInfoEntity2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

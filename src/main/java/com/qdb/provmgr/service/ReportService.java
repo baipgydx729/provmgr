@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qdb.provmgr.dao.ReportDao;
+import com.qdb.provmgr.dao.entity.report.AccountInfoEntity;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.param.ReportParam;
 import com.qdb.provmgr.util.DateUtils;
@@ -41,6 +42,13 @@ public class ReportService {
         reportParam.setBankName(bankName);
         reportParam.setADIDs(ADIDs);
         return reportDao.queryForBankList(reportParam);
+    }
+
+    public AccountInfoEntity queryAccountById(Integer ADID) {
+        if (null == ADID) {
+            return null;
+        }
+        return reportDao.queryAccountById(ADID);
     }
 
 }

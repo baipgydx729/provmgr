@@ -70,7 +70,10 @@ public class PbcReportHelper {
      * @return
      */
     public String getPbcFtpDirCorp(String timeStr, String bankName, String AD) {
-        return PBC_REPORT_ROOT_PATH + timeStr + "/" + bankName + AD.substring(AD.length() - 6) + "/";
+        if (AD != null && AD.length() >= 6) {
+            return PBC_REPORT_ROOT_PATH + timeStr + "/" + bankName + AD.substring(AD.length() - 6) + "/";
+        }
+        return "";
     }
 
     /**
@@ -120,8 +123,11 @@ public class PbcReportHelper {
      * @return
      */
     public String getPbcFileNameCorp(Date startDate, Date endDate, TableModeEnum tableMode, String companyName, String bankName, String AD) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + "_" + bankName + AD.substring(AD.length() - 6) + ".xls";
+        if (AD != null && AD.length() >= 6) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + "_" + bankName + AD.substring(AD.length() - 6) + ".xls";
+        }
+        return "";
     }
 
     /**
