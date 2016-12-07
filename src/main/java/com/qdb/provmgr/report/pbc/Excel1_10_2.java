@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -47,13 +48,15 @@ public class Excel1_10_2 extends ReportHelper {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        for (int i = 0; i < size; i++) {
-            DataTable1_10 dataTable1_10 = (DataTable1_10)dataList.get(i);
-            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_10, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            for (int i = 0; i < size; i++) {
+                DataTable1_10 dataTable1_10 = (DataTable1_10) dataList.get(i);
+                for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                    BigDecimal value = getDoubleDataByColumnIndex(dataTable1_10, j);
+                    sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+                }
             }
         }
     }

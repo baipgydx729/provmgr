@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -48,13 +49,16 @@ public class Excel1_6 extends ReportHelper {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        for (int i = 0; i < size; i++) {
-            DataTable1_6 dataTable1_6 = (DataTable1_6) dataList.get(i);
-            for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
-                BigDecimal value = getDoubleDataByRowIndex(dataTable1_6, j);
-                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            for (int i = 0; i < size; i++) {
+                DataTable1_6 dataTable1_6 = (DataTable1_6) dataList.get(i);
+                for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
+                    BigDecimal value = getDoubleDataByRowIndex(dataTable1_6, j);
+                    sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
+
+                }
             }
         }
     }
@@ -75,7 +79,7 @@ public class Excel1_6 extends ReportHelper {
         sheet.getRow(5).createCell(1).setCellValue(presetContent.getAccountName());
         sheet.getRow(6).createCell(1).setCellValue(presetContent.getAccount());
         sheet.getRow(7).createCell(1).setCellValue(presetContent.getReportDate());
-        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(presetContent.getReportDate());
+        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(presetContent.getReportUserName());
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(presetContent.getCheckUserName());
     }
 
