@@ -180,13 +180,14 @@ module.exports = {
 					avalon.scan(document.getElementById("modal").firstChild);
 				},
                 download: function (reportName) {
-                    pbcModule.download(
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-                        $('#datetime-start').val(),
-                        $('#datetime-end').val(),
-                        reportName
-                    );
+					pbcModule.download(
+						mainVm.data.selectedReportTypeIndex,
+						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+						mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+						$('#datetime-start').val(),
+						$('#datetime-end').val(),
+						reportName
+					);
                 },
 				downloadAll: function () {
                     pbcModule.downloadAll(

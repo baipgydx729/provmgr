@@ -83,15 +83,27 @@ module.exports = {
             }
         });
     },
-    downloadable: function(bankName, accountId, startDay, endDay, reportName){
+    downloadable: function(reportType, bankName, accountId, startDay, endDay, reportName){
         var result = true;
 
+        var url = null;
+        if (reportType==0){
+            url = "/report/pbc/download?"
+                +"&report_type="+reportType
+                +"&start_day="+startDay
+                +"&end_day="+endDay
+                +"&report_name="+reportName;
+        } else {
+            url = "/report/pbc/download?report_type="+reportType
+                +"&bank_name="+bankName
+                +"&account_id="+accountId
+                +"&start_day="+startDay
+                +"&end_day="+endDay
+                +"&report_name="+reportName;
+        }
+
         $.ajax({
-            url: "/report/pbc/download?bank_name="+bankName
-                    +"&account_id="+accountId
-                    +"&start_day="+startDay
-                    +"&end_day="+endDay
-                    +"&report_name="+reportName,
+            url: url,
             type: 'GET',
             dataType: 'json',
             async: false,
