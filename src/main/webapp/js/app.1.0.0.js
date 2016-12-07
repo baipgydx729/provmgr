@@ -23549,13 +23549,14 @@
 						avalon.scan(document.getElementById("modal").firstChild);
 					},
 	                download: function (reportName) {
-	                    pbcModule.download(
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                        $('#datetime-start').val(),
-	                        $('#datetime-end').val(),
-	                        reportName
-	                    );
+						pbcModule.download(
+							mainVm.data.selectedReportTypeIndex,
+							mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+							mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+							$('#datetime-start').val(),
+							$('#datetime-end').val(),
+							reportName
+						);
 	                },
 					downloadAll: function () {
 	                    pbcModule.downloadAll(
@@ -23689,15 +23690,25 @@
 	    submitReport: function(startDay, endDay){
 	        pbcService.submitReport(startDay, endDay);
 	    },
-	    download: function (bankName, accountId, startDay, endDay, reportName) {
-	        if (pbcService.downloadable(bankName, accountId, startDay, endDay, reportName)){
-	            window.open(
-	                "/report/pbc/download?bank_name="+bankName
-	                +"&account_id="+accountId
-	                +"&start_day="+startDay
-	                +"&end_day="+endDay
-	                +"&report_name="+reportName
-	            );
+	    download: function (reportType, bankName, accountId, startDay, endDay, reportName) {
+	        if (pbcService.downloadable(reportType, bankName, accountId, startDay, endDay, reportName)){
+	            if (reportType==0) {
+	                window.open(
+	                    "/report/pbc/download?report_type=" + reportType
+	                    + "&start_day=" + startDay
+	                    + "&end_day=" + endDay
+	                    + "&report_name=" + reportName
+	                );
+	            } else {
+	                window.open(
+	                    "/report/pbc/download?report_type=" + reportType
+	                    +"&bank_name=" + bankName
+	                    + "&account_id=" + accountId
+	                    + "&start_day=" + startDay
+	                    + "&end_day=" + endDay
+	                    + "&report_name=" + reportName
+	                );
+	            }
 	        }
 	    },
 	    downloadAll: function (startDay, endDay) {
@@ -23801,15 +23812,27 @@
 	            }
 	        });
 	    },
-	    downloadable: function(bankName, accountId, startDay, endDay, reportName){
+	    downloadable: function(reportType, bankName, accountId, startDay, endDay, reportName){
 	        var result = true;
 	
+	        var url = null;
+	        if (reportType==0){
+	            url = "/report/pbc/download?"
+	                +"&report_type="+reportType
+	                +"&start_day="+startDay
+	                +"&end_day="+endDay
+	                +"&report_name="+reportName;
+	        } else {
+	            url = "/report/pbc/download?report_type="+reportType
+	                +"&bank_name="+bankName
+	                +"&account_id="+accountId
+	                +"&start_day="+startDay
+	                +"&end_day="+endDay
+	                +"&report_name="+reportName;
+	        }
+	
 	        $.ajax({
-	            url: "/report/pbc/download?bank_name="+bankName
-	                    +"&account_id="+accountId
-	                    +"&start_day="+startDay
-	                    +"&end_day="+endDay
-	                    +"&report_name="+reportName,
+	            url: url,
 	            type: 'GET',
 	            dataType: 'json',
 	            async: false,
