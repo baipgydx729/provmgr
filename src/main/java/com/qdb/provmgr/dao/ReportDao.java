@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.alibaba.dubbo.common.utils.StringUtils;
+import com.qdb.provmgr.dao.entity.report.AccountInfoEntity;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
+import com.qdb.provmgr.dao.param.AccountInfoParam;
 import com.qdb.provmgr.dao.param.ReportParam;
 import com.qdb.provmgr.util.MapUtil;
 
@@ -26,70 +28,6 @@ public class ReportDao {
     @Autowired
     private DBUtil dbUtil;
 
-    public <T> List<T> queryForList(TableModeEnum tableMode, String startDate, String endDate) {
-        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
-            log.info("起始日期不能为空");
-            return Collections.EMPTY_LIST;
-        }
-        Object[] params = new Object[]{startDate, endDate};
-        StringBuilder SQL = new StringBuilder();
-        SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
-                .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
-                .append(ReportSQLConstant.SQL_WHERE);
-        if (!TableModeEnum.Table1_2.equals(tableMode)) {
-            SQL.append(ReportSQLConstant.ADINFO_PLACEHOLDER);
-        }
-        try {
-            return MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), tableMode.getEntityClass());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public <T> List<T> queryForList(TableModeEnum tableMode, String startDate, String endDate, List<Integer> ADIDs) {
-        if (StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate)) {
-            log.info("起始日期不能为空");
-            return Collections.EMPTY_LIST;
-        }
-        List<T> result = new ArrayList<>();
-        Object[] params = null;
-        StringBuilder SQL = new StringBuilder();
-        SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
-                .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
-                .append(ReportSQLConstant.SQL_WHERE);
-        if (!TableModeEnum.Table1_2.equals(tableMode)) {
-            SQL.append(ReportSQLConstant.ADINFO_PLACEHOLDER);
-        }
-        if (CollectionUtils.isNotEmpty(ADIDs)) {
-            int size = ADIDs.size();
-            params = new Object[2 + size];
-            SQL.append(" AND t1.ADID IN (");
-            for (int i = 0; i < size; i++) {
-                if (i < size - 1) {
-                    SQL.append("?,");
-                } else {
-                    SQL.append("?)");
-                }
-                params[i + 2] = ADIDs.get(i);
-            }
-        } else {
-            params = new Object[2];
-        }
-        params[0] = startDate;
-        params[1] = endDate;
-        try {
-            result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), params), tableMode.getEntityClass());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public <T> List<T> queryForTableList(TableModeEnum tableMode, ReportParam params) {
         if (tableMode == null || params == null || StringUtils.isBlank(params.getStartNatuDate()) || StringUtils.isBlank(params.getEndNatuDate())) {
             log.warn("参数不全查询请求被拒绝");
@@ -98,18 +36,24 @@ public class ReportDao {
         List<T> result = new ArrayList<>();
         List<Object> sqlParams = new ArrayList<>();
         StringBuilder SQL = new StringBuilder();
-        SQL.append(ReportSQLConstant.SQL_SELECT).append(tableMode.getSqlColumns())
-                .append(ReportSQLConstant.SQL_FROM).append(tableMode.getSqlTableName())
-                .append(ReportSQLConstant.SQL_WHERE);
-        if (!TableModeEnum.Table1_2.equals(tableMode)) {
-            SQL.append(ReportSQLConstant.ADINFO_PLACEHOLDER);
-        }
+        SQL.append(" SELECT ").append(tableMode.getSqlColumns())
+                .append(" FROM ").append(tableMode.getSqlTableName())
+                .append(" WHERE t1.natuDate >= ? and t1.natuDate <= ? ");
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
+        if (null != params.getIsTotalCount() && !params.getIsTotalCount()) {
+            SQL.append(" AND t1.ADID!=99999 ");
+        } else {
+            SQL.append(" AND t1.ADID=99999 ");
+        }
+        if (!TableModeEnum.Table1_2.equals(tableMode)) {
+            SQL.append(" and t1.ADID = t2.ADID and t2.isProvision=1 ");
+        }
         if (null != params.getADID()) {
             SQL.append(" AND t1.ADID = ? ");
             sqlParams.add(params.getADID());
         }
+
         if (CollectionUtils.isNotEmpty(params.getADIDs())) {
             int size = params.getADIDs().size();
             SQL.append(" AND t1.ADID IN (");
@@ -129,9 +73,7 @@ public class ReportDao {
 
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), tableMode.getEntityClass());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -145,9 +87,9 @@ public class ReportDao {
         List<Object> sqlParams = new ArrayList<>();
         StringBuilder SQL = new StringBuilder();
         SQL.append(" SELECT DISTINCT t1.bankName_S bankName,t1.ADID,t1.AD, t1.name ")
-                .append(ReportSQLConstant.SQL_FROM)
+                .append(" FROM ")
                 .append(ReportSQLConstant.TABLE1_3_NAME)
-                .append(ReportSQLConstant.SQL_WHERE);
+                .append(" WHERE t1.ADID != 99999 AND t1.natuDate >= ? and t1.natuDate <= ? ");
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
         if (null != params.getADID()) {
@@ -172,11 +114,79 @@ public class ReportDao {
         }
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), BaseReportEntity.class);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 
+    public List<AccountInfoEntity> queryForAccountList(AccountInfoParam param) {
+        if (param == null) {
+            return Collections.EMPTY_LIST;
+        }
+        List<AccountInfoEntity> result = new ArrayList<>();
+        List<Object> sqlParams = new ArrayList<>();
+        StringBuilder SQL = new StringBuilder();
+        SQL.append(" SELECT ").append(ReportSQLConstant.TABLE_ACCOUNT_INFO_COLUMNS)
+                .append(" FROM ")
+                .append(ReportSQLConstant.TABLE_ACCOUNT_INFO_NAME);
+        StringBuilder sql2 = new StringBuilder();
+        if (null != param.getADID()) {
+            SQL.append(" WHERE t1.ADID=? ");
+            sqlParams.add(param.getADID());
+        } else {
+            if (null != param.getAD()) {
+                sql2.append(" and t1.AD=? ");
+                sqlParams.add(param.getAD());
+            }
+            if (null != param.getAccState()) {
+                sql2.append(" and t1.accState=? ");
+                sqlParams.add(param.getAccState());
+            }
+            if (null != param.getAccType()) {
+                sql2.append(" and t1.accType=? ");
+                sqlParams.add(param.getAccType());
+            }
+            if (null != param.getBankName()) {
+                sql2.append(" and t1.bankName_S=? ");
+                sqlParams.add(param.getBankName());
+            }
+            if (null != param.getIsProvision()) {
+                sql2.append(" and t1.isProvision=? ");
+                sqlParams.add(param.getIsProvision());
+            }
+            if (null != param.getIsReport()) {
+                sql2.append(" and t1.isReport=? ");
+                sqlParams.add(param.getIsReport());
+            }
+            if (sql2.length() > 0) {
+                sql2.substring(4);
+            }
+            SQL.append(" WHERE ").append(sql2);
+        }
+        try {
+            result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), AccountInfoEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public AccountInfoEntity queryAccountById(Integer ADID) {
+        if (ADID == null) {
+            return null;
+        }
+        StringBuilder SQL = new StringBuilder();
+        SQL.append(" SELECT ").append(ReportSQLConstant.TABLE_ACCOUNT_INFO_COLUMNS)
+                .append(" FROM ")
+                .append(ReportSQLConstant.TABLE_ACCOUNT_INFO_NAME)
+                .append(" WHERE t1.ADID=? ");
+        try {
+            return MapUtil.mapToObject(dbUtil.query(SQL.toString(), new Object[]{ADID}), AccountInfoEntity.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

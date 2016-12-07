@@ -381,6 +381,7 @@ public class FTPUtil {
             for (FTPFile ftpFile : files) {
                 String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
                 if (ftpFileName.equals(remoteFileName)) {
+
                     os = response.getOutputStream();
                     ftp.retrieveFile(ftpFileName, os);
                     os.flush();

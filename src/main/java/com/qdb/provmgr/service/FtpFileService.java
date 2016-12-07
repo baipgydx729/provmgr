@@ -109,6 +109,10 @@ public class FtpFileService {
             try {
                 fis = new FileInputStream(file);
                 response.reset();
+                // 设置response的编码方式
+                response.setHeader("Cache-Control", "private");
+                response.setHeader("Pragma", "private");
+                response.setHeader("Content-Type", "application/force-download");
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-Disposition","attachment; filename=" + targetFileName);
                 IOUtils.copy(fis, response.getOutputStream());
