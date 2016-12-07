@@ -34,6 +34,10 @@ public class PresetContent {
      */
     private String account;
     /**
+     * 备付金账户id
+     */
+    private String accountId;
+    /**
      * 填报日期，格式yyyyMMdd
      */
     private String reportDate;
@@ -126,5 +130,13 @@ public class PresetContent {
 
     public void setCheckUserName(String checkUserName) {
         this.checkUserName = checkUserName;
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 }

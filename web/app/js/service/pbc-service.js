@@ -2,7 +2,7 @@ var commonModule = require("../module/common-module");
 
 module.exports = {
     getBankList: function (startDay, endDay) {
-        var data = null;
+        var data = [];
         $.ajax({
             url: "/report/bank-account?start_day="+startDay+"&end_day="+endDay,
             type: 'GET',
@@ -28,7 +28,7 @@ module.exports = {
             parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
         }
 
-        var data = null;
+        var data = [];
         $.ajax({
             url: "/report/pbc/list?"+parameterList,
             type: 'GET',
@@ -52,7 +52,7 @@ module.exports = {
             type: "POST",
             dataType: 'json',
             contentType: "application/json;charset=utf-8",
-            data: reportList,
+            data: JSON.stringify(reportList),
             success: function (data) {
                 if (data.code == 200) {
                     commonModule.infoModal(data.message);
@@ -82,5 +82,51 @@ module.exports = {
                 commonModule.errorModal("接口错误！");
             }
         });
+    },
+    downloadable: function(bankName, accountId, startDay, endDay, reportName){
+        var result = true;
+
+        $.ajax({
+            url: "/report/pbc/download?bank_name="+bankName
+                    +"&account_id="+accountId
+                    +"&start_day="+startDay
+                    +"&end_day="+endDay
+                    +"&report_name="+reportName,
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            timeout : 5000,
+            success: function (response) {
+                if (response.code == 400) {
+                    commonModule.errorModal(response.message);
+
+                    result=false;
+                }
+            }
+        });
+
+        return result;
+    },
+    downloadableAll: function(startDay, endDay){
+        var result = true;
+
+        $.ajax({
+            url: "/report/pbc/download-all?"
+            +"&start_day="+startDay
+            +"&end_day="+endDay,
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            timeout : 5000,
+            success: function (response) {
+                if (response.code == 400) {
+                    commonModule.errorModal(response.message);
+
+                    result=false;
+                }
+            }
+        });
+
+        return result;
     }
 }

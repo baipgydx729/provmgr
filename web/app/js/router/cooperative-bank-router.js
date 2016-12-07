@@ -21,7 +21,6 @@ module.exports = {
                 },
                 selectBank: function () {
                     mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
-
                     mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
                 },
                 selectAccount: function () {
@@ -52,6 +51,22 @@ module.exports = {
                             mainVm.data.checkedReportIndexList.push(i);
                         }
                     }
+                },
+                generate: function (index) {
+                    var reportList={
+                        start_day: $('#datetime-start').val(),
+                        end_day: $('#datetime-end').val(),
+                        report_list: []
+                    };
+
+                    reportList.report_list.push({
+                        report_name: mainVm.data.reportList[index].report_name
+                    });
+
+                    cooperativeBankModule.generateReport(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        reportList
+                    );
                 },
                 batchGenerate: function () {
                     if (mainVm.data.checkedReportIndexList.length==0){
@@ -112,8 +127,20 @@ module.exports = {
                     $('#modal').html(submitTemplate).modal({fadeDuration: 100});
                     avalon.scan(document.getElementById("modal").firstChild);
                 },
+                download: function (reportName) {
+                    cooperativeBankModule.download(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        $('#datetime-start').val(),
+                        $('#datetime-end').val(),
+                        reportName
+                    );
+                },
                 downloadAll: function () {
-
+                    cooperativeBankModule.downloadAll(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        $('#datetime-start').val(),
+                        $('#datetime-end').val()
+                    );
                 },
                 filter: function () {
                     //此处需要调用接口重新获取列表
@@ -128,7 +155,7 @@ module.exports = {
                     }
                 },
                 getOKBankList: function () {
-                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "浦发"];
+                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "上海浦东发展银行"];
                     var okBankList = [];
 
                     var allBankList = pbcModule.getBankList();
@@ -144,7 +171,6 @@ module.exports = {
             });
 
             mainVm.data.bankList = mainVm.getOKBankList();
-
             mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
 
             mainVm.$watch('onReady', function(){
@@ -159,6 +185,7 @@ module.exports = {
                 $('#datetime-start').datetimepicker({
                     timepicker:false,
                     format:'Y-m-d',
+                    maxDate:'+1970/01/01',
                     onShow:function(){
                         this.setOptions({
                             maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'

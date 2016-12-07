@@ -18,7 +18,7 @@
                 <input id="datetime-start" class="datetime-picker" type="text" readonly>
                 <hr class="datetime-separator"/>
                 <input id="datetime-end" class="datetime-picker" type="text" readonly>
-                <button ms-click="@submit()">报送</button>
+                <button ms-click="@submit()" ms-if="@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'">报送</button>
                 <button ms-click="@downloadAll()">下载全部</button>
             </div>
 
@@ -67,8 +67,8 @@
                             <img class="icon" src="../image/round_close_fill.png">未生成
                         </td>
                         <td>
-                            <button>生成</button>
-                            <button>下载</button>
+                            <button ms-click="@generate(index)">生成</button>
+                            <button ms-click="@download(report.report_name)">下载</button>
                         </td>
                     </tr>
                 </tbody>

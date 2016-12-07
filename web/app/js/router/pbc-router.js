@@ -90,6 +90,30 @@ module.exports = {
 
 					console.log(mainVm.data.checkedReportIndexList);
 				},
+                generate: function (index) {
+                    var reportList={
+                        start_day: $('#datetime-start').val(),
+                        end_day: $('#datetime-end').val(),
+                        report_type: mainVm.data.selectedReportTypeIndex,
+                        report_list: []
+                    };
+
+                    if (mainVm.data.selectedReportTypeIndex==0){
+						reportList.report_list.push({
+							report_name: mainVm.data.reportList[index].report_name
+						});
+                    } else {
+                        reportList.report_list.push({
+                            bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                            account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+                            account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+                            report_name: mainVm.data.reportList[index].report_name
+                        });
+					}
+
+                    pbcModule.generateReport(reportList);
+                },
 				batchGenerate: function () {
 					if (mainVm.data.checkedReportIndexList.length==0){
                         commonModule.errorModal("请选择您要生成的报表!");
@@ -100,16 +124,26 @@ module.exports = {
 					var reportList={
                         start_day: $('#datetime-start').val(),
                         end_day: $('#datetime-end').val(),
+                        report_type: mainVm.data.selectedReportTypeIndex,
                         report_list: []
 					};
 
-					for (var i=0; i<mainVm.data.checkedReportIndexList.length; i++){
-                        reportList.report_list.push({
-                            bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-                            report_type: mainVm.data.selectedReportTypeIndex,
-                            report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
-                        });
+                    if (mainVm.data.selectedReportTypeIndex==0) {
+                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
+                            reportList.report_list.push({
+                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+                            });
+                        }
+                    } else {
+                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
+                            reportList.report_list.push({
+                                bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                                account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+                                account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+                            });
+                        }
 					}
 
                     pbcModule.generateReport(reportList);
@@ -145,8 +179,20 @@ module.exports = {
 					$('#modal').html(submitTemplate).modal({fadeDuration: 100});
 					avalon.scan(document.getElementById("modal").firstChild);
 				},
+                download: function (reportName) {
+                    pbcModule.download(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                        $('#datetime-start').val(),
+                        $('#datetime-end').val(),
+                        reportName
+                    );
+                },
 				downloadAll: function () {
-
+                    pbcModule.downloadAll(
+                        $('#datetime-start').val(),
+                        $('#datetime-end').val()
+                    );
 				},
 				filter: function () {
 					//此处需要调用接口重新获取列表

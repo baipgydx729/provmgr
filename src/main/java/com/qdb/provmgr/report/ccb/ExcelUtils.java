@@ -172,7 +172,7 @@ public class ExcelUtils {
      * @throws InvalidFormatException
      * @throws IOException
      */
-    public static void download(HttpServletRequest request, HttpServletResponse response, String filePath, String destFileName) throws InvalidFormatException, IOException {
+    public static void downloadZip(HttpServletRequest request, HttpServletResponse response, String filePath, String destFileName) throws InvalidFormatException, IOException {
         InputStream is = null;
         OutputStream os = null;
         try {

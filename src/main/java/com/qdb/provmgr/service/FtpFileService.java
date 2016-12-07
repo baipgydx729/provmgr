@@ -9,13 +9,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.qdb.provmgr.util.FTPUtil;
 import com.qdb.provmgr.util.FileUtil;
 import com.qdb.provmgr.util.ZipUtil;
@@ -53,8 +53,23 @@ public class FtpFileService {
      * @param remotePath 远程文件全路径
      * @param response http请求
      */
-    public void downloadFileFromFtp(String remotePath, HttpServletResponse response) {
+    public void downloadFileFromFtp(String remotePath, HttpServletResponse response) throws Exception {
         FTPUtil.downloadFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, response);
+    }
+
+    /**
+     * 将文件下载至本地路径
+     * @param remotePath 远程文件路径
+     * @param localPath 本地路径
+     * @param fileSuffix 指定要下载的文件后缀，可为空默认所有文件
+     * @return
+     */
+    public boolean retriveFile(String remotePath, String localPath, String fileSuffix) {
+        if (StringUtils.isBlank(remotePath) || StringUtils.isBlank(localPath)) {
+            log.info("路径为空，下载失败");
+            return false;
+        }
+        return FTPUtil.retrieveFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, localPath, fileSuffix);
     }
 
     /**
@@ -66,7 +81,7 @@ public class FtpFileService {
      */
     public boolean retrieveAndCompressFromFtp(String remoteDir, String targetZipFilePath, String fileSuffix) {
         String tempDir = FileUtil.getTempPath();
-        boolean result = FTPUtil.retrieveDir(ftp_ip, ftp_port, ftp_user, ftp_pwd, remoteDir, tempDir, fileSuffix);
+        boolean result = FTPUtil.retrieveFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remoteDir, tempDir, fileSuffix);
         if (!result) {
             log.error("下载文件异常！请重新下载");
             return false;
@@ -83,7 +98,7 @@ public class FtpFileService {
      * @param fileSuffix 包含的文件后缀名,可为空默认全部文件
      * @param response http请求
      */
-    public void downloadAndCompressFromFtp(String remoteDir, String targetFileName, String fileSuffix, HttpServletResponse response) {
+    public void downloadAndCompressFromFtp(String remoteDir, String targetFileName, String fileSuffix, HttpServletResponse response) throws IOException {
         if (!targetFileName.endsWith(ZipUtil.FILE_SUFFIX)) {
             targetFileName = targetFileName + ZipUtil.FILE_SUFFIX;
         }
@@ -94,11 +109,16 @@ public class FtpFileService {
             try {
                 fis = new FileInputStream(file);
                 response.reset();
+                // 设置response的编码方式
+                response.setHeader("Cache-Control", "private");
+                response.setHeader("Pragma", "private");
+                response.setHeader("Content-Type", "application/force-download");
                 response.setContentType("application/octet-stream");
-                response.setHeader("Content-Disposition","attachment; filename=" + targetFileName);
+                response.setHeader("Content-Disposition","attachment; filename=" + new String(targetFileName.getBytes(), "UTF-8"));
                 IOUtils.copy(fis, response.getOutputStream());
+
             } catch (IOException e) {
-                e.printStackTrace();
+                throw e;
             } finally {
                 IOUtils.closeQuietly(fis);
             }
@@ -116,36 +136,25 @@ public class FtpFileService {
             return new String[][]{};
         }
         String[][] result = null;
-        FTPClient ftpClient = null;
-        try {
-            ftpClient = FTPUtil.login(ftp_ip, ftp_port, ftp_user, ftp_pwd);
-            if (ftpClient == null || !ftpClient.isConnected()) {
-                log.error("ftp登录失败");
-                throw new IOException("登录失败");
-            }
-            result = new String[fileNames.length][3];
-            String[] listNames = ftpClient.listNames(dir);
-            if (listNames == null || listNames.length == 0) {
-                log.info("目录为空");
-                return result;
-            }
-            List<String> names = Arrays.asList(listNames);
-            if (names.size() <= 0) {
-                return result;
-            }
-            for (int i = 0; i < fileNames.length; i++) {
-                result[i][0] = fileNames[i];
-                if (containsValue(names, fileNames[i])) {
-                    result[i][1] = "1";
-                } else {
-                    result[i][1] = "0";
-                }
-            }
+        result = new String[fileNames.length][2];
+        for (int i = 0; i < fileNames.length; i++) {
+            result[i][0] = fileNames[i];
+            result[i][1] = "0";
+        }
+        String[] listNames = FTPUtil.listNames(ftp_ip, ftp_port, ftp_user, ftp_pwd, dir);
+        if (listNames == null || listNames.length == 0) {
+            log.info("目录为空");
             return result;
-        } catch (IOException e) {
-            log.error("登录异常", e);
-        } finally {
-            FTPUtil.close(ftpClient);
+        }
+        List<String> names = Arrays.asList(listNames);
+        if (names.size() <= 0) {
+            return result;
+        }
+        for (int i = 0; i < fileNames.length; i++) {
+            result[i][0] = fileNames[i];
+            if (containsValue(names, fileNames[i])) {
+                result[i][1] = "1";
+            }
         }
         return result;
     }

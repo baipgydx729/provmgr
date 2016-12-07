@@ -11,6 +11,10 @@ public class ReportParam {
     private Integer ADID;
     private List<Integer> ADIDs;
     private String bankName;
+    /**
+     * 是否查询汇总数据，默认不查询汇总
+     */
+    private Boolean isTotalCount = false;
 
     public String getStartNatuDate() {
         return startNatuDate;
@@ -52,4 +56,11 @@ public class ReportParam {
         this.bankName = bankName;
     }
 
+    public Boolean getIsTotalCount() {
+        return isTotalCount;
+    }
+
+    public void setIsTotalCount(Boolean isTotalCount) {
+        this.isTotalCount = isTotalCount;
+    }
 }

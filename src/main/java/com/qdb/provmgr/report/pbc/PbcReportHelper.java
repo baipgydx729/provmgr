@@ -18,6 +18,7 @@ public class PbcReportHelper {
 
     static final String PBC_REPORT_ROOT_PATH = "/备付金报表/中国人民银行/";
 
+//    private String ROOT_PATH = "/Users/mashengli/Desktop/workspace/provmgr/src/main/webapp/WEB-INF/";
     private String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("/").getPath() + "../";
 
     @Value("${report.company.name}")
@@ -26,6 +27,8 @@ public class PbcReportHelper {
     private String reportUserName;
     @Value("${report.checktable.name}")
     private String checkUserName;
+    @Value("${excel.template.path}")
+    private String excelTemplateDir;
 
     public String getCompanyName() {
         return companyName;
@@ -51,6 +54,14 @@ public class PbcReportHelper {
         this.checkUserName = checkUserName;
     }
 
+    public void setExcelTemplateDir(String excelTemplateDir) {
+        this.excelTemplateDir = excelTemplateDir;
+    }
+
+    public String getExcelTemplateDir() {
+        return excelTemplateDir;
+    }
+
     /**
      * 获取上报人行的合作行报表文件夹
      * @param timeStr 时间串格式为yyyyMM
@@ -59,7 +70,10 @@ public class PbcReportHelper {
      * @return
      */
     public String getPbcFtpDirCorp(String timeStr, String bankName, String AD) {
-        return PBC_REPORT_ROOT_PATH + timeStr + "/" + bankName + AD.substring(AD.length() - 6) + "/";
+        if (AD != null && AD.length() >= 6) {
+            return PBC_REPORT_ROOT_PATH + timeStr + "/" + bankName + AD.substring(AD.length() - 6) + "/";
+        }
+        return "";
     }
 
     /**
@@ -109,8 +123,11 @@ public class PbcReportHelper {
      * @return
      */
     public String getPbcFileNameCorp(Date startDate, Date endDate, TableModeEnum tableMode, String companyName, String bankName, String AD) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + "_" + bankName + AD.substring(AD.length() - 6) + ".xls";
+        if (AD != null && AD.length() >= 6) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            return simpleDateFormat.format(startDate) + "_" + simpleDateFormat.format(endDate) + tableMode.getTableName() + companyName + "_" + bankName + AD.substring(AD.length() - 6) + ".xls";
+        }
+        return "";
     }
 
     /**
@@ -151,52 +168,52 @@ public class PbcReportHelper {
 
     public String getPbcTemplateFile(TableModeEnum tableModeEnum) {
         if (TableModeEnum.Table1_1.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/template_1_1.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_1.xls";
         }
         if (TableModeEnum.Table1_1_2.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/template_1_1_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_1_2.xls";
         }
         if (TableModeEnum.Table1_2.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/template_1_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_2.xls";
         }
         if (TableModeEnum.Table1_2_1.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/template_1_2_1.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_2_1.xls";
         }
         if (TableModeEnum.Table1_3.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_3.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_3.xls";
         }
         if (TableModeEnum.Table1_4.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_4.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_4.xls";
         }
         if (TableModeEnum.Table1_5.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_5.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_5.xls";
         }
         if (TableModeEnum.Table1_6.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_6.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_6.xls";
         }
         if (TableModeEnum.Table1_6_2.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_6_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_6_2.xls";
         }
         if (TableModeEnum.Table1_9.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_9.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_9.xls";
         }
         if (TableModeEnum.Table1_9_2.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_9_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_9_2.xls";
         }
         if (TableModeEnum.Table1_10.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_10.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_10.xls";
         }
         if (TableModeEnum.Table1_10_2.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_10_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_10_2.xls";
         }
         if (TableModeEnum.Table1_11.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_11.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_11.xls";
         }
         if (TableModeEnum.Table1_12.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_12.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_12.xls";
         }
         if (TableModeEnum.Table1_13.equals(tableModeEnum)) {
-            return ROOT_PATH + "excelTemplate/pbc/_1_13.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/_1_13.xls";
         }
         return "";
     }

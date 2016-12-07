@@ -2,7 +2,7 @@ var commonModule = require("../module/common-module");
 
 module.exports = {
     getReportList: function (bankName, startDay, endDay) {
-        var data = null;
+        var data = [];
         $.ajax({
             url: "/report/"+commonModule.getBankAbbreviation(bankName)+"/list?start_day="+startDay+"&end_day="+endDay,
             type: 'GET',
@@ -56,5 +56,50 @@ module.exports = {
                 commonModule.errorModal("接口错误！");
             }
         });
+    },
+    downloadable: function(bankName, startDay, endDay, reportName){
+        var result = true;
+
+        $.ajax({
+            url: "/report/"+commonModule.getBankAbbreviation(bankName)
+                    +"/download?start_day="+startDay
+                    +"&end_day="+endDay
+                    +"&report_name="+reportName,
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            timeout : 5000,
+            success: function (response) {
+                if (response.code == 400) {
+                    commonModule.errorModal(response.message);
+
+                    result=false;
+                }
+            }
+        });
+
+        return result;
+    },
+    downloadableAll: function(bankName, startDay, endDay){
+        var result = true;
+
+        $.ajax({
+            url: "/report/"+commonModule.getBankAbbreviation(bankName)
+                    +"/download-all?start_day="+startDay
+                    +"&end_day="+endDay,
+            type: 'GET',
+            dataType: 'json',
+            async: false,
+            timeout : 5000,
+            success: function (response) {
+                if (response.code == 400) {
+                    commonModule.errorModal(response.message);
+
+                    result=false;
+                }
+            }
+        });
+
+        return result;
     }
 }
