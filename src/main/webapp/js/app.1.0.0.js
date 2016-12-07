@@ -23475,8 +23475,8 @@
 	                        reportList.report_list.push({
 	                            bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 	                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
-	                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+	                            account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+	                            account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
 	                            report_name: mainVm.data.reportList[index].report_name
 	                        });
 						}
@@ -23508,8 +23508,8 @@
 	                            reportList.report_list.push({
 	                                bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 	                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
-	                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+	                                account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+	                                account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
 	                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
 	                            });
 	                        }
@@ -23720,7 +23720,7 @@
 	
 	module.exports = {
 	    getBankList: function (startDay, endDay) {
-	        var data = null;
+	        var data = [];
 	        $.ajax({
 	            url: "/report/bank-account?start_day="+startDay+"&end_day="+endDay,
 	            type: 'GET',
@@ -23746,7 +23746,7 @@
 	            parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
 	        }
 	
-	        var data = null;
+	        var data = [];
 	        $.ajax({
 	            url: "/report/pbc/list?"+parameterList,
 	            type: 'GET',
@@ -23889,11 +23889,10 @@
 	    },
 		getBankAbbreviation: function (bankName) {
 			var bankList = [
-				{name: "中国人民银行", abbreviation: "pbc"},
 	            {name: "中国建设银行", abbreviation: "ccb"},
 	            {name: "平安银行", abbreviation: "pab"},
 	            {name: "江苏银行", abbreviation: "bojs"},
-	            {name: "浦发银行", abbreviation: "spdb"}
+	            {name: "上海浦东发展银行", abbreviation: "spdb"}
 			];
 	
 			for (var i=0; i<bankList.length; i++){
@@ -24016,7 +24015,6 @@
 	                },
 	                selectBank: function () {
 	                    mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
-	
 	                    mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
 	                },
 	                selectAccount: function () {
@@ -24287,7 +24285,7 @@
 	
 	module.exports = {
 	    getReportList: function (bankName, startDay, endDay) {
-	        var data = null;
+	        var data = [];
 	        $.ajax({
 	            url: "/report/"+commonModule.getBankAbbreviation(bankName)+"/list?start_day="+startDay+"&end_day="+endDay,
 	            type: 'GET',

@@ -2,7 +2,7 @@ var commonModule = require("../module/common-module");
 
 module.exports = {
     getBankList: function (startDay, endDay) {
-        var data = null;
+        var data = [];
         $.ajax({
             url: "/report/bank-account?start_day="+startDay+"&end_day="+endDay,
             type: 'GET',
@@ -28,7 +28,7 @@ module.exports = {
             parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
         }
 
-        var data = null;
+        var data = [];
         $.ajax({
             url: "/report/pbc/list?"+parameterList,
             type: 'GET',

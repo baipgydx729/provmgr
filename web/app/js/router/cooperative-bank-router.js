@@ -21,7 +21,6 @@ module.exports = {
                 },
                 selectBank: function () {
                     mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
-
                     mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
                 },
                 selectAccount: function () {
