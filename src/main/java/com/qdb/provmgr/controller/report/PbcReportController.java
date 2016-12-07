@@ -269,53 +269,59 @@ public class PbcReportController {
     public Map download(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashedMap();
         String startDateStr = request.getParameter("start_day");
-        String endDateStr = request.getParameter("end_day");
         String reportType = request.getParameter("report_type");
+        String reportName = request.getParameter("report_name");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = null;
-        Date endDate = null;
-        try {
-            startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
-            endDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(endDateStr)));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        TableModeEnum tableModeEnum = TableModeEnum.getEnumByTableName(request.getParameter("report_name"));
-        if (tableModeEnum == null) {
+        if (StringUtils.isBlank(startDateStr) || StringUtils.isBlank(reportType) || StringUtils.isBlank(reportName)) {
             resultMap.put("code", 400);
-            resultMap.put("message", "请选择报表");
+            resultMap.put("message", "参数不全");
             return resultMap;
         }
-        String ftpPath;
-        String fileName;
-        if ("0".equals(reportType)) {
-            ftpPath = pbcReportHelper.getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate));
-            fileName = pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableModeEnum, pbcReportHelper.getCompanyName());
-        } else {
-            try {
-                AccountInfoEntity accountInfoEntity = reportService.queryAccountById(Integer.valueOf(request.getParameter("account_id")));
-                ftpPath = pbcReportHelper.getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate),
-                        accountInfoEntity.getBankName(), accountInfoEntity.getAD());
-                fileName = pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableModeEnum,
-                        pbcReportHelper.getCompanyName(), accountInfoEntity.getBankName(), accountInfoEntity.getAD());
-            } catch (Exception e) {
+        try {
+            Date startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
+            Date endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(startDateStr)));
+            TableModeEnum tableModeEnum = TableModeEnum.getEnumByTableName(reportName);
+            if (tableModeEnum == null) {
                 resultMap.put("code", 400);
                 resultMap.put("message", "请选择报表");
                 return resultMap;
             }
+            String ftpPath = null;
+            String fileName = null;
+            if ("0".equals(reportType)) {
+                ftpPath = pbcReportHelper.getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate));
+                fileName = pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableModeEnum, pbcReportHelper.getCompanyName());
+            } else {
+                String ADID = request.getParameter("account_id");
+                if (!StringUtils.isBlank(ADID) && StringUtils.isNumeric(ADID)) {
+                    AccountInfoEntity accountInfoEntity = reportService.queryAccountById(Integer.valueOf(ADID));
+                    ftpPath = pbcReportHelper.getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate),
+                            accountInfoEntity.getBankName(), accountInfoEntity.getAD());
+                    fileName = pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableModeEnum,
+                            pbcReportHelper.getCompanyName(), accountInfoEntity.getBankName(), accountInfoEntity.getAD());
+                }
+            }
+            if (StringUtils.isBlank(fileName) || !ftpFileService.isFileExists(ftpPath, fileName)) {
+                resultMap.put("code", 400);
+                resultMap.put("message", "文件不存在");
+                return resultMap;
+            }
+            // 设置response
+            response.reset();
+            response.setHeader("Cache-Control", "private");
+            response.setHeader("Pragma", "private");
+            response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+            response.setHeader("Content-Type", "application/force-download");
+            response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes(), "UTF-8"));
+            ftpFileService.downloadFileFromFtp(ftpPath + fileName, response);
+            resultMap.put("code", 200);
+            resultMap.put("message", "SUCCESS");
+            return resultMap;
+        } catch (Exception e) {
+            log.error("下载异常", e);
         }
-        // 设置response
-        response.reset();
-        response.setHeader("Cache-Control", "private");
-        response.setHeader("Pragma", "private");
-        response.setContentType("application/vnd.ms-excel;charset=utf-8");
-        response.setHeader("Content-Type", "application/force-download");
-        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-
-        ftpFileService.downloadFileFromFtp(ftpPath + fileName, response);
-        resultMap.put("code", 200);
-        resultMap.put("message", "SUCCESS");
+        resultMap.put("code", 400);
+        resultMap.put("message", "下载失败");
         return resultMap;
     }
 
@@ -324,24 +330,24 @@ public class PbcReportController {
     public Map downloadAll(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashedMap();
         String startDateStr = request.getParameter("start_day");
-        String endDateStr = request.getParameter("end_day");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date startDate = null;
-        Date endDate = null;
+        if (StringUtils.isBlank(startDateStr)) {
+            resultMap.put("code", 400);
+            resultMap.put("message", "日期不能为空");
+            return resultMap;
+        }
         try {
-            startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
-            endDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(endDateStr)));
+            Date startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
+            Date endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(startDateStr)));
             String ftpPath = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
             String fileName = pbcReportHelper.getPbcZipFileName(startDate, endDate, pbcReportHelper.getCompanyName());
             ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, FILE_SUFFIX, response);
-            resultMap.put("code", 200);
-            resultMap.put("message", "SUCCESS");
-            return resultMap;
         } catch (Exception e) {
-            resultMap.put("code", 400);
-            resultMap.put("message", "出错了Orz~");
-            return resultMap;
+            log.error("下载异常", e);
         }
+        resultMap.put("code", 400);
+        resultMap.put("message", "下载失败");
+        return resultMap;
     }
 
     private Map<String, Object> getTotalReportList(Date startDate, Date endDate) {

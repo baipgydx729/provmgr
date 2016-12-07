@@ -183,12 +183,13 @@ public class FTPUtil {
                 log.error("无法登录");
                 return null;
             }
-            changeWorkingDirectory(ftp, dir);
-            String[] listNames = ftp.listNames();
-            if (listNames != null && listNames.length > 0) {
-                names = new String[listNames.length];
-                for (int i = 0; i < listNames.length; i++) {
-                    names[i] = new String(listNames[i].getBytes(SERVER_CHARSET));
+            if (changeWorkingDirectory(ftp, dir)) {
+                String[] listNames = ftp.listNames();
+                if (listNames != null && listNames.length > 0) {
+                    names = new String[listNames.length];
+                    for (int i = 0; i < listNames.length; i++) {
+                        names[i] = new String(listNames[i].getBytes(SERVER_CHARSET));
+                    }
                 }
             }
             return names;
@@ -329,17 +330,19 @@ public class FTPUtil {
         }
         OutputStream os = null;
         try {
-            changeWorkingDirectory(ftp, remoteDir);
-            FTPFile[] files = ftp.listFiles();
-            for (FTPFile ftpFile : files) {
-                String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
-                if (ftpFileName.equals(remoteFileName)) {
-                    os = new FileOutputStream(new File(localPath));
-                    ftp.retrieveFile(ftpFileName, os);
-                    os.flush();
+            if (changeWorkingDirectory(ftp, remoteDir)) {
+                FTPFile[] files = ftp.listFiles();
+                for (FTPFile ftpFile : files) {
+                    String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
+                    if (ftpFileName.equals(remoteFileName)) {
+                        os = new FileOutputStream(new File(localPath));
+                        ftp.retrieveFile(ftpFileName, os);
+                        os.flush();
+                    }
                 }
+                return true;
             }
-            return true;
+            return false;
         } catch (IOException e) {
             log.error("下载文件异常:" + e);
             return false;
@@ -359,10 +362,9 @@ public class FTPUtil {
      * @return
      */
     public static void downloadFile(String url, int port, String username, String password,
-                                String remotePath, HttpServletResponse response) {
+                                String remotePath, HttpServletResponse response) throws Exception {
         if (StringUtils.isBlank(remotePath)) {
-            log.error("文件路径为空不能上传");
-            return;
+            throw new Exception("文件路径为空");
         }
         String remoteDir = remotePath.substring(0, remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
         String remoteFileName = remotePath.substring(remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
@@ -371,24 +373,29 @@ public class FTPUtil {
         try {
             ftp = login(url, port, username, password);
             if (ftp == null || !ftp.isConnected()) {
-                log.error("无法登录，上传失败");
-                return;
+                throw new IOException("无法登录");
             }
-
             log.info("用户登录成功，准备开始下载文件...");
-            changeWorkingDirectory(ftp, remoteDir);
-            FTPFile[] files = ftp.listFiles();
-            for (FTPFile ftpFile : files) {
-                String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
-                if (ftpFileName.equals(remoteFileName)) {
-
+            if (!changeWorkingDirectory(ftp, remoteDir)) {
+                throw new Exception("文件不存在");
+            }
+            FTPFile[] ftpFiles = ftp.listFiles();
+            boolean status = false;
+            for (FTPFile file : ftpFiles) {
+                String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
+                if (fileName.equals(remoteFileName)) {
+                    status = true;
                     os = response.getOutputStream();
-                    ftp.retrieveFile(ftpFileName, os);
+                    ftp.retrieveFile(file.getName(), os);
                     os.flush();
                 }
             }
-        } catch (IOException e) {
+            if (!status) {
+                throw new Exception("文件不存在");
+            }
+        } catch (Exception e) {
             log.error("下载文件异常:" + e.getMessage());
+            throw e;
         } finally {
             IOUtils.closeQuietly(os);
             close(ftp);
