@@ -22,7 +22,7 @@
 	<context:component-scan base-package="com.qdb.provmgr"/>
 
 	<!--加载db.properties文件 -->
-	<context:property-placeholder location="classpath*:*.properties" file-encoding="UTF-8" ignore-unresolvable="true" system-properties-mode="FALLBACK" />
+	<context:property-placeholder location="classpath*:application.properties" file-encoding="UTF-8" ignore-unresolvable="true" system-properties-mode="FALLBACK" />
 
 	<mvc:default-servlet-handler/>
 	<!-- jsp 视图 -->
