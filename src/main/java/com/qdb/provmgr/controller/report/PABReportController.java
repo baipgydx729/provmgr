@@ -2,30 +2,24 @@ package com.qdb.provmgr.controller.report;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.CollectionUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.fastjson.JSONObject;
-import com.qdb.provmgr.dao.entity.report.DataTable3Entity;
-import com.qdb.provmgr.report.ccb.ExcelUtils;
 import com.qdb.provmgr.service.FtpFileService;
 import com.qdb.provmgr.service.pab.PABService;
-import com.qdb.provmgr.util.DateUtils;
+import com.qdb.provmgr.util.FileUtil;
 import com.qdb.provmgr.util.StringUtils;
 import com.qdb.provmgr.util.constant.JSONInfo;
 
@@ -34,10 +28,11 @@ import com.qdb.provmgr.util.constant.JSONInfo;
  *
  */
 @RequestMapping("/report/pab")
+@Controller
 public class PABReportController {
 	private Logger logger = LoggerFactory.getLogger(PABReportController.class);
-	
-	
+	private final String FTP_BANK_PATH = "/Users/caoqiang/备付金报表/平安银行/";
+	String sep = System.getProperty("file.separator");
 	@Value("${PAB.report.list}")
     private String pabReportList;
 	@Autowired
@@ -54,6 +49,10 @@ public class PABReportController {
     
 	@Autowired
     private PABService PABService;
+	
+	private String FILE_SUFFIX = ".xls";
+	
+	
 	 /**
      * 获取报表列表
      *
@@ -64,18 +63,30 @@ public class PABReportController {
     @ResponseBody
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String reportList(String start_day, String end_day) {
-    	Map<String, Object> reportMap = new HashMap<>();
-    	List<Map<String, Object>> statusList = new ArrayList<>();
-    	Map<String, Object> rowMap = new HashMap<>();
-        String[] tableTypes = StringUtils.split(pabReportList, ',');
-        for (String tableType : tableTypes) {
-        	rowMap.put("report_name", tableType);
-            rowMap.put("report_status", false);
-            statusList.add(rowMap);
+    	Map<String,Object> resultMap = new HashMap<>();
+    	List<Object> dataList = new ArrayList<>();
+    	String dateString = start_day.substring(0, 7).replace("-", "");
+    	String pabFtpDir = FTP_BANK_PATH + dateString + sep;
+    	String[] tableList = StringUtils.split(pabReportList, ',');
+    	for (int i =0; i<tableList.length;i++) {
+    		tableList[i] = dateString + "_BJ0000004_" + tableList[i] + "_SZ_766004.xls";
+		}
+    	String[][] fileStatus = ftpFileService.checkFileStatus(pabFtpDir, tableList);
+    	for (String[] arr: fileStatus) {
+    		Map<String, Object> reportMap = new HashMap<>();
+            String fileName = arr[0];
+            if(StringUtils.isEmpty(fileName)){
+                continue;
+            }
+            String reportStatus = arr[1];
+            String tableName = fileName.substring(17, fileName.length()-14);
+            reportMap.put("report_status", reportStatus);
+            reportMap.put("report_name", tableName);
+            dataList.add(reportMap);
         }
-        reportMap.put(JSONInfo.JSONConstant.CODE.getValue(), 200);
-        reportMap.put(JSONInfo.JSONConstant.DATA.getValue(), statusList);
-        return JSONObject.toJSONString(reportMap);
+    	resultMap.put("code", 200);
+    	resultMap.put("data", dataList);
+    	return JSONObject.toJSONString(resultMap);
     }
 	
     /**
@@ -88,71 +99,73 @@ public class PABReportController {
     @ResponseBody
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createExcels(HttpServletRequest request, @RequestBody String jsonStr) {
-    	
+    	int succesNumber = 0;
         Map<String, Object> resultMap = new HashMap<>();
         int code = 200;
-        String message = "成功";
+        String message = "失败";
+        List<Map<String, String>> reportList = null;
+        int tableNumber = 0;
         try {
             JSONObject jsonObject = JSONObject.parseObject(jsonStr);
             String beginDate = (String) jsonObject.get("start_day");
             String endDate = (String) jsonObject.get("end_day");
-            List<Map<String, String>> reportList = (List<Map<String, String>>) jsonObject.get("report_list");
-
+            reportList = (List<Map<String, String>>) jsonObject.get("report_list");
+            if(null != reportList && 0 != reportList.size()){
+            	tableNumber = reportList.size();
+            }
             String sep = System.getProperty("file.separator");
             String dateDir = null;
-            if (StringUtils.isNotEmpty(beginDate)){
-                dateDir = beginDate.substring(0, 7).replace("-", "");
-            }
-            String destDir = System.getProperty("java.io.tmpdir") + sep + "pab" + sep;
-            File file = new File(destDir);
-            if (!file.exists()){
-                file.mkdir();
-            }
-            destDir += dateDir + sep;
-            File childFile = new File(destDir);
-            if (!childFile.exists()){
-                childFile.mkdir();
-            }
-            for (Map<String, String> map : reportList) {
-                String tableType = map.get("report_name");
-                String templateName = "pab" + tableType + ".xls";
-                //201401_BJ0000004_T1-1_SZ_766004.xls
-                String destFileName = dateDir + "BJ0000004_" + tableType + "_SZ_766004.xls";
-                String destExcelPath = destDir + destFileName;
-                //模板相对于WEB-INF的路径
-                String tempRelativePath = templatePath + sep + "pab" + sep + templateName;
-                try {
-                	PABService.createEachTypeExcel(tempRelativePath,destFileName,destExcelPath,tableType,beginDate,endDate);
-                    logger.info("建设银行备付金报表创建完成! 报表名称:{}", destFileName);
-                } catch (Exception e) {
-                    code = 400;
-                    message = destFileName + "创建失败!";
-                    resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
-                    resultMap.put(JSONInfo.JSONConstant.MESSAGE.getValue(), message);
-                    logger.error("建设银行备付金报表创建失败! 报表名称:{},失败原因:{}", destFileName, e.getMessage());
-                    return JSONObject.toJSONString(resultMap);
+            if (!StringUtils.isNotEmpty(beginDate)){
+            	message = "日期不能为空";
+            }else{
+            	dateDir = beginDate.substring(0, 7).replace("-", "");
+            	String destDir = System.getProperty("java.io.tmpdir") + sep + "pab" + sep;
+                File file = new File(destDir);
+                if (!file.exists()){
+                    file.mkdir();
                 }
-
-                String remotePath = "/备付金报表/建设银行/" + dateDir + "/";
-                boolean isSuccess = ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
-                if (!isSuccess) {
-                    logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
-                    code = 400;
-                    message = destFileName + "上传至FTP失败!";
-                    resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
-                    resultMap.put(JSONInfo.JSONConstant.MESSAGE.getValue(), message);
-                    return JSONObject.toJSONString(resultMap);
+                destDir += dateDir + sep;
+                File childFile = new File(destDir);
+                if (!childFile.exists()){
+                    childFile.mkdir();
+                }
+                for (Map<String, String> map : reportList) {
+                    String tableType = map.get("report_name");
+                    String templateName = "pab" + tableType + ".xls";
+                    //201401_BJ0000004_T1-1_SZ_766004.xls
+                    String destFileName = dateDir + "_BJ0000004_" + tableType + "_SZ_766004.xls";
+//                    String localExcelPath = "/Users/caoqiang/work/备付金报表/生成的报表/" + dateDir +sep;
+//                    String ftpExcelPath = "/Users/caoqiang/work/备付金报表/平安银行/" + dateDir +sep;
+                    String localExcelPath = destDir;
+                    String ftpExcelPath = FTP_BANK_PATH + dateDir + sep;
+                    //模板相对于WEB-INF的路径
+                    String tempRelativePath = templatePath + sep + "pab" + sep + templateName;
+                    String realPath = request.getServletContext().getRealPath("/WEB-INF/");
+                    String excelTemplatePath = realPath + sep + tempRelativePath;
+                    try {
+                    	PABService.createEachTypeExcel(excelTemplatePath,destFileName,localExcelPath,tableType,beginDate,endDate);
+                    	boolean uploadResult = ftpFileService.uploadFileToFtp(localExcelPath + destFileName,ftpExcelPath + destFileName );
+                    	if(uploadResult){
+                    		succesNumber++;
+                    	}
+                    	logger.info("平安备付金报表创建完成! 报表名称:{}", destFileName);
+                    } catch (Exception e) {
+                    	e.printStackTrace();
+                    }
                 }
             }
-            logger.info("************建设银行备付金报表创建并上传至FTP全部完成!************");
         } catch (Exception e) {
-            code = 400;
-            message = "失败:" + e.getMessage();
-            logger.error("************建设银行备付金报表创建并上传至FTP失败!************");
+        	e.printStackTrace();
+        }
+        if(tableNumber == succesNumber){
+        	code = 400;
+        	message = "共记" + succesNumber + "张报表，创建成功";
+        }else{
+        	code = 200;
+        	message = "共记" + succesNumber + "张报表创建成功,创建失败" + (tableNumber - succesNumber) + "张";
         }
         resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
         resultMap.put(JSONInfo.JSONConstant.MESSAGE.getValue(), message);
-        logger.info("**************" + JSONObject.toJSONString(resultMap) + "**************");
         return JSONObject.toJSONString(resultMap);
     }
     
@@ -168,30 +181,93 @@ public class PABReportController {
      */
     @ResponseBody
     @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public String download(HttpServletRequest request, HttpServletResponse response, String start_day, String end_day, String report_name) {
-		return report_name;
-//        Map<String, Object> resultMap = new HashMap<>();
-//        int code = 200;
-//        String message = "成功";
-//
-//        try {
-//            this.downloadExcel(request, response, start_day, end_day, report_name);
-//        } catch (Exception e) {
-//            logger.error(e.getMessage());
-//            code = 400;
-//            message = "失败:" + e.getMessage();
-//            resultMap.put(CODE, code);
-//            resultMap.put(MESSAGE, message);
-//            return JSONObject.toJSONString(resultMap);
-//        }
-//        resultMap.put(CODE, code);
-//        resultMap.put(MESSAGE, message);
-//        logger.info("**************" + JSONObject.toJSONString(resultMap) + "**************");
-//        return JSONObject.toJSONString(resultMap);
+    public Map<String, Object> download(HttpServletRequest request, HttpServletResponse response, String start_day, String end_day, String report_name) {
+    	int code = 400;
+    	String message = "失败";
+    	 Map<String, Object> resultMap = new HashMap<String, Object>();
+    	try {
+			String dateDir = start_day.substring(0, 7).replace("-", "");
+			String fileName = dateDir + "_BJ0000004_" + report_name + "_SZ_766004.xls";
+			response.reset();
+			response.setHeader("Cache-Control", "private");
+			response.setHeader("Pragma", "private");
+			response.setContentType("application/vnd.ms-excel;charset=UTF-8");
+			response.setHeader("Content-Type", "application/force-download");
+			response.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes(), "UTF-8"));
+			ftpFileService.downloadFileFromFtp(FTP_BANK_PATH + sep + dateDir + sep + fileName, response);
+			code = 200;
+	    	message = "成功";
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
+        resultMap.put(JSONInfo.JSONConstant.MESSAGE.getValue(), message);
+        return resultMap;
     }
 	
+    
+    /**
+     * 下载全部文件
+     * @param request
+     * @param response
+     * @param start_day
+     * @param end_day
+     * @return
+     */
+    @RequestMapping(value = "/download-all", method = RequestMethod.GET)
+    @ResponseBody
+    public String downloadAll(HttpServletRequest request, HttpServletResponse response, String start_day, String end_day) {
+    	int code = 400;
+    	String message = "失败";
+    	Map<String, Object> resultMap = new HashMap<String, Object>();
+    	String dateDir = start_day.substring(0, 7).replace("-", "");
+        if (StringUtils.isEmpty(start_day)) {
+        	message = "日期不能为空";
+        }else{
+        	try {
+                String ftpPath = FTP_BANK_PATH + dateDir + sep;
+                String fileName = dateDir + "_BJ0000004_SZ_766004.zip";
+                ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, FILE_SUFFIX, response);
+                code = 200;
+            	message = "成功";
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+        }
+        resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
+        resultMap.put(JSONInfo.JSONConstant.MESSAGE.getValue(), message);
+        return JSONObject.toJSONString(resultMap);
+    }
 	
-	
-	
+    /**
+     * 报送接口
+     *
+     * @return
+     */
+    @RequestMapping(value = "submit")
+    @ResponseBody
+    public Map<String, Object> submit(HttpServletRequest request, HttpServletResponse response, String start_day, String end_day) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        int code = 400;
+    	String message = "失败";
+        String dateDir = start_day.substring(0, 7).replace("-", "");
+        if (StringUtils.isEmpty(dateDir)) {
+        	message = "日期不能为空";
+        }
+        String ftpPath = FTP_BANK_PATH + dateDir + sep ;
+        String zipName = dateDir + "_BJ0000004_SZ_766004.zip";
+        File tempFile = FileUtil.createTempFile( zipName);
+        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), FILE_SUFFIX);
+        boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
+        if (!result) {
+            resultMap.put("code", 400);
+            resultMap.put("message", "失败!");
+            return resultMap;
+        }
+        //TODO 调用张梦宇报送接口
+        resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
+        resultMap.put(JSONInfo.JSONConstant.MESSAGE.getValue(), message);
+        return resultMap;
+    }
 	
 }

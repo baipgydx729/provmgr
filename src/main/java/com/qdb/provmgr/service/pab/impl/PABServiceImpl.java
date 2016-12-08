@@ -14,7 +14,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.qdb.provmgr.dao.entity.report.Location;
@@ -41,7 +40,7 @@ public class PABServiceImpl implements PABService{
 	@Override
 	public void createEachTypeExcel(String tempRelativePath,String destFileName, String destExcelPath, String tableType, String beginDate,String endDate) throws Exception {
 		switch (tableType) {
-		case "T_1":
+		case "T1-1":
 			reportPABTableT1_1(tempRelativePath,destFileName,destExcelPath,beginDate,endDate);
 			break;
 		case "T1-2":
@@ -53,16 +52,16 @@ public class PABServiceImpl implements PABService{
 		case "T1-3":
 			reportPABTableT1_3(tempRelativePath,destFileName,destExcelPath,beginDate,endDate);
 			break;
-		case "T_6":
+		case "T1-6":
 			reportPABTableT1_6(tempRelativePath,destFileName,destExcelPath,beginDate,endDate);
 			break;
-		case "T_9":
+		case "T1-9":
 			reportPABTableT1_9(tempRelativePath,destFileName,destExcelPath,beginDate,endDate);
 			break;
-		case "T_10":
+		case "T1-10":
 			reportPABTableT1_10(tempRelativePath,destFileName,destExcelPath,beginDate,endDate);
 			break;
-		case "T_13":
+		case "T1-13":
 			reportPABTableT1_13(tempRelativePath,destFileName,destExcelPath,beginDate,endDate);
 			break;
 		default:
@@ -106,7 +105,7 @@ public class PABServiceImpl implements PABService{
 		//处理标题
 		countTitleList.add(insertReportTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 	}
 
 	private void reportPABTableT1_6(String tempRelativePath, String destFileName, String destExcelPath,
@@ -146,7 +145,7 @@ public class PABServiceImpl implements PABService{
 		//处理标题
 		countTitleList.add(insertReportTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 	}
 
 	private void reportPABTableT1_9(String tempRelativePath, String destFileName, String destExcelPath,
@@ -186,7 +185,7 @@ public class PABServiceImpl implements PABService{
 		//处理标题
 		countTitleList.add(insertReportTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 		
 	}
 	
@@ -227,7 +226,7 @@ public class PABServiceImpl implements PABService{
 		//处理标题
 		countTitleList.add(insertReportTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 		
 	}
 	
@@ -251,7 +250,7 @@ public class PABServiceImpl implements PABService{
 		Location textLocation = new Location(9,1);
 		dealEveryAccount(workBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
 				specialColumn,everyAccountTableType,textLocation,beginDate,endDate,haveCount,sourceSheetNumber);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 		
 	}
 
@@ -269,7 +268,7 @@ public class PABServiceImpl implements PABService{
 		List<ThreeTuple<String,Location,String>>  countTitleList = new ArrayList<ThreeTuple<String,Location,String>>();
 		HSSFSheet countSheet = workBook.getSheetAt(0);
 		int count = 31;
-		int columnCount = 6;
+		int columnCount = 9;
 		//处理账户总计内容
 		String tableType = TableEnum.TABLE_TYPE.T1_2.getValue();
 		List<Object[]> textList = pabDao.getPABTable(null,beginDate,endDate,tableType,true);
@@ -281,7 +280,7 @@ public class PABServiceImpl implements PABService{
 		//处理标题
 		countTitleList.add(insertReportTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 	}
 	
 	
@@ -308,7 +307,7 @@ public class PABServiceImpl implements PABService{
 		//处理标题
 		countTitleList.add(insertReportTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 	}
 
 	private void reportPABTableT1_3(String tempRelativePath, String destFileName, String destExcelPath,
@@ -371,7 +370,7 @@ public class PABServiceImpl implements PABService{
 			Row sumRow = targetSheet.getRow(textRowNumber);
 			dealReportPABTableT1_3Data(sumRow,sumList);
 		}
-		ExcelUtil.exportExcel(workBook, destExcelPath);
+		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
 		
 	}
 
