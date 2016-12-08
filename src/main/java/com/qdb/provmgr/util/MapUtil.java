@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections.map.HashedMap;
 
 import com.google.common.collect.Lists;
-import com.qdb.provmgr.dao.entity.report.AccountInfoEntity;
 
 /**
  * @author mashengli
@@ -31,18 +29,7 @@ public class MapUtil {
             return null;
         }
         T obj = beanClass.newInstance();
-//        BeanInfo beanInfo = Introspector.getBeanInfo(beanClass, Object.class);
-//        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-//        for (PropertyDescriptor property : propertyDescriptors) {
-//            Method setter = property.getWriteMethod();
-//            if (setter != null) {
-//                setter.invoke(obj, map.get(property.getName()));
-//            }
-//        }
-
         BeanUtils.copyProperties(obj, map);
-//        PropertyUtils.copyProperties(obj, map);
-
         return obj;
     }
 
@@ -109,25 +96,4 @@ public class MapUtil {
         return list;
     }
 
-    public static void main(String[] args) {
-        AccountInfoEntity accountInfoEntity = new AccountInfoEntity();
-        accountInfoEntity.setAD("12");
-        accountInfoEntity.setADID(123);
-        accountInfoEntity.setBankName("中国银行");
-        accountInfoEntity.setIsProvision(true);
-        try {
-            Map map = objectToMap(accountInfoEntity);
-            System.out.println(map.values());
-
-            Map<String, Object> map2 = new HashedMap();
-            map2.put("AD", "123");
-            map2.put("ADID", 12);
-            map2.put("isProvision", true);
-            map2.put("accState", 1);
-            AccountInfoEntity accountInfoEntity2 = mapToObject(map2, AccountInfoEntity.class);
-            System.out.println(accountInfoEntity2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
