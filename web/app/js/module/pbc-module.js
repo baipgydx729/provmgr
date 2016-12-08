@@ -1,33 +1,29 @@
+var commonModule = require("./common-module");
 var pbcService = require("../service/pbc-service");
 
 module.exports = {
-	getBankList: function () {
-	    if ($("#datetime-start").val()!=undefined && $("#datetime-end").val()!=undefined){
-            return pbcService.getBankList($("#datetime-start").val(), $("#datetime-end").val());
+	getBankList: function (startDay, endDay) {
+	    if (startDay!=null && endDay!=null){
+            return pbcService.getBankList(startDay, endDay);
         } else {
             var dateObj = new Date();
             var year = dateObj.getFullYear();
             var month = dateObj.getMonth()+1;
-            var day = dateObj.getDate();
 
-            return pbcService.getBankList(year+"-"+month+"-01", year+"-"+month+"-"+day);
+            startDay = commonModule.getStartDay(year, month);
+            endDay = commonModule.getEndDay(year, month);
+
+            return pbcService.getBankList(startDay, endDay);
         }
     },
-    getReportList: function (reportType, bankName, accountId) {
-        var startDay;
-        var endDay;
-
-        if ($("#datetime-start").val()!=undefined && $("#datetime-end").val()!=undefined){
-            startDay = $("#datetime-start").val();
-            endDay = $("#datetime-end").val();
-        } else {
+    getReportList: function (reportType, bankName, accountId, startDay, endDay) {
+        if (startDay==null || endDay==null){
             var dateObj = new Date();
             var year = dateObj.getFullYear();
             var month = dateObj.getMonth()+1;
-            var day = dateObj.getDate();
 
-            startDay = year+"-"+month+"-01";
-            endDay = year+"-"+month+"-"+day;
+            startDay = commonModule.getStartDay(year, month);
+            endDay = commonModule.getEndDay(year, month);
         }
 
 	    if (reportType==0){

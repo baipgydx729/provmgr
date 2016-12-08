@@ -180,43 +180,21 @@ module.exports = {
                     }
                 });
 
-                $.datetimepicker.setLocale('ch');
-
-                $('#datetime-start').datetimepicker({
-                    timepicker:false,
-                    format:'Y-m-d',
-                    maxDate:'+1970/01/01',
-                    onShow:function(){
-                        this.setOptions({
-                            maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
-                        });
-                    },
-                    onSelectDate: function(){
-                        mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
-                    }
-                });
-
-                $('#datetime-end').datetimepicker({
-                    timepicker:false,
-                    format:'Y-m-d',
-                    maxDate:'+1970/01/01',
-                    onShow:function(){
-                        this.setOptions({
-                            minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
-                        });
-                    },
-                    onSelectDate: function(){
-                        mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
-                    }
-                });
-
                 var dateObj = new Date();
-                var year = dateObj.getFullYear();
-                var month = dateObj.getMonth()+1;
-                var day = dateObj.getDate();
+                var currentYear = dateObj.getFullYear();
 
-                $("#datetime-start").val(year+"-"+month+"-01");
-                $("#datetime-end").val(year+"-"+month+"-"+day);
+                var years = []
+                for (var i=0; i<=currentYear-2008; i++){
+                    years.push(currentYear-i);
+                }
+
+                $('#monthpicker').monthpicker({
+                    years: years,
+                    topOffset: 6,
+                    onMonthSelect: function(month, year) {
+
+                    }
+                });
             });
             avalon.scan(document.body);
         });

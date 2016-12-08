@@ -12,7 +12,7 @@ module.exports = {
 				$id: 'main',
 				template: require('../../template/pbc.html'),
 				data: {
-					bankList: pbcModule.getBankList(),
+					bankList: pbcModule.getBankList(null, null),
 					selectedBankIndex: 0,
 					selectedAccountIndex: 0,
 					reportTypeList: [
@@ -24,7 +24,7 @@ module.exports = {
 						}
 					],
 					selectedReportTypeIndex: 0,
-					reportList: pbcModule.getReportList(0),
+					reportList: pbcModule.getReportList(0, null, null, null, null),
 					checkedReportIndexList: []
 				},
 				selectBank: function () {
@@ -32,19 +32,29 @@ module.exports = {
                     document.getElementsByName("account")[0].value = 0;
                     mainVm.data.selectedAccountIndex = 0;
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     mainVm.data.reportList = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+						commonModule.getStartDay(year, month),
+						commonModule.getEndDay(year, month)
                     );
 				},
 				selectAccount: function () {
 					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     mainVm.data.reportList = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month)
                     );
 				},
 				selectReportType: function(){
@@ -56,10 +66,15 @@ module.exports = {
                     mainVm.data.selectedAccountIndex = 0;
                     document.getElementsByName("account")[0].value = 0;
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
 					mainVm.data.reportList = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
 						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month)
 					);
 				},
 				checkAll: function () {
@@ -91,9 +106,12 @@ module.exports = {
 					console.log(mainVm.data.checkedReportIndexList);
 				},
                 generate: function (index) {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     var reportList={
-                        start_day: $('#datetime-start').val(),
-                        end_day: $('#datetime-end').val(),
+                        start_day: commonModule.getStartDay(year, month),
+                        end_day: commonModule.getEndDay(year, month),
                         report_type: mainVm.data.selectedReportTypeIndex,
                         report_list: []
                     };
@@ -121,9 +139,12 @@ module.exports = {
                         return;
 					}
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
 					var reportList={
-                        start_day: $('#datetime-start').val(),
-                        end_day: $('#datetime-end').val(),
+                        start_day: commonModule.getStartDay(year, month),
+                        end_day: commonModule.getEndDay(year, month),
                         report_type: mainVm.data.selectedReportTypeIndex,
                         report_list: []
 					};
@@ -149,8 +170,8 @@ module.exports = {
                     pbcModule.generateReport(reportList);
 				},
 				submit: function () {
-					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
-                        commonModule.errorModal("请选择时间区间!");
+					if($('#monthpicker').html()==''){
+                        commonModule.errorModal("请选择月份!");
 
 						return;
 					}
@@ -159,11 +180,17 @@ module.exports = {
 						delete avalon.vmodels['submit-controller'];
 					}
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
 					var submitVm = avalon.define({
 						$id: 'submit-controller',
                         checkReportFlag: 0,
 						submit: function () {
-                            pbcModule.submitReport($('#datetime-start').val(), $('#datetime-end').val());
+                            pbcModule.submitReport(
+                            	commonModule.getStartDay(year, month),
+								commonModule.getEndDay(year, month)
+							);
 						},
                         checkReport: function () {
                             if (document.getElementsByName("check-report")[0].checked) {
@@ -180,19 +207,25 @@ module.exports = {
 					avalon.scan(document.getElementById("modal").firstChild);
 				},
                 download: function (reportName) {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
 					pbcModule.download(
 						mainVm.data.selectedReportTypeIndex,
 						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 						mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-						$('#datetime-start').val(),
-						$('#datetime-end').val(),
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month),
 						reportName
 					);
                 },
 				downloadAll: function () {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     pbcModule.downloadAll(
-                        $('#datetime-start').val(),
-                        $('#datetime-end').val()
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month)
                     );
 				},
 				filter: function () {
@@ -216,51 +249,27 @@ module.exports = {
 					}
 				});
 
-				$.datetimepicker.setLocale('ch');
-
-				$('#datetime-start').datetimepicker({
-					timepicker:false,
-					format:'Y-m-d',
-					maxDate:'+1970/01/01',
-					onShow:function(){
-						this.setOptions({
-							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
-						});
-					},
-                    onSelectDate: function(){
-                        mainVm.data.reportList = pbcModule.getReportList(
-                            mainVm.data.selectedReportTypeIndex,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
-                        );
-                    }
-				});
-
-				$('#datetime-end').datetimepicker({
-					timepicker:false,
-					format:'Y-m-d',
-					maxDate:'+1970/01/01',
-					onShow:function(){
-						this.setOptions({
-							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
-						});
-					},
-                    onSelectDate: function(){
-                        mainVm.data.reportList = pbcModule.getReportList(
-                            mainVm.data.selectedReportTypeIndex,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
-                        );
-                    }
-				});
-
                 var dateObj = new Date();
-                var year = dateObj.getFullYear();
-                var month = dateObj.getMonth()+1;
-                var day = dateObj.getDate();
+                var currentYear = dateObj.getFullYear();
 
-                $("#datetime-start").val(year+"-"+month+"-01");
-                $("#datetime-end").val(year+"-"+month+"-"+day);
+				var years = []
+				for (var i=0; i<=currentYear-2008; i++){
+					years.push(currentYear-i);
+				}
+
+                $('#monthpicker').monthpicker({
+                    years: years,
+                    topOffset: 6,
+                    onMonthSelect: function(month, year) {
+                        mainVm.data.reportList = pbcModule.getReportList(
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                            commonModule.getStartDay(year, month),
+                            commonModule.getEndDay(year, month)
+                        );
+                    }
+                });
 			});
 
 			avalon.scan(document.body);

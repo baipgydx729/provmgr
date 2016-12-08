@@ -14,10 +14,8 @@
             </div>
 
             <div class="report-head-item">
-                <label>时间区间</label>
-                <input id="datetime-start" class="datetime-picker" type="text" readonly>
-                <hr class="datetime-separator"/>
-                <input id="datetime-end" class="datetime-picker" type="text" readonly>
+                <label>选择月份</label>
+                <a href="#monthpicker" id="monthpicker"></a>
                 <button ms-click="@submit()" ms-if="@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'">报送</button>
                 <button ms-click="@downloadAll()">下载全部</button>
             </div>
