@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.poi.util.IOUtils;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.qdb.provmgr.util.FTPUtil;
 import com.qdb.provmgr.util.FileUtil;
+import com.qdb.provmgr.util.HttpRequestUtil;
 import com.qdb.provmgr.util.ZipUtil;
 
 /**
@@ -98,7 +100,7 @@ public class FtpFileService {
      * @param fileSuffix 包含的文件后缀名,可为空默认全部文件
      * @param response http请求
      */
-    public void downloadAndCompressFromFtp(String remoteDir, String targetFileName, String fileSuffix, HttpServletResponse response) throws IOException {
+    public void downloadAndCompressFromFtp(HttpServletRequest request, HttpServletResponse response, String remoteDir, String targetFileName, String fileSuffix) throws IOException {
         if (!targetFileName.endsWith(ZipUtil.FILE_SUFFIX)) {
             targetFileName = targetFileName + ZipUtil.FILE_SUFFIX;
         }
@@ -114,7 +116,7 @@ public class FtpFileService {
                 response.setHeader("Pragma", "private");
                 response.setHeader("Content-Type", "application/force-download");
                 response.setContentType("application/octet-stream");
-                response.setHeader("Content-Disposition","attachment; filename=" + new String(targetFileName.getBytes(), "UTF-8"));
+                response.setHeader("Content-Disposition","attachment; filename=" + HttpRequestUtil.getAttachFileName(request, targetFileName));
                 IOUtils.copy(fis, response.getOutputStream());
 
             } catch (IOException e) {
@@ -181,6 +183,29 @@ public class FtpFileService {
             }
         }
         return false;
+    }
+
+    /**
+     * 统计文件夹内文件数量
+     * @param remotePath ftp远程路径
+     * @param fileSuffix 指定文件后缀
+     * @return
+     */
+    public long countFiles(String remotePath, String fileSuffix) {
+        try {
+            return FTPUtil.countFiles(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, fileSuffix);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * 删除远程文件
+     * @param remotePath 远程文件路径
+     */
+    public void deleteFile(String remotePath) {
+        FTPUtil.deleteFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath);
     }
 
 }

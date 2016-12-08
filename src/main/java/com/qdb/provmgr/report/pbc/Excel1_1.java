@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,21 +61,24 @@ public class Excel1_1 {
     }
 
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        DataTable1_1 total = new DataTable1_1();
-        for (int i = 0; i < size; i++) {
-            DataTable1_1 dataTable1_1 = (DataTable1_1)dataList.get(i);
-            total = ReportHelper.addData(total, dataTable1_1);
-            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            DataTable1_1 total = new DataTable1_1();
+            for (int i = 0; i < size; i++) {
+                DataTable1_1 dataTable1_1 = (DataTable1_1) dataList.get(i);
+                total = ReportHelper.addData(total, dataTable1_1);
+                for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                    BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
+                    sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+
+                }
             }
-        }
-        //合计行
-        for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            BigDecimal value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+            //合计行
+            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                BigDecimal value = getDoubleDataByColumnIndex(total, j);
+                sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+            }
         }
     }
 

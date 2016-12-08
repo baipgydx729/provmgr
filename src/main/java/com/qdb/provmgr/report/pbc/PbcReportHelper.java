@@ -82,7 +82,7 @@ public class PbcReportHelper {
      * @return
      */
     public String getPbcFtpDirDP(String timeStr) {
-        return PBC_REPORT_ROOT_PATH + timeStr + "/兴业银行/";
+        return PBC_REPORT_ROOT_PATH + timeStr + "/兴业银行/存管行特殊表/";
     }
 
     /**
@@ -180,40 +180,40 @@ public class PbcReportHelper {
             return ROOT_PATH + excelTemplateDir + "/pbc/template_1_2_1.xls";
         }
         if (TableModeEnum.Table1_3.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_3.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_3.xls";
         }
         if (TableModeEnum.Table1_4.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_4.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_4.xls";
         }
         if (TableModeEnum.Table1_5.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_5.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_5.xls";
         }
         if (TableModeEnum.Table1_6.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_6.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_6.xls";
         }
         if (TableModeEnum.Table1_6_2.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_6_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_6_2.xls";
         }
         if (TableModeEnum.Table1_9.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_9.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_9.xls";
         }
         if (TableModeEnum.Table1_9_2.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_9_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_9_2.xls";
         }
         if (TableModeEnum.Table1_10.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_10.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_10.xls";
         }
         if (TableModeEnum.Table1_10_2.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_10_2.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_10_2.xls";
         }
         if (TableModeEnum.Table1_11.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_11.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_11.xls";
         }
         if (TableModeEnum.Table1_12.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_12.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_12.xls";
         }
         if (TableModeEnum.Table1_13.equals(tableModeEnum)) {
-            return ROOT_PATH + excelTemplateDir + "/pbc/_1_13.xls";
+            return ROOT_PATH + excelTemplateDir + "/pbc/template_1_13.xls";
         }
         return "";
     }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -37,7 +38,7 @@ public class Excel1_12 extends ReportHelper {
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
-        writeData(sheet, dataList);
+        writeData(sheet, ReportHelper.mergeAndSumByDate(dataList));
     }
 
     /**
@@ -47,13 +48,16 @@ public class Excel1_12 extends ReportHelper {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        for (int i = 0; i < size; i++) {
-            DataTable1_12 dataTable1_12 = (DataTable1_12)dataList.get(i);
-            for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
-                BigDecimal value = getDoubleDataByRowIndex(dataTable1_12, j);
-                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            for (int i = 0; i < size; i++) {
+                DataTable1_12 dataTable1_12 = (DataTable1_12) dataList.get(i);
+                for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
+                    BigDecimal value = getDoubleDataByRowIndex(dataTable1_12, j);
+                    sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
+
+                }
             }
         }
     }
