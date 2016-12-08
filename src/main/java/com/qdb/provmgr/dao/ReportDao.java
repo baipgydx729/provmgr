@@ -86,10 +86,10 @@ public class ReportDao {
         List<BaseReportEntity> result = new ArrayList<>();
         List<Object> sqlParams = new ArrayList<>();
         StringBuilder SQL = new StringBuilder();
-        SQL.append(" SELECT DISTINCT t1.bankName_S bankName,t1.ADID,t1.AD, t1.name ")
+        SQL.append(" SELECT DISTINCT t1.ADID,t1.AD,t1.bankName_S bankName,t1.name ")
                 .append(" FROM ")
                 .append(ReportSQLConstant.TABLE1_3_NAME)
-                .append(" WHERE t1.ADID != 99999 AND t1.natuDate >= ? and t1.natuDate <= ? ");
+                .append(" WHERE t1.ADID = t2.ADID and t2.isProvision = 1 and t1.ADID != 99999 AND t1.natuDate >= ? and t1.natuDate <= ? ");
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
         if (null != params.getADID()) {
