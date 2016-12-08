@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -33,6 +34,31 @@ public class ReportHelper {
     public static final String REPORT_FTP_ROOT_PATH = "/备付金报表";
 
     public static final String FILEPATH_SEPRATOR = "/";
+
+    @Value("${report.company.name}")
+    private static String companyName;
+    @Value("${report.writetable.name}")
+    private static String reportUserName;
+    @Value("${report.checktable.name}")
+    private static String checkUserName;
+    @Value("${excel.template.path}")
+    private static String excelTemplateDir;
+
+    public static String getCompanyName() {
+        return companyName;
+    }
+
+    public static String getReportUserName() {
+        return reportUserName;
+    }
+
+    public static String getCheckUserName() {
+        return checkUserName;
+    }
+
+    public static String getExcelTemplateDir() {
+        return excelTemplateDir;
+    }
 
     /**
      * 将原始数据按照账户分割成N个数组

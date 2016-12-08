@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.dubbo.common.utils.StringUtils;
@@ -31,19 +29,15 @@ import com.qdb.provmgr.dao.entity.report.AccountInfoEntity;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_1;
 import com.qdb.provmgr.dao.entity.report.DataTable1_10;
-import com.qdb.provmgr.dao.entity.report.DataTable1_11;
-import com.qdb.provmgr.dao.entity.report.DataTable1_12;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
 import com.qdb.provmgr.dao.entity.report.DataTable1_2;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
-import com.qdb.provmgr.dao.entity.report.DataTable1_4;
-import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 import com.qdb.provmgr.report.PresetContent;
 import com.qdb.provmgr.report.ReportHelper;
+import com.qdb.provmgr.report.citic.CiticReportHelper;
 import com.qdb.provmgr.report.pbc.PbcExcelUtil;
-import com.qdb.provmgr.report.pbc.PbcReportHelper;
 import com.qdb.provmgr.service.FtpFileService;
 import com.qdb.provmgr.service.ReportService;
 import com.qdb.provmgr.service.pbc.PbcReportService;
@@ -55,30 +49,23 @@ import com.qdb.provmgr.util.HttpRequestUtil;
  * @author mashengli
  */
 @Controller
-@RequestMapping(value = "/report/pbc")
-public class PbcReportController {
+@RequestMapping(value = "/report/citic")
+public class CiticReportController {
 
-    private Logger log = LoggerFactory.getLogger(PbcReportController.class);
+    private Logger log = LoggerFactory.getLogger(CiticReportController.class);
 
-    public static String FILE_SUFFIX = ".xls";
-
+    @Autowired
+    private CiticReportHelper citicReportHelper;
+    @Autowired
+    private FtpFileService ftpFileService;
     @Autowired
     private ReportService reportService;
     @Autowired
     private PbcReportService pbcReportService;
-    @Autowired
-    private FtpFileService ftpFileService;
-    @Autowired
-    private PbcReportHelper pbcReportHelper;
 
-    /**
-     * 获取报表列表
-     *
-     * @return
-     */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "list")
     @ResponseBody
-    public Map index(HttpServletRequest request, HttpServletResponse response) {
+    public Map getReportList(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashMap<>();
         String startDateStr = request.getParameter("start_day");
         String endDateStr = request.getParameter("end_day");
@@ -103,22 +90,17 @@ public class PbcReportController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        String remoteDir = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
-        long count = ftpFileService.countFiles(remoteDir, PbcReportHelper.FILE_SUFFIX);
+        String remoteDir = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
+        long count = ftpFileService.countFiles(remoteDir, CiticReportHelper.FILE_SUFFIX);
         resultMap.put("file_count", count);
-        if ("0".equals(reportType)) {
-            //汇总类型的报表，不再区分银行和账户，只区分哪张表
-            getTotalReportList(resultMap, startDate, endDate);
-        } else {
-            String bankName = request.getParameter("bank_name");
-            String account_id = request.getParameter("account_id");
-            List<Integer> adids = null;
-            if (!StringUtils.isBlank(account_id)) {
-                adids = new ArrayList<>();
-                adids.add(Integer.valueOf(account_id));
-            }
-            getCorpReportList(resultMap, startDate, endDate, bankName, adids);
+        String account_id = request.getParameter("account_id");
+        List<Integer> adids = null;
+        if (!StringUtils.isBlank(account_id)) {
+            adids = new ArrayList<>();
+            adids.add(Integer.valueOf(account_id));
         }
+        resultMap.put("code", 200);
+        resultMap.put("data", getCorpReportList(startDate, endDate, CiticReportHelper.CITIC_BANK_NAME, adids));
         return resultMap;
     }
 
@@ -132,14 +114,12 @@ public class PbcReportController {
     public Map createReport(HttpServletRequest request, @RequestBody String jsonData) {
         Map<String, Object> resultMap = new HashMap<>();
         JSONObject jsonObject = null;
-        String reportType = null;
         Date startDate = null;
         Date endDate = null;
         List<Map<String, String>> reportListParam = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             jsonObject = JSONObject.parseObject(jsonData);
-            reportType = String.valueOf(jsonObject.get("report_type"));
             startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse((String) jsonObject.get("start_day"))));
             endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse((String) jsonObject.get("end_day"))));
             reportListParam = (List<Map<String, String>>) jsonObject.get("report_list");
@@ -148,85 +128,51 @@ public class PbcReportController {
             resultMap.put("message", "数据格式有误");
             return resultMap;
         }
-        if (StringUtils.isBlank(reportType) || CollectionUtils.isEmpty(reportListParam)) {
+        if (CollectionUtils.isEmpty(reportListParam)) {
             resultMap.put("code", 400);
             resultMap.put("message", "参数不全");
             return resultMap;
         }
         int success = 0;
         int total = 0;
-        if ("0".equals(reportType)) {
-            //汇总行报表，对应存管行特殊表
-            for (Map<String, String> map : reportListParam) {
-                total++;
-                TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
-                PresetContent presetContent = new PresetContent();
-                presetContent.setCompanyName(ReportHelper.getCompanyName());
-                presetContent.setReportUserName(ReportHelper.getReportUserName());
-                presetContent.setCheckUserName(ReportHelper.getCheckUserName());
-                presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
-                presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+        //合作行表
+        //汇总行报表，对应存管行特殊表
+        for (Map<String, String> map : reportListParam) {
+            total++;
+            TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
+            PresetContent presetContent = new PresetContent();
+            presetContent.setCompanyName(ReportHelper.getCompanyName());
+            presetContent.setReportUserName(ReportHelper.getReportUserName());
+            presetContent.setCheckUserName(ReportHelper.getCheckUserName());
+            presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
+            presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+            presetContent.setAuthCompanyName(ReportHelper.getCompanyName());
+            presetContent.setAccountId(map.get("account_id"));
+            presetContent.setBankName(map.get(CiticReportHelper.CITIC_BANK_NAME));
+            presetContent.setAccount(map.get("account_no"));
+            presetContent.setAccountName(map.get("account_name"));
+            presetContent.setLegalPerson(map.get(CiticReportHelper.CITIC_BANK_NAME));
 
-                String dir = pbcReportHelper
-                        .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate));
-                String fileName =  pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, ReportHelper.getCompanyName());
-                boolean uploadResult = false;
-                try {
-                    File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
-                            fileName, presetContent, getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
-                    uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), dir + fileName);
-                    if (uploadResult) {
-                        success++;
-                    }
-                } catch (Exception e) {
-                    log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
+            List<Integer> ADIDs = new ArrayList<>();
+            ADIDs.add(Integer.valueOf(presetContent.getAccountId()));
+            List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
+            boolean uploadResult = false;
+            String dir = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate), presetContent.getAccount());
+            String fileName = citicReportHelper.getCiticFileName(startDate, endDate, tableMode, ReportHelper.getCompanyName(), presetContent.getAccount());
+            try {
+                File tempFile = PbcExcelUtil.createExcelFile(tableMode,
+                        citicReportHelper.getCiticTemplateFile(tableMode),
+                        fileName, presetContent, dataList);
+                uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), dir + fileName);
+                if (uploadResult) {
+                    success++;
                 }
-                if (!uploadResult) {
-                    log.info("生成报表失败,正在删除ftp已有报表文件");
-                    ftpFileService.deleteFile(dir + fileName);
-                }
+            } catch (Exception e) {
+                log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
             }
-        } else {
-            //合作行表
-            //汇总行报表，对应存管行特殊表
-            for (Map<String, String> map : reportListParam) {
-                total++;
-                TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
-                PresetContent presetContent = new PresetContent();
-                presetContent.setCompanyName(ReportHelper.getCompanyName());
-                presetContent.setReportUserName(ReportHelper.getReportUserName());
-                presetContent.setCheckUserName(ReportHelper.getCheckUserName());
-                presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
-                presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
-                presetContent.setAuthCompanyName(ReportHelper.getCompanyName());
-                presetContent.setAccountId(map.get("account_id"));
-                presetContent.setBankName(map.get("bank_name"));
-                presetContent.setAccount(map.get("account_no"));
-                presetContent.setAccountName(map.get("account_name"));
-                presetContent.setLegalPerson(map.get("bank_name"));
-
-                List<Integer> ADIDs = new ArrayList<>();
-                ADIDs.add(Integer.valueOf(presetContent.getAccountId()));
-                List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
-                boolean uploadResult = false;
-                String dir = pbcReportHelper.getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate),
-                        presetContent.getBankName(), presetContent.getAccount());
-                String fileName =  pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode,
-                        ReportHelper.getCompanyName(), presetContent.getBankName(), presetContent.getAccount());
-                try {
-                    File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
-                            fileName, presetContent, dataList);
-                    uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(),  dir + fileName);
-                    if (uploadResult) {
-                        success++;
-                    }
-                } catch (Exception e) {
-                    log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
-                }
-                if (!uploadResult) {
-                    log.info("生成报表失败,正在删除ftp已有报表文件");
-                    ftpFileService.deleteFile(dir + fileName);
-                }
+            if (!uploadResult) {
+                log.info("生成报表失败,正在删除ftp已有报表文件");
+                ftpFileService.deleteFile(dir + fileName);
             }
         }
         if (success < total) {
@@ -265,9 +211,9 @@ public class PbcReportController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        String ftpPath = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
-        File tempFile = FileUtil.createTempFile(pbcReportHelper.getPbcZipFileName(startDate, endDate, ReportHelper.getCompanyName()));
-        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), FILE_SUFFIX);
+        String ftpPath = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
+        File tempFile = FileUtil.createTempFile(citicReportHelper.getCiticZipFileName(startDate, endDate, ReportHelper.getCompanyName()));
+        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), CiticReportHelper.FILE_SUFFIX);
 
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
         if (!result) {
@@ -277,7 +223,7 @@ public class PbcReportController {
         }
         //TODO 调用张梦宇报送接口
         resultMap.put("code", 200);
-        resultMap.put("message", 400);
+        resultMap.put("message", "SUCCESS");
         return resultMap;
     }
 
@@ -286,10 +232,9 @@ public class PbcReportController {
     public Map download(HttpServletRequest request, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashedMap();
         String startDateStr = request.getParameter("start_day");
-        String reportType = request.getParameter("report_type");
         String reportName = request.getParameter("report_name");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        if (StringUtils.isBlank(startDateStr) || StringUtils.isBlank(reportType) || StringUtils.isBlank(reportName)) {
+        if (StringUtils.isBlank(startDateStr) || StringUtils.isBlank(reportName)) {
             resultMap.put("code", 400);
             resultMap.put("message", "参数不全");
             return resultMap;
@@ -305,18 +250,13 @@ public class PbcReportController {
             }
             String ftpPath = null;
             String fileName = null;
-            if ("0".equals(reportType)) {
-                ftpPath = pbcReportHelper.getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate));
-                fileName = pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableModeEnum, ReportHelper.getCompanyName());
-            } else {
-                String ADID = request.getParameter("account_id");
-                if (!StringUtils.isBlank(ADID) && StringUtils.isNumeric(ADID)) {
-                    AccountInfoEntity accountInfoEntity = reportService.queryAccountById(Integer.valueOf(ADID));
-                    ftpPath = pbcReportHelper.getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate),
-                            accountInfoEntity.getBankName(), accountInfoEntity.getAD());
-                    fileName = pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableModeEnum,
-                            ReportHelper.getCompanyName(), accountInfoEntity.getBankName(), accountInfoEntity.getAD());
-                }
+
+            String ADID = request.getParameter("account_id");
+            if (!StringUtils.isBlank(ADID) && StringUtils.isNumeric(ADID)) {
+                AccountInfoEntity accountInfoEntity = reportService.queryAccountById(Integer.valueOf(ADID));
+                ftpPath = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate), accountInfoEntity.getAD());
+                fileName = citicReportHelper.getCiticFileName(startDate, endDate, tableModeEnum,
+                        ReportHelper.getCompanyName(), accountInfoEntity.getAD());
             }
             if (StringUtils.isBlank(fileName) || !ftpFileService.isFileExists(ftpPath, fileName)) {
                 resultMap.put("code", 400);
@@ -356,9 +296,9 @@ public class PbcReportController {
         try {
             Date startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
             Date endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(startDateStr)));
-            String ftpPath = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
-            String fileName = pbcReportHelper.getPbcZipFileName(startDate, endDate, ReportHelper.getCompanyName());
-            ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, FILE_SUFFIX);
+            String ftpPath = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
+            String fileName = citicReportHelper.getCiticZipFileName(startDate, endDate, ReportHelper.getCompanyName());
+            ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, CiticReportHelper.FILE_SUFFIX);
         } catch (Exception e) {
             log.error("下载异常", e);
         }
@@ -367,42 +307,22 @@ public class PbcReportController {
         return resultMap;
     }
 
-    private void getTotalReportList(Map<String, Object> resultMap, Date startDate, Date endDate) {
+    private List<Map<String, Object>> getCorpReportList(Date startDate, Date endDate, String bankName, List<Integer> ADIDs) {
         List<Map<String, Object>> dataList = new ArrayList<>();
-        List<TableModeEnum> tables = pbcReportHelper.getPbcReportTablesDP();
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
-        for (TableModeEnum tableMode : tables) {
-            Map<String, Object> dataMap = new HashMap<>();
-            dataMap.put("bank_name", "中国人民银行");
-            dataMap.put("report_name", tableMode.getTableName());
-            boolean status = ftpFileService.isFileExists(pbcReportHelper.getPbcFtpDirDP(sdf.format(startDate)),
-                    pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, ReportHelper.getCompanyName()));
-            dataMap.put("report_status", status ? "1" : "0");
-            dataList.add(dataMap);
-        }
-
-        resultMap.put("code", 200);
-        resultMap.put("data", dataList);
-    }
-
-    private void getCorpReportList(Map<String, Object> resultMap, Date startDate, Date endDate, String bankName, List<Integer> ADIDs) {
-        List<Map<String, Object>> dataList = new ArrayList<>();
-        List<TableModeEnum> tables = pbcReportHelper.getPbcReportTablesCorp();
+        List<TableModeEnum> tables = citicReportHelper.getCiticReportTables();
 
         List<BaseReportEntity> baseReportEntityList = reportService.getBankList(bankName, ADIDs, startDate, endDate);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
         for (BaseReportEntity baseReportEntity : baseReportEntityList) {
-            String dir = pbcReportHelper.getPbcFtpDirCorp(sdf.format(startDate), baseReportEntity.getBankName(), baseReportEntity.getAD());
+            String dir = citicReportHelper.getCiticFtpDir(sdf.format(startDate), baseReportEntity.getAD());
             String[] fileNames = new String[tables.size()];
             for (int i = 0; i < tables.size(); i++) {
-                fileNames[i] = pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tables.get(i),
-                        ReportHelper.getCompanyName(), baseReportEntity.getBankName(), baseReportEntity.getAD());
+                fileNames[i] = citicReportHelper.getCiticFileName(startDate, endDate, tables.get(i), ReportHelper.getCompanyName(), baseReportEntity.getAD());
             }
             String[][] status = ftpFileService.checkFileStatus(dir, fileNames);
             for (int i = 0; i < fileNames.length; i++) {
                 Map<String, Object> element = new HashMap<>();
-                element.put("bank_name", baseReportEntity.getBankName());
+                element.put("bank_name", CiticReportHelper.CITIC_BANK_NAME);
                 element.put("account_id", baseReportEntity.getADID());
                 element.put("account_no", baseReportEntity.getAD());
                 element.put("account_name", baseReportEntity.getName());
@@ -411,19 +331,18 @@ public class PbcReportController {
                 dataList.add(element);
             }
         }
-        resultMap.put("code", 200);
-        resultMap.put("data", dataList);
+        return dataList;
     }
 
     private List<BaseReportEntity> getDataList(TableModeEnum tableMode, Date startDate, Date endDate, List<Integer> ADIDs) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<BaseReportEntity> resultList = new ArrayList<>();
-        if (TableModeEnum.Table1_1.equals(tableMode) || TableModeEnum.Table1_1_2.equals(tableMode)) {
+        if (TableModeEnum.Table1_1.equals(tableMode)) {
             List<DataTable1_1> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
-        if (TableModeEnum.Table1_2.equals(tableMode) || TableModeEnum.Table1_2_1.equals(tableMode)) {
+        if (TableModeEnum.Table1_2_1.equals(tableMode)) {
             List<DataTable1_2> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
@@ -433,38 +352,18 @@ public class PbcReportController {
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
-        if (TableModeEnum.Table1_4.equals(tableMode)) {
-            List<DataTable1_4> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), ADIDs);
-            resultList.addAll(list);
-        }
-        if (TableModeEnum.Table1_5.equals(tableMode)) {
-            List<DataTable1_5> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), ADIDs);
-            resultList.addAll(list);
-        }
-        if (TableModeEnum.Table1_6.equals(tableMode) || TableModeEnum.Table1_6_2.equals(tableMode)) {
+        if (TableModeEnum.Table1_6.equals(tableMode)) {
             List<DataTable1_6> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
-        if (TableModeEnum.Table1_9.equals(tableMode) || TableModeEnum.Table1_9_2.equals(tableMode)) {
+        if (TableModeEnum.Table1_9.equals(tableMode)) {
             List<DataTable1_9> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
-        if (TableModeEnum.Table1_10.equals(tableMode) || TableModeEnum.Table1_10_2.equals(tableMode)) {
+        if (TableModeEnum.Table1_10.equals(tableMode)) {
             List<DataTable1_10> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), ADIDs);
-            resultList.addAll(list);
-        }
-        if (TableModeEnum.Table1_11.equals(tableMode)) {
-            List<DataTable1_11> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
-                    sdf.format(endDate), ADIDs);
-            resultList.addAll(list);
-        }
-        if (TableModeEnum.Table1_12.equals(tableMode)) {
-            List<DataTable1_12> list = pbcReportService.queryForList(tableMode, sdf.format(startDate),
                     sdf.format(endDate), ADIDs);
             resultList.addAll(list);
         }
@@ -475,4 +374,5 @@ public class PbcReportController {
         }
         return resultList;
     }
+
 }
