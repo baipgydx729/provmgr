@@ -227,7 +227,7 @@ public class PABReportController {
         	try {
                 String ftpPath = FTP_BANK_PATH + dateDir + sep;
                 String fileName = dateDir + "_BJ0000004_SZ_766004.zip";
-                ftpFileService.downloadAndCompressFromFtp(ftpPath, fileName, FILE_SUFFIX, response);
+                ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, FILE_SUFFIX);
                 code = 200;
             	message = "成功";
             } catch (Exception e) {
@@ -259,10 +259,9 @@ public class PABReportController {
         File tempFile = FileUtil.createTempFile( zipName);
         ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), FILE_SUFFIX);
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
-        if (!result) {
-            resultMap.put("code", 400);
-            resultMap.put("message", "失败!");
-            return resultMap;
+        if (result) {
+            resultMap.put("code", 200);
+            resultMap.put("message", "成功!");
         }
         //TODO 调用张梦宇报送接口
         resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
