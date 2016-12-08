@@ -43,7 +43,7 @@ public class Excel1_1_2 {
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
-        writeData(sheet, dataList);
+        writeData(sheet, ReportHelper.mergeAndSumByDate(dataList));
     }
 
     private static void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
@@ -66,7 +66,6 @@ public class Excel1_1_2 {
                 for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                     BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
                     sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
             //合计行

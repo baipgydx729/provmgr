@@ -82,7 +82,7 @@ public class PbcReportHelper {
      * @return
      */
     public String getPbcFtpDirDP(String timeStr) {
-        return PBC_REPORT_ROOT_PATH + timeStr + "/兴业银行/";
+        return PBC_REPORT_ROOT_PATH + timeStr + "/兴业银行/存管行特殊表/";
     }
 
     /**

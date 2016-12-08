@@ -102,10 +102,12 @@ public class PbcReportController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+        String remoteDir = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
+        long count = ftpFileService.countFiles(remoteDir, ".xls");
+        resultMap.put("file_count", count);
         if ("0".equals(reportType)) {
             //汇总类型的报表，不再区分银行和账户，只区分哪张表
-            return getTotalReportList(startDate, endDate);
+            getTotalReportList(resultMap, startDate, endDate);
         } else {
             String bankName = request.getParameter("bank_name");
             String account_id = request.getParameter("account_id");
@@ -114,8 +116,9 @@ public class PbcReportController {
                 adids = new ArrayList<>();
                 adids.add(Integer.valueOf(account_id));
             }
-            return getCorpReportList(startDate, endDate, bankName, adids);
+            getCorpReportList(resultMap, startDate, endDate, bankName, adids);
         }
+        return resultMap;
     }
 
     /**
@@ -163,18 +166,23 @@ public class PbcReportController {
                 presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
+                String dir = pbcReportHelper
+                        .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate));
+                String fileName =  pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, pbcReportHelper.getCompanyName());
+                boolean uploadResult = false;
                 try {
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
-                            pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, pbcReportHelper.getCompanyName()),
-                            presetContent,
-                            getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
-                    boolean uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), pbcReportHelper
-                            .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate)) + tempFile.getName());
+                            fileName, presetContent, getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
+                    uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), dir + fileName);
                     if (uploadResult) {
                         success++;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
+                }
+                if (!uploadResult) {
+                    log.info("生成报表失败,正在删除ftp已有报表文件");
+                    ftpFileService.deleteFile(dir + fileName);
                 }
             }
         } else {
@@ -199,20 +207,24 @@ public class PbcReportController {
                 List<Integer> ADIDs = new ArrayList<>();
                 ADIDs.add(Integer.valueOf(presetContent.getAccountId()));
                 List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
+                boolean uploadResult = false;
+                String dir = pbcReportHelper.getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate),
+                        presetContent.getBankName(), presetContent.getAccount());
+                String fileName =  pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode,
+                        pbcReportHelper.getCompanyName(), presetContent.getBankName(), presetContent.getAccount());
                 try {
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
-                            pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode, pbcReportHelper
-                                    .getCompanyName(), presetContent.getBankName(), presetContent.getAccount()),
-                            presetContent,
-                            dataList);
-                    boolean uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), pbcReportHelper
-                            .getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate), presetContent
-                                    .getBankName(), presetContent.getAccount()) + tempFile.getName());
+                            fileName, presetContent, dataList);
+                    uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(),  dir + fileName);
                     if (uploadResult) {
                         success++;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
+                }
+                if (!uploadResult) {
+                    log.info("生成报表失败,正在删除ftp已有报表文件");
+                    ftpFileService.deleteFile(dir + fileName);
                 }
             }
         }
@@ -354,8 +366,7 @@ public class PbcReportController {
         return resultMap;
     }
 
-    private Map<String, Object> getTotalReportList(Date startDate, Date endDate) {
-        Map<String, Object> resultMap = new HashMap<>();
+    private void getTotalReportList(Map<String, Object> resultMap, Date startDate, Date endDate) {
         List<Map<String, Object>> dataList = new ArrayList<>();
         List<TableModeEnum> tables = pbcReportHelper.getPbcReportTablesDP();
 
@@ -372,11 +383,9 @@ public class PbcReportController {
 
         resultMap.put("code", 200);
         resultMap.put("data", dataList);
-        return resultMap;
     }
 
-    private Map<String, Object> getCorpReportList(Date startDate, Date endDate, String bankName, List<Integer> ADIDs) {
-        Map<String, Object> resultMap = new HashMap<>();
+    private void getCorpReportList(Map<String, Object> resultMap, Date startDate, Date endDate, String bankName, List<Integer> ADIDs) {
         List<Map<String, Object>> dataList = new ArrayList<>();
         List<TableModeEnum> tables = pbcReportHelper.getPbcReportTablesCorp();
 
@@ -403,7 +412,6 @@ public class PbcReportController {
         }
         resultMap.put("code", 200);
         resultMap.put("data", dataList);
-        return resultMap;
     }
 
     private List<BaseReportEntity> getDataList(TableModeEnum tableMode, Date startDate, Date endDate, List<Integer> ADIDs) {

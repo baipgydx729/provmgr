@@ -38,7 +38,7 @@ public class Excel1_9_2 extends ReportHelper {
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
-        writeData(sheet, dataList);
+        writeData(sheet, ReportHelper.mergeAndSumByDate(dataList));
     }
 
     /**
@@ -56,7 +56,6 @@ public class Excel1_9_2 extends ReportHelper {
                 for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
                     BigDecimal value = getDoubleDataByRowIndex(dataTable1_9, j);
                     sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
         }

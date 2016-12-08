@@ -66,7 +66,7 @@ public class Excel1_3 {
         totalRow.createCell(columnNum++);
         sheet.addMergedRegion(new CellRangeAddress(DATA_START_ROW_NUM + countAccount, DATA_START_ROW_NUM + countAccount, 0, 2));
 
-        totalRow.createCell(columnNum++);
+        totalRow.createCell(columnNum++).setCellValue("C03");
         for (Object obj : totalDataMap.values()) {
             totalRow.createCell(columnNum++).setCellValue(null != obj ? ((BigDecimal)obj).doubleValue() : 0);
         }

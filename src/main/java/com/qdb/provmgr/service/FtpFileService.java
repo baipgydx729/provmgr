@@ -185,4 +185,27 @@ public class FtpFileService {
         return false;
     }
 
+    /**
+     * 统计文件夹内文件数量
+     * @param remotePath ftp远程路径
+     * @param fileSuffix 指定文件后缀
+     * @return
+     */
+    public long countFiles(String remotePath, String fileSuffix) {
+        try {
+            return FTPUtil.countFiles(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath, fileSuffix);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
+     * 删除远程文件
+     * @param remotePath 远程文件路径
+     */
+    public void deleteFile(String remotePath) {
+        FTPUtil.deleteFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath);
+    }
+
 }

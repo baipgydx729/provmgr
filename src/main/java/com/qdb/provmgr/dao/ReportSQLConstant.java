@@ -27,7 +27,7 @@ public interface ReportSQLConstant {
     public static final String TABLE1_6_COLUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.F01 f01,t1.F02 f02,t1.F03 f03,t1.F04 f04,t1.F05 f05,t1.F06 f06,t1.F07 f07,t1.F08 f08,t1.F09 f09,t1.F10 f10,t1.G01 g01,t1.G02 g02,t1.G03 g03,t1.G04 g04,t1.G05 g05,t1.G06 g06,t1.G07 g07,t1.G08 g08,t1.G09 g09,t1.G10 g10,t1.G11 g11,t1.G12 g12,t1.G13 g13,t1.G14 g14 ";
 
     public static final String TABLE1_9_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_9 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
-    public static final String TABLE1_9_COLUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.J01 j01,t1.J02j02,t1.J03 j03,t1.J04 j04 ";
+    public static final String TABLE1_9_COLUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.J01 j01,t1.J02 j02,t1.J03 j03,t1.J04 j04 ";
 
     public static final String TABLE1_10_NAME = " UacAutoCheck.ProvMgr.report_provision_cent_1_10 t1, UacAutoCheck.ProvMgr.info_ADinfo t2 ";
     public static final String TABLE1_10_COMUMNS = " t2.bankName_S + t2.branch bankName,t1.ADID,t1.name,t1.AD,t1.natuDate,t1.K01 k01,t1.K02 k02,t1.K03 k03,t1.K04 k04,t1.K05 k05,t1.K06 k06,t1.K07 k07,t1.K08 k08,t1.K09 k09,t1.K10 k10,t1.K11 k11,t1.K12 k12,t1.K13 k13,t1.K14 k14,t1.K15 k15,t1.K16 k16,t1.K17 k17,t1.K18 k18,t1.K19 k19,t1.K20 k20,t1.K21 k21,t1.K22 k22,t1.K23 k23,t1.K24 k24 ";
