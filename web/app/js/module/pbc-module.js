@@ -2,42 +2,55 @@ var commonModule = require("./common-module");
 var pbcService = require("../service/pbc-service");
 
 module.exports = {
-	getBankList: function (startDay, endDay) {
-	    if (startDay!=null && endDay!=null){
-            return pbcService.getBankList(startDay, endDay);
+	getBankList: function () {
+        var year;
+        var month;
+
+	    if ($('#monthpicker').html()!=undefined && $('#monthpicker').html()!=''){
+            year = $('#monthpicker').html().split("-")[0];
+            month = $('#monthpicker').html().split("-")[1];
         } else {
             var dateObj = new Date();
-            var year = dateObj.getFullYear();
-            var month = dateObj.getMonth()+1;
-
-            startDay = commonModule.getStartDay(year, month);
-            endDay = commonModule.getEndDay(year, month);
-
-            return pbcService.getBankList(startDay, endDay);
+            year = dateObj.getFullYear();
+            month = dateObj.getMonth()+1;
         }
+
+        return pbcService.getBankList(
+            commonModule.getStartDay(year, month),
+            commonModule.getEndDay(year, month)
+        );
     },
-    getReportList: function (reportType, bankName, accountId, startDay, endDay) {
-        if (startDay==null || endDay==null){
-            var dateObj = new Date();
-            var year = dateObj.getFullYear();
-            var month = dateObj.getMonth()+1;
+    getReportList: function (reportType, bankName, accountId) {
+        var year;
+        var month;
 
-            startDay = commonModule.getStartDay(year, month);
-            endDay = commonModule.getEndDay(year, month);
+        if ($('#monthpicker').html()!=undefined && $('#monthpicker').html()!=''){
+            year = $('#monthpicker').html().split("-")[0];
+            month = $('#monthpicker').html().split("-")[1];
+        } else {
+            var dateObj = new Date();
+            year = dateObj.getFullYear();
+            month = dateObj.getMonth()+1;
         }
+
+        var startDay = commonModule.getStartDay(year, month);
+        var endDay = commonModule.getEndDay(year, month);
 
 	    if (reportType==0){
             return pbcService.getReportList(reportType, startDay, endDay);
         } else {
 	        if (bankName==undefined || accountId==undefined){
-                return [];
+                return {
+                    reportList: [],
+                    fileCount: 0
+                };
             }
 
             return pbcService.getReportList(reportType, startDay, endDay, bankName, accountId);
         }
     },
     generateReport: function(reportList){
-        pbcService.generateReport(reportList);
+        return pbcService.generateReport(reportList);
     },
     submitReport: function(startDay, endDay){
         pbcService.submitReport(startDay, endDay);

@@ -20,15 +20,26 @@
                 <button ms-click="@downloadAll()">下载全部</button>
             </div>
 
-            <!--<div class="report-head-item">
+            <div class="report-head-item" ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'">
+                <label>报表类型</label>
+                <select name="report-type" ms-on-change="@selectReportType()">
+                    <option ms-for="(index, reportType) in @data.reportTypeList"
+                            ms-attr="{'value': index}">
+                        {{reportType.label}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="report-head-item"
+                 ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行' && @data.selectedReportTypeIndex==1">
                 <label>选择账户</label>
                 <select name="account" ms-on-change="@selectAccount()">
                     <option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
                             ms-attr="{'value': index}">
-                        {{account.account_name}}
+                        {{account.account_no}}
                     </option>
                 </select>
-            </div>-->
+            </div>
         </div>
 
         <div class="report-body">

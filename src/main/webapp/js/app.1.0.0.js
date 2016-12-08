@@ -20017,7 +20017,7 @@
 	
 	  $.fn.monthpicker = function(options) {
 	
-	    var months = options.months || ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+	    var months = options.months || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
 	
 	      Monthpicker = function(el) {
 	        this._el = $(el);
@@ -20239,38 +20239,37 @@
 							}
 						],
 						selectedReportTypeIndex: 0,
-						reportList: pbcModule.getReportList(0, null, null, null, null),
+						reportList: [],
+						totalCount: 11,
+						fileCount: 0,
 						checkedReportIndexList: []
 					},
 					selectBank: function () {
 						mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
+	
 	                    document.getElementsByName("account")[0].value = 0;
 	                    mainVm.data.selectedAccountIndex = 0;
 	
-	                    var year = $('#monthpicker').html().split("-")[0];
-	                    var month = $('#monthpicker').html().split("-")[1];
-	
-	                    mainVm.data.reportList = pbcModule.getReportList(
+	                    var reportListObj = pbcModule.getReportList(
 	                        mainVm.data.selectedReportTypeIndex,
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-							commonModule.getStartDay(year, month),
-							commonModule.getEndDay(year, month)
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
 	                    );
+	
+	                    mainVm.data.reportList = reportListObj.reportList;
+	                    mainVm.data.fileCount = reportListObj.fileCount;
 					},
 					selectAccount: function () {
 						mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
 	
-	                    var year = $('#monthpicker').html().split("-")[0];
-	                    var month = $('#monthpicker').html().split("-")[1];
-	
-	                    mainVm.data.reportList = pbcModule.getReportList(
+	                    var reportListObj = pbcModule.getReportList(
 	                        mainVm.data.selectedReportTypeIndex,
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                        commonModule.getStartDay(year, month),
-	                        commonModule.getEndDay(year, month)
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
 	                    );
+	
+	                    mainVm.data.reportList = reportListObj.reportList;
+	                    mainVm.data.fileCount = reportListObj.fileCount;
 					},
 					selectReportType: function(){
 						mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
@@ -20281,16 +20280,14 @@
 	                    mainVm.data.selectedAccountIndex = 0;
 	                    document.getElementsByName("account")[0].value = 0;
 	
-	                    var year = $('#monthpicker').html().split("-")[0];
-	                    var month = $('#monthpicker').html().split("-")[1];
-	
-						mainVm.data.reportList = pbcModule.getReportList(
+	                    var reportListObj = pbcModule.getReportList(
 	                        mainVm.data.selectedReportTypeIndex,
 							mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                        commonModule.getStartDay(year, month),
-	                        commonModule.getEndDay(year, month)
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
 						);
+	
+	                    mainVm.data.reportList = reportListObj.reportList;
+	                    mainVm.data.fileCount = reportListObj.fileCount;
 					},
 					checkAll: function () {
 						mainVm.data.checkedReportIndexList=[];
@@ -20345,7 +20342,18 @@
 	                        });
 						}
 	
-	                    pbcModule.generateReport(reportList);
+	                    var result = pbcModule.generateReport(reportList);
+	
+	                    if (result) {
+	                        var reportListObj =pbcModule.getReportList(
+	                            mainVm.data.selectedReportTypeIndex,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        );
+	
+	                        mainVm.data.reportList = reportListObj.reportList;
+	                        mainVm.data.fileCount = reportListObj.fileCount;
+						}
 	                },
 					batchGenerate: function () {
 						if (mainVm.data.checkedReportIndexList.length==0){
@@ -20382,7 +20390,18 @@
 	                        }
 						}
 	
-	                    pbcModule.generateReport(reportList);
+	                    var result = pbcModule.generateReport(reportList);
+	
+	                    if (result) {
+	                        var reportListObj = pbcModule.getReportList(
+	                            mainVm.data.selectedReportTypeIndex,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        );
+	
+	                        mainVm.data.reportList = reportListObj.reportList;
+	                        mainVm.data.fileCount = reportListObj.fileCount;
+	                    }
 					},
 					submit: function () {
 						if($('#monthpicker').html()==''){
@@ -20457,6 +20476,14 @@
 					}
 				});
 	
+				var reportListObj = pbcModule.getReportList(0);
+	            mainVm.data.reportList = reportListObj.reportList;
+	            mainVm.data.fileCount = reportListObj.fileCount;
+	
+				for (var i=0; i<mainVm.data.bankList.length; i++){
+	                mainVm.data.totalCount += mainVm.data.bankList[i].account_list.length*7;
+				}
+	
 				mainVm.$watch('onReady', function(){
 					$("#filter").keydown(function(event){
 						if(event.which == "13"){
@@ -20476,13 +20503,14 @@
 	                    years: years,
 	                    topOffset: 6,
 	                    onMonthSelect: function(month, year) {
-	                        mainVm.data.reportList = pbcModule.getReportList(
+	                        var reportListObj = pbcModule.getReportList(
 	                            mainVm.data.selectedReportTypeIndex,
 	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                            commonModule.getStartDay(year, month),
-	                            commonModule.getEndDay(year, month)
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
 	                        );
+	
+	                        mainVm.data.reportList = reportListObj.reportList;
+	                        mainVm.data.fileCount = reportListObj.fileCount;
 	                    }
 	                });
 				});
@@ -20497,46 +20525,59 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var commonModule = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(12);
 	var pbcService = __webpack_require__(17);
 	
 	module.exports = {
-		getBankList: function (startDay, endDay) {
-		    if (startDay!=null && endDay!=null){
-	            return pbcService.getBankList(startDay, endDay);
+		getBankList: function () {
+	        var year;
+	        var month;
+	
+		    if ($('#monthpicker').html()!=undefined && $('#monthpicker').html()!=''){
+	            year = $('#monthpicker').html().split("-")[0];
+	            month = $('#monthpicker').html().split("-")[1];
 	        } else {
 	            var dateObj = new Date();
-	            var year = dateObj.getFullYear();
-	            var month = dateObj.getMonth()+1;
-	
-	            startDay = commonModule.getStartDay(year, month);
-	            endDay = commonModule.getEndDay(year, month);
-	
-	            return pbcService.getBankList(startDay, endDay);
+	            year = dateObj.getFullYear();
+	            month = dateObj.getMonth()+1;
 	        }
+	
+	        return pbcService.getBankList(
+	            commonModule.getStartDay(year, month),
+	            commonModule.getEndDay(year, month)
+	        );
 	    },
-	    getReportList: function (reportType, bankName, accountId, startDay, endDay) {
-	        if (startDay==null || endDay==null){
-	            var dateObj = new Date();
-	            var year = dateObj.getFullYear();
-	            var month = dateObj.getMonth()+1;
+	    getReportList: function (reportType, bankName, accountId) {
+	        var year;
+	        var month;
 	
-	            startDay = commonModule.getStartDay(year, month);
-	            endDay = commonModule.getEndDay(year, month);
+	        if ($('#monthpicker').html()!=undefined && $('#monthpicker').html()!=''){
+	            year = $('#monthpicker').html().split("-")[0];
+	            month = $('#monthpicker').html().split("-")[1];
+	        } else {
+	            var dateObj = new Date();
+	            year = dateObj.getFullYear();
+	            month = dateObj.getMonth()+1;
 	        }
+	
+	        var startDay = commonModule.getStartDay(year, month);
+	        var endDay = commonModule.getEndDay(year, month);
 	
 		    if (reportType==0){
 	            return pbcService.getReportList(reportType, startDay, endDay);
 	        } else {
 		        if (bankName==undefined || accountId==undefined){
-	                return [];
+	                return {
+	                    reportList: [],
+	                    fileCount: 0
+	                };
 	            }
 	
 	            return pbcService.getReportList(reportType, startDay, endDay, bankName, accountId);
 	        }
 	    },
 	    generateReport: function(reportList){
-	        pbcService.generateReport(reportList);
+	        return pbcService.generateReport(reportList);
 	    },
 	    submitReport: function(startDay, endDay){
 	        pbcService.submitReport(startDay, endDay);
@@ -20572,6 +20613,7 @@
 	        }
 	    }
 	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 12 */
@@ -20627,7 +20669,7 @@
 			return null;
 	    },
 	    getStartDay: function(year, month){
-	        return year+"-"+month+"-01";
+	        return year+"-"+month+"-1";
 	    },
 		getEndDay: function(year, month){
 			var total = new Date(year, month, 0).getDate();
@@ -20695,7 +20737,10 @@
 	            parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
 	        }
 	
-	        var data = [];
+	        var data = {
+	            reportList: [],
+	            fileCount: 0
+	        };
 	        $.ajax({
 	            url: "/report/pbc/list?"+parameterList,
 	            type: 'GET',
@@ -20703,7 +20748,8 @@
 	            dataType: 'json',
 	            success: function (response) {
 	                if (response.code == 200) {
-	                    data = response.data;
+	                    data.reportList = response.data;
+	                    data.fileCount = response.file_count;
 	                }
 	            },
 	            error: function () {
@@ -20714,15 +20760,19 @@
 	        return data;
 	    },
 	    generateReport: function (reportList) {
+	        var result = false;
+	
 	        $.ajax({
 	            url: "/report/pbc/create",
 	            type: "POST",
+	            async: false,
 	            dataType: 'json',
 	            contentType: "application/json;charset=utf-8",
 	            data: JSON.stringify(reportList),
 	            success: function (data) {
 	                if (data.code == 200) {
 	                    commonModule.infoModal(data.message);
+	                    result = true;
 	                } else if (data.code == 400) {
 	                    commonModule.errorModal(data.message);
 	                }
@@ -20731,6 +20781,8 @@
 	                commonModule.errorModal("接口错误！");
 	            }
 	        });
+	
+	        return result;
 	    },
 	    submitReport: function(startDay, endDay) {
 	        $.ajax({
@@ -20815,7 +20867,7 @@
 /* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.reportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-click=\"@generate(index)\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行(报表总数: {{@data.totalCount}}，已生成: {{@data.fileCount}})</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\" class=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\"\r\n\t\t\t\t ms-for=\"(bankIndex, bank) in @data.bankList\"\r\n\t\t\t\t ms-visible=\"@data.selectedReportTypeIndex==1 && bankIndex==@data.selectedBankIndex\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\"\r\n\t\t\t\t\t\tms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[bankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.reportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-click=\"@generate(index)\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
 
 /***/ },
 /* 19 */
@@ -20891,15 +20943,48 @@
 	                    bankList: [],
 	                    selectedBankIndex: 0,
 	                    selectedAccountIndex: 0,
+	                    reportTypeList: [
+	                        {
+	                            label: "汇总报表"
+	                        },
+	                        {
+	                            label: "账户报表"
+	                        }
+	                    ],
+	                    selectedReportTypeIndex: 0,
 	                    reportList: [],
 	                    checkedReportIndexList: []
 	                },
 	                selectBank: function () {
 	                    mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
-	                    mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
+	                    mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                        mainVm.data.selectedReportTypeIndex,
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                    );
 	                },
 	                selectAccount: function () {
 	                    mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
+	
+	                    mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                        mainVm.data.selectedReportTypeIndex,
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                    );
+	                },
+	                selectReportType: function(){
+	                    mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
+	
+	                    if (mainVm.data.selectedReportTypeIndex==1) {
+	                        mainVm.data.selectedAccountIndex = 0;
+	                        document.getElementsByName("account")[0].value = 0;
+	                    }
+	
+	                    mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                        mainVm.data.selectedReportTypeIndex,
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                    );
 	                },
 	                checkAll: function () {
 	                    mainVm.data.checkedReportIndexList=[];
@@ -20928,20 +21013,44 @@
 	                    }
 	                },
 	                generate: function (index) {
+	                    var year = $('#monthpicker').html().split("-")[0];
+	                    var month = $('#monthpicker').html().split("-")[1];
+	
 	                    var reportList={
-	                        start_day: $('#datetime-start').val(),
-	                        end_day: $('#datetime-end').val(),
+	                        start_day: commonModule.getStartDay(year, month),
+	                        end_day: commonModule.getEndDay(year, month),
 	                        report_list: []
 	                    };
 	
-	                    reportList.report_list.push({
-	                        report_name: mainVm.data.reportList[index].report_name
-	                    });
+	                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+	                        reportList.report_type = mainVm.data.selectedReportTypeIndex;
+	                    }
 	
-	                    cooperativeBankModule.generateReport(
+	                    if (mainVm.data.selectedReportTypeIndex==1) {
+	                        reportList.report_list.push({
+	                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+	                            account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+	                            account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+	                            report_name: mainVm.data.reportList[index].report_name
+	                        });
+	                    } else {
+	                        reportList.report_list.push({
+	                            report_name: mainVm.data.reportList[index].report_name
+	                        });
+	                    }
+	
+	                    var result = cooperativeBankModule.generateReport(
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 	                        reportList
 	                    );
+	
+	                    if (result) {
+	                        mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.selectedReportTypeIndex,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        );
+	                    }
 	                },
 	                batchGenerate: function () {
 	                    if (mainVm.data.checkedReportIndexList.length==0){
@@ -20950,26 +21059,52 @@
 	                        return ;
 	                    }
 	
+	                    var year = $('#monthpicker').html().split("-")[0];
+	                    var month = $('#monthpicker').html().split("-")[1];
+	
 	                    var reportList={
-	                        start_day: $('#datetime-start').val(),
-	                        end_day: $('#datetime-end').val(),
+	                        start_day: commonModule.getStartDay(year, month),
+	                        end_day: commonModule.getEndDay(year, month),
 	                        report_list: []
 	                    };
 	
-	                    for (var i=0; i<mainVm.data.checkedReportIndexList.length; i++){
-	                        reportList.report_list.push({
-	                            report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
-	                        });
+	                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+	                        reportList.report_type = mainVm.data.selectedReportTypeIndex;
 	                    }
 	
-	                    cooperativeBankModule.generateReport(
+	                    if (mainVm.data.selectedReportTypeIndex==1) {
+	                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
+	                            reportList.report_list.push({
+	                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+	                                account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+	                                account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+	                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+	                            });
+	                        }
+	                    } else {
+	                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
+	                            reportList.report_list.push({
+	                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+	                            });
+	                        }
+	                    }
+	
+	                    var result = cooperativeBankModule.generateReport(
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
 	                        reportList
 	                    );
+	
+	                    if (result) {
+	                        mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.selectedReportTypeIndex,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        );
+	                    }
 	                },
 	                submit: function () {
-	                    if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
-	                        commonModule.errorModal("请选择时间区间!");
+	                    if($('#monthpicker').html()==''){
+	                        commonModule.errorModal("请选择月份!");
 	
 	                        return;
 	                    }
@@ -20978,14 +21113,17 @@
 	                        delete avalon.vmodels['submit-controller'];
 	                    }
 	
+	                    var year = $('#monthpicker').html().split("-")[0];
+	                    var month = $('#monthpicker').html().split("-")[1];
+	
 	                    var submitVm = avalon.define({
 	                        $id: 'submit-controller',
 	                        checkReportFlag: 0,
 	                        submit: function () {
 	                            cooperativeBankModule.submitReport(
 	                                mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                                $('#datetime-start').val(),
-	                                $('#datetime-end').val()
+	                                commonModule.getStartDay(year, month),
+	                                commonModule.getEndDay(year, month)
 	                            );
 	                        },
 	                        checkReport: function () {
@@ -21003,18 +21141,26 @@
 	                    avalon.scan(document.getElementById("modal").firstChild);
 	                },
 	                download: function (reportName) {
+	                    var year = $('#monthpicker').html().split("-")[0];
+	                    var month = $('#monthpicker').html().split("-")[1];
+	
 	                    cooperativeBankModule.download(
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        $('#datetime-start').val(),
-	                        $('#datetime-end').val(),
+	                        mainVm.data.selectedReportTypeIndex,
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+	                        commonModule.getStartDay(year, month),
+	                        commonModule.getEndDay(year, month),
 	                        reportName
 	                    );
 	                },
 	                downloadAll: function () {
+	                    var year = $('#monthpicker').html().split("-")[0];
+	                    var month = $('#monthpicker').html().split("-")[1];
+	
 	                    cooperativeBankModule.downloadAll(
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        $('#datetime-start').val(),
-	                        $('#datetime-end').val()
+	                        commonModule.getStartDay(year, month),
+	                        commonModule.getEndDay(year, month)
 	                    );
 	                },
 	                filter: function () {
@@ -21046,7 +21192,11 @@
 	            });
 	
 	            mainVm.data.bankList = mainVm.getOKBankList();
-	            mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
+	            mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                mainVm.data.selectedReportTypeIndex,
+	                mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	            );
 	
 	            mainVm.$watch('onReady', function(){
 	                $("#filter").keydown(function(event){
@@ -21067,7 +21217,11 @@
 	                    years: years,
 	                    topOffset: 6,
 	                    onMonthSelect: function(month, year) {
-	
+	                        mainVm.data.reportList = cooperativeBankModule.getReportList(
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.selectedReportTypeIndex,
+	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        );
 	                    }
 	                });
 	            });
@@ -21085,43 +21239,56 @@
 	var commonModule = __webpack_require__(12);
 	
 	module.exports = {
-	    getReportList: function (bankName) {
-	        var startDay;
-	        var endDay;
+	    getReportList: function (bankName, reportType, accountId) {
+	        if ($('#monthpicker').html()!=undefined && $('#monthpicker').html()!=''){
+	            var year = $('#monthpicker').html().split("-")[0];
+	            var month = $('#monthpicker').html().split("-")[1];
 	
-	        if ($("#datetime-start").val()!=undefined
-	            && $("#datetime-start").val()!=""
-	            && $("#datetime-end").val()!=undefined
-	            && $("#datetime-end").val()!=""
-	        ){
-	            startDay = $("#datetime-start").val();
-	            endDay = $("#datetime-end").val();
+	            startDay = commonModule.getStartDay(year, month);
+	            endDay = commonModule.getEndDay(year, month);
 	        } else {
 	            var dateObj = new Date();
 	            var year = dateObj.getFullYear();
 	            var month = dateObj.getMonth()+1;
-	            var day = dateObj.getDate();
 	
-	            startDay = year+"-"+month+"-01";
-	            endDay = year+"-"+month+"-"+day;
+	            startDay = commonModule.getStartDay(year, month);
+	            endDay = commonModule.getEndDay(year, month);
 	        }
 	
-	        return cooperativeBankService.getReportList(bankName, startDay, endDay);
+	        return cooperativeBankService.getReportList(bankName, reportType, accountId, startDay, endDay);
 	    },
 	    generateReport: function(bankName, reportList){
-	        cooperativeBankService.generateReport(bankName, reportList);
+	        return cooperativeBankService.generateReport(bankName, reportList);
 	    },
 	    submitReport: function(bankName, startDay, endDay){
 	        cooperativeBankService.submitReport(bankName, startDay, endDay);
 	    },
-	    download: function (bankName, startDay, endDay, reportName) {
-	        if (cooperativeBankService.downloadable(bankName, startDay, endDay, reportName)){
-	            window.open(
-	                "/report/"+commonModule.getBankAbbreviation(bankName)
-	                +"/download?start_day="+startDay
-	                +"&end_day="+endDay
-	                +"&report_name="+reportName
-	            );
+	    download: function (bankName, reportType, accountId, startDay, endDay, reportName) {
+	        if (cooperativeBankService.downloadable(bankName, reportType, accountId, startDay, endDay, reportName)){
+	            var url =null;
+	            if (bankName=="中国建设银行"){
+	                if(reportType==0){
+	                    url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                        +"/download?report_type="+reportType
+	                        +"&start_day="+startDay
+	                        +"&end_day="+endDay
+	                        +"&report_name="+reportName;
+	                }else {
+	                    url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                        +"/download?report_type="+reportType
+	                        +"&account_id="+accountId
+	                        +"&start_day="+startDay
+	                        +"&end_day="+endDay
+	                        +"&report_name="+reportName;
+	                }
+	            }else {
+	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                    +"/download?start_day="+startDay
+	                    +"&end_day="+endDay
+	                    +"&report_name="+reportName;
+	            }
+	
+	            window.open(url);
 	        }
 	    },
 	    downloadAll: function (bankName, startDay, endDay) {
@@ -21143,10 +21310,31 @@
 	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(12);
 	
 	module.exports = {
-	    getReportList: function (bankName, startDay, endDay) {
+	    getReportList: function (bankName, reportType, accountId, startDay, endDay) {
 	        var data = [];
+	
+	        var url =null;
+	        if (bankName=="中国建设银行"){
+	            if(reportType==0){
+	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                        +"/list?report_type="+reportType
+	                        +"&start_day="+startDay
+	                        +"&end_day="+endDay;
+	            }else {
+	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                    +"/list?report_type="+reportType
+	                    +"&account_id="+accountId
+	                    +"&start_day="+startDay
+	                    +"&end_day="+endDay;
+	            }
+	        }else {
+	            url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                    +"/list?start_day="+startDay
+	                    +"&end_day="+endDay;
+	        }
+	
 	        $.ajax({
-	            url: "/report/"+commonModule.getBankAbbreviation(bankName)+"/list?start_day="+startDay+"&end_day="+endDay,
+	            url: url,
 	            type: 'GET',
 	            async: false,
 	            dataType: 'json',
@@ -21163,15 +21351,19 @@
 	        return data;
 	    },
 	    generateReport: function (bankName, reportList) {
+	        var result = false;
+	
 	        $.ajax({
 	            url: "/report/"+commonModule.getBankAbbreviation(bankName)+"/create",
 	            type: "POST",
+	            async: false,
 	            dataType: 'json',
 	            contentType: "application/json;charset=utf-8",
 	            data: JSON.stringify(reportList),
 	            success: function (data) {
 	                if (data.code == 200) {
 	                    commonModule.infoModal(data.message);
+	                    result = true;
 	                } else if (data.code == 400) {
 	                    commonModule.errorModal(data.message);
 	                }
@@ -21180,6 +21372,8 @@
 	                commonModule.errorModal("接口错误！");
 	            }
 	        });
+	
+	        return result;
 	    },
 	    submitReport: function(bankName, startDay, endDay) {
 	        $.ajax({
@@ -21199,14 +21393,34 @@
 	            }
 	        });
 	    },
-	    downloadable: function(bankName, startDay, endDay, reportName){
+	    downloadable: function(bankName, reportType, accountId, startDay, endDay, reportName){
 	        var result = true;
 	
-	        $.ajax({
-	            url: "/report/"+commonModule.getBankAbbreviation(bankName)
+	        var url =null;
+	        if (bankName=="中国建设银行"){
+	            if(reportType==0){
+	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                    +"/download?report_type="+reportType
+	                    +"&start_day="+startDay
+	                    +"&end_day="+endDay
+	                    +"&report_name="+reportName;
+	            }else {
+	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
+	                    +"/download?report_type="+reportType
+	                    +"&account_id="+accountId
+	                    +"&start_day="+startDay
+	                    +"&end_day="+endDay
+	                    +"&report_name="+reportName;
+	            }
+	        }else {
+	            url = "/report/"+commonModule.getBankAbbreviation(bankName)
 	                    +"/download?start_day="+startDay
 	                    +"&end_day="+endDay
-	                    +"&report_name="+reportName,
+	                    +"&report_name="+reportName;
+	        }
+	
+	        $.ajax({
+	            url: url,
 	            type: 'GET',
 	            dataType: 'json',
 	            async: false,
@@ -21251,7 +21465,7 @@
 /* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\" ms-if=\"@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'\">报送</button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <!--<div class=\"report-head-item\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_name}}\r\n                    </option>\r\n                </select>\r\n            </div>-->\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-click=\"@generate(index)\">生成</button>\r\n                            <button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n                            <button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\" ms-if=\"@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'\">报送</button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\" ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\">\r\n                <label>报表类型</label>\r\n                <select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n                    <option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{reportType.label}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行' && @data.selectedReportTypeIndex==1\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_no}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-click=\"@generate(index)\">生成</button>\r\n                            <button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n                            <button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }
 /******/ ]);
