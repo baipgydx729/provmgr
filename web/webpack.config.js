@@ -49,13 +49,13 @@ module.exports=function (options) {
     //config
     var config = {
         entry: {
-            'app': ['avalon2', 'mmRouter', 'jquery', 'jquery-modal', 'jquery-datetimepicker'].concat(['./app/js/app'])
+            'app': ['avalon2', 'mmRouter', 'jquery', 'jquery-modal', 'jquery-monthpicker'].concat(['./app/js/app'])
         },
         resolve: {
             extensions: ['', '.js', '.json'],
             alias: {
                 'jquery':path.resolve(node_modules,'jquery/dist/jquery.js'),
-                'jquery-datetimepicker':path.resolve(node_modules,'jquery-datetimepicker/build/jquery.datetimepicker.full.js'),
+                'jquery-monthpicker':path.resolve(node_modules,'jquery.monthpicker/js/jquery.monthpicker.js'),
                 'jquery-modal':path.resolve(node_modules,'jquery-modal/jquery.modal.js'),
                 'avalon2':path.resolve(node_modules,'avalon2/dist/avalon.js'),
                 'mmRouter':path.resolve(node_modules,'mmRouter/dist/mmRouter.js')

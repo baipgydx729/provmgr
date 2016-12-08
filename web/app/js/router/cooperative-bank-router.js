@@ -16,15 +16,48 @@ module.exports = {
                     bankList: [],
                     selectedBankIndex: 0,
                     selectedAccountIndex: 0,
+                    reportTypeList: [
+                        {
+                            label: "汇总报表"
+                        },
+                        {
+                            label: "账户报表"
+                        }
+                    ],
+                    selectedReportTypeIndex: 0,
                     reportList: [],
                     checkedReportIndexList: []
                 },
                 selectBank: function () {
                     mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
-                    mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
+                    mainVm.data.reportList = cooperativeBankModule.getReportList(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.selectedReportTypeIndex,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                    );
                 },
                 selectAccount: function () {
                     mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
+
+                    mainVm.data.reportList = cooperativeBankModule.getReportList(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.selectedReportTypeIndex,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                    );
+                },
+                selectReportType: function(){
+                    mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
+
+                    if (mainVm.data.selectedReportTypeIndex==1) {
+                        mainVm.data.selectedAccountIndex = 0;
+                        document.getElementsByName("account")[0].value = 0;
+                    }
+
+                    mainVm.data.reportList = cooperativeBankModule.getReportList(
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                        mainVm.data.selectedReportTypeIndex,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                    );
                 },
                 checkAll: function () {
                     mainVm.data.checkedReportIndexList=[];
@@ -53,20 +86,44 @@ module.exports = {
                     }
                 },
                 generate: function (index) {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     var reportList={
-                        start_day: $('#datetime-start').val(),
-                        end_day: $('#datetime-end').val(),
+                        start_day: commonModule.getStartDay(year, month),
+                        end_day: commonModule.getEndDay(year, month),
                         report_list: []
                     };
 
-                    reportList.report_list.push({
-                        report_name: mainVm.data.reportList[index].report_name
-                    });
+                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+                        reportList.report_type = mainVm.data.selectedReportTypeIndex;
+                    }
 
-                    cooperativeBankModule.generateReport(
+                    if (mainVm.data.selectedReportTypeIndex==1) {
+                        reportList.report_list.push({
+                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                            account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+                            account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+                            report_name: mainVm.data.reportList[index].report_name
+                        });
+                    } else {
+                        reportList.report_list.push({
+                            report_name: mainVm.data.reportList[index].report_name
+                        });
+                    }
+
+                    var result = cooperativeBankModule.generateReport(
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                         reportList
                     );
+
+                    if (result) {
+                        mainVm.data.reportList = cooperativeBankModule.getReportList(
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+                    }
                 },
                 batchGenerate: function () {
                     if (mainVm.data.checkedReportIndexList.length==0){
@@ -75,26 +132,52 @@ module.exports = {
                         return ;
                     }
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     var reportList={
-                        start_day: $('#datetime-start').val(),
-                        end_day: $('#datetime-end').val(),
+                        start_day: commonModule.getStartDay(year, month),
+                        end_day: commonModule.getEndDay(year, month),
                         report_list: []
                     };
 
-                    for (var i=0; i<mainVm.data.checkedReportIndexList.length; i++){
-                        reportList.report_list.push({
-                            report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
-                        });
+                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+                        reportList.report_type = mainVm.data.selectedReportTypeIndex;
                     }
 
-                    cooperativeBankModule.generateReport(
+                    if (mainVm.data.selectedReportTypeIndex==1) {
+                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
+                            reportList.report_list.push({
+                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                                account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
+                                account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+                            });
+                        }
+                    } else {
+                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
+                            reportList.report_list.push({
+                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
+                            });
+                        }
+                    }
+
+                    var result = cooperativeBankModule.generateReport(
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                         reportList
                     );
+
+                    if (result) {
+                        mainVm.data.reportList = cooperativeBankModule.getReportList(
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+                    }
                 },
                 submit: function () {
-                    if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
-                        commonModule.errorModal("请选择时间区间!");
+                    if($('#monthpicker').html()==''){
+                        commonModule.errorModal("请选择月份!");
 
                         return;
                     }
@@ -103,14 +186,17 @@ module.exports = {
                         delete avalon.vmodels['submit-controller'];
                     }
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     var submitVm = avalon.define({
                         $id: 'submit-controller',
                         checkReportFlag: 0,
                         submit: function () {
                             cooperativeBankModule.submitReport(
                                 mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                                $('#datetime-start').val(),
-                                $('#datetime-end').val()
+                                commonModule.getStartDay(year, month),
+                                commonModule.getEndDay(year, month)
                             );
                         },
                         checkReport: function () {
@@ -128,18 +214,26 @@ module.exports = {
                     avalon.scan(document.getElementById("modal").firstChild);
                 },
                 download: function (reportName) {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     cooperativeBankModule.download(
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        $('#datetime-start').val(),
-                        $('#datetime-end').val(),
+                        mainVm.data.selectedReportTypeIndex,
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month),
                         reportName
                     );
                 },
                 downloadAll: function () {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     cooperativeBankModule.downloadAll(
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        $('#datetime-start').val(),
-                        $('#datetime-end').val()
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month)
                     );
                 },
                 filter: function () {
@@ -171,7 +265,11 @@ module.exports = {
             });
 
             mainVm.data.bankList = mainVm.getOKBankList();
-            mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
+            mainVm.data.reportList = cooperativeBankModule.getReportList(
+                mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                mainVm.data.selectedReportTypeIndex,
+                mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+            );
 
             mainVm.$watch('onReady', function(){
                 $("#filter").keydown(function(event){
@@ -180,43 +278,25 @@ module.exports = {
                     }
                 });
 
-                $.datetimepicker.setLocale('ch');
-
-                $('#datetime-start').datetimepicker({
-                    timepicker:false,
-                    format:'Y-m-d',
-                    maxDate:'+1970/01/01',
-                    onShow:function(){
-                        this.setOptions({
-                            maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
-                        });
-                    },
-                    onSelectDate: function(){
-                        mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
-                    }
-                });
-
-                $('#datetime-end').datetimepicker({
-                    timepicker:false,
-                    format:'Y-m-d',
-                    maxDate:'+1970/01/01',
-                    onShow:function(){
-                        this.setOptions({
-                            minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
-                        });
-                    },
-                    onSelectDate: function(){
-                        mainVm.data.reportList = cooperativeBankModule.getReportList(mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name);
-                    }
-                });
-
                 var dateObj = new Date();
-                var year = dateObj.getFullYear();
-                var month = dateObj.getMonth()+1;
-                var day = dateObj.getDate();
+                var currentYear = dateObj.getFullYear();
 
-                $("#datetime-start").val(year+"-"+month+"-01");
-                $("#datetime-end").val(year+"-"+month+"-"+day);
+                var years = []
+                for (var i=0; i<=currentYear-2008; i++){
+                    years.push(currentYear-i);
+                }
+
+                $('#monthpicker').monthpicker({
+                    years: years,
+                    topOffset: 6,
+                    onMonthSelect: function(month, year) {
+                        mainVm.data.reportList = cooperativeBankModule.getReportList(
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+                    }
+                });
             });
             avalon.scan(document.body);
         });
