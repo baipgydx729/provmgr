@@ -200,4 +200,12 @@ public class FtpFileService {
         return 0;
     }
 
+    /**
+     * 删除远程文件
+     * @param remotePath 远程文件路径
+     */
+    public void deleteFile(String remotePath) {
+        FTPUtil.deleteFile(ftp_ip, ftp_port, ftp_user, ftp_pwd, remotePath);
+    }
+
 }

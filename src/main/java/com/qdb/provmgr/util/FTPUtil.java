@@ -123,10 +123,8 @@ public class FTPUtil {
     }
 
     private static boolean isFileNameExists(FTPClient ftpClient, String remoteFileName) throws IOException {
-        if (StringUtils.isBlank(remoteFileName)) {
-            return true;
-        } else {
-            String[] fileNames = ftpClient.listNames();
+        String[] fileNames = ftpClient.listNames();
+        if (fileNames != null) {
             for (String fileName : fileNames) {
                 if (new String(fileName.getBytes(SERVER_CHARSET)).equals(remoteFileName)) {
                     return true;
@@ -204,7 +202,8 @@ public class FTPUtil {
                 }
             }
             return names;
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error("访问ftp异常", e);
         } finally {
             close(ftp);
         }
@@ -255,12 +254,12 @@ public class FTPUtil {
                     "上传失败!"));
             return success;
         } catch (IOException e) {
-            log.error("上传文件异常:" + e.getMessage());
-            return false;
+            log.error("访问ftp异常:" + e);
         } finally {
             IOUtils.closeQuietly(input);
             close(ftp);
         }
+        return false;
     }
 
     /**
@@ -297,7 +296,7 @@ public class FTPUtil {
             }
             return true;
         } catch (IOException e) {
-            log.error("下载异常", e);
+            log.error("访问ftp异常", e);
             return false;
         } finally {
             close(ftp);
@@ -329,7 +328,7 @@ public class FTPUtil {
                 }
             }
         } catch (Exception e) {
-            log.error("下载异常", e);
+            log.error("访问ftp异常", e);
         }
     }
 
@@ -355,11 +354,11 @@ public class FTPUtil {
             }
             return false;
         } catch (IOException e) {
-            log.error("下载文件异常:" + e);
-            return false;
+            log.error("访问ftp异常:", e);
         } finally {
             IOUtils.closeQuietly(os);
         }
+        return false;
     }
 
     /**
@@ -405,7 +404,7 @@ public class FTPUtil {
                 throw new Exception("文件不存在");
             }
         } catch (Exception e) {
-            log.error("下载文件异常:" + e.getMessage());
+            log.error("访问ftp异常:", e);
             throw e;
         } finally {
             IOUtils.closeQuietly(os);
@@ -436,14 +435,14 @@ public class FTPUtil {
                 log.error("无法登录");
                 throw new Exception("无法登录");
             }
-            log.info("用户登录成功，准备开始下载文件...");
+            log.info("用户登录成功，准备解析文件...");
             boolean changeSuccess = changeWorkingDirectory(ftp, remoteDir);
             if (!changeSuccess) {
                 return false;
             }
             return isFileNameExists(ftp, remoteFileName);
         } catch (IOException e) {
-            log.error("下载文件异常:" + e.getMessage());
+            log.error("访问ftp异常:", e);
         } finally {
             close(ftp);
         }
@@ -473,7 +472,8 @@ public class FTPUtil {
                 log.error("无法登录");
                 throw new Exception("无法登录");
             }
-            log.info("用户登录成功，准备开始下载文件...");
+            log.info("用户登录成功，准备开始解析文件...");
+            count = 0L;
             countFiles(ftp, remotePath, fileSuffix);
             return count;
         } finally {
@@ -481,20 +481,68 @@ public class FTPUtil {
         }
     }
 
-    private static void countFiles(FTPClient ftpClient, String remotePath, String fileSuffix) throws
-            UnsupportedEncodingException {
+    /**
+     * 删除远程文件
+     * @param url ftp地址
+     * @param port ftp端口
+     * @param username ftp登录名
+     * @param password ftp密码
+     * @param remotePath 远程路径
+     * @return
+     */
+    public static boolean deleteFile(String url, int port, String username, String password, String remotePath) {
+        if (StringUtils.isBlank(remotePath)) {
+            return true;
+        }
+        String remoteDir = remotePath.substring(0, remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        String remoteFileName = remotePath.substring(remotePath.lastIndexOf(FTP_FILE_SEPARATOR) + 1);
+        FTPClient ftp = null;
+        try {
+            ftp = login(url, port, username, password);
+            if (ftp == null || !ftp.isConnected()) {
+                log.error("无法登录");
+                return false;
+            }
+            log.info("用户登录成功，准备开始删除文件...");
+            if (changeWorkingDirectory(ftp, remoteDir)) {
+                if (!StringUtils.isBlank(remoteFileName)) {
+                    return ftp.deleteFile(new String(remoteFileName.getBytes(), SERVER_CHARSET));
+                } else {
+                    FTPFile[] ftpFiles = ftp.listFiles();
+                    boolean result = true;
+                    for (FTPFile file  :ftpFiles) {
+                        if (!ftp.deleteFile(file.getName())) {
+                            result = false;
+                        }
+                    }
+                    if (ftp.changeToParentDirectory()) {
+                        remoteDir = remoteDir.substring(0, remoteDir.lastIndexOf(FTP_FILE_SEPARATOR));
+                        ftp.removeDirectory(remoteDir.substring(remoteDir.lastIndexOf(FTP_FILE_SEPARATOR) + 1));
+                    }
+                    return result;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("访问ftp异常", e);
+        } finally {
+            close(ftp);
+        }
+        return false;
+    }
+
+    private static void countFiles(FTPClient ftpClient, String remotePath, String fileSuffix) {
         FTPFile[] files = getFileListWithoutCD(ftpClient, remotePath);
         if (files != null) {
             for (FTPFile file : files) {
-                if (file.isDirectory()) {
-                    countFiles(ftpClient, remotePath + new String(file.getName().getBytes(SERVER_CHARSET)) + FTP_FILE_SEPARATOR, fileSuffix);
-                }
                 try {
-                    String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
-                    if (StringUtils.isBlank(fileSuffix)) {
-                        count++;
-                    } else if (fileName.endsWith(fileSuffix)) {
-                        count++;
+                    if (file.isDirectory()) {
+                        countFiles(ftpClient, remotePath + new String(file.getName().getBytes(SERVER_CHARSET)) + FTP_FILE_SEPARATOR, fileSuffix);
+                    } else {
+                        String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
+                        if (StringUtils.isBlank(fileSuffix) || fileName.endsWith(fileSuffix)) {
+                            count++;
+                        }
                     }
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -508,11 +556,18 @@ public class FTPUtil {
         int port = 21;
         String user = "mashengli";
         String pwd = "mslV1234";
+//        System.out.println(deleteFile(ip, port, user, pwd, "/备付金报表/中国人民银行/201612/兴业银行/存管行特殊表/"));
+
         try {
             System.out.println(countFiles(ip, port, user, pwd, "/备付金报表/中国人民银行/201612/", ".xls"));
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        try {
+//            System.out.println(countFiles(ip, port, user, pwd, "/备付金报表/中国人民银行/201612/", ".xls"));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        try {
 //            System.out.println("1111111" + ftpUtils.login(ip, port, user, pwd));
 //        } catch (IOException e) {

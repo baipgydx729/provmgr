@@ -166,18 +166,23 @@ public class PbcReportController {
                 presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
                 presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
 
+                String dir = pbcReportHelper
+                        .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate));
+                String fileName =  pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, pbcReportHelper.getCompanyName());
+                boolean uploadResult = false;
                 try {
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
-                            pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, pbcReportHelper.getCompanyName()),
-                            presetContent,
-                            getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
-                    boolean uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), pbcReportHelper
-                            .getPbcFtpDirDP(new SimpleDateFormat("yyyyMM").format(startDate)) + tempFile.getName());
+                            fileName, presetContent, getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
+                    uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), dir + fileName);
                     if (uploadResult) {
                         success++;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
+                }
+                if (!uploadResult) {
+                    log.info("生成报表失败,正在删除ftp已有报表文件");
+                    ftpFileService.deleteFile(dir + fileName);
                 }
             }
         } else {
@@ -202,20 +207,24 @@ public class PbcReportController {
                 List<Integer> ADIDs = new ArrayList<>();
                 ADIDs.add(Integer.valueOf(presetContent.getAccountId()));
                 List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
+                boolean uploadResult = false;
+                String dir = pbcReportHelper.getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate),
+                        presetContent.getBankName(), presetContent.getAccount());
+                String fileName =  pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode,
+                        pbcReportHelper.getCompanyName(), presetContent.getBankName(), presetContent.getAccount());
                 try {
                     File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
-                            pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode, pbcReportHelper
-                                    .getCompanyName(), presetContent.getBankName(), presetContent.getAccount()),
-                            presetContent,
-                            dataList);
-                    boolean uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), pbcReportHelper
-                            .getPbcFtpDirCorp(new SimpleDateFormat("yyyyMM").format(startDate), presetContent
-                                    .getBankName(), presetContent.getAccount()) + tempFile.getName());
+                            fileName, presetContent, dataList);
+                    uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(),  dir + fileName);
                     if (uploadResult) {
                         success++;
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("生成报表异常,将尝试删除ftp已有报表文件", e);
+                }
+                if (!uploadResult) {
+                    log.info("生成报表失败,正在删除ftp已有报表文件");
+                    ftpFileService.deleteFile(dir + fileName);
                 }
             }
         }
