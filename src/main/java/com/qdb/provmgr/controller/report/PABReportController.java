@@ -31,7 +31,7 @@ import com.qdb.provmgr.util.constant.JSONInfo;
 @Controller
 public class PABReportController {
 	private Logger logger = LoggerFactory.getLogger(PABReportController.class);
-	private final String FTP_BANK_PATH = "/Users/caoqiang/备付金报表/平安银行/";
+	private final String FTP_BANK_PATH = "/备付金报表/平安银行/";
 	String sep = System.getProperty("file.separator");
 	@Value("${PAB.report.list}")
     private String pabReportList;
@@ -134,8 +134,6 @@ public class PABReportController {
                     String templateName = "pab" + tableType + ".xls";
                     //201401_BJ0000004_T1-1_SZ_766004.xls
                     String destFileName = dateDir + "_BJ0000004_" + tableType + "_SZ_766004.xls";
-//                    String localExcelPath = "/Users/caoqiang/work/备付金报表/生成的报表/" + dateDir +sep;
-//                    String ftpExcelPath = "/Users/caoqiang/work/备付金报表/平安银行/" + dateDir +sep;
                     String localExcelPath = destDir;
                     String ftpExcelPath = FTP_BANK_PATH + dateDir + sep;
                     //模板相对于WEB-INF的路径

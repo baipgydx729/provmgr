@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -84,8 +87,8 @@ public class PABServiceImpl implements PABService{
 				new ThreeTuple<String,Location,String>(nowTimeString,new Location(1,0),"String");
 		HSSFWorkbook  workBook = ExcelUtil.getNewExcel(tempRelativePath);
 		List<PABEntity> pabEntityList =  pabDao.getBaseInfo();
-		int sourceSheetNumber = 1;
-		copySheet(workBook,pabEntityList.size(),sourceSheetNumber);
+		int sourceSheetNumber = 0;
+		HSSFWorkbook newWorkBook = copySheet(workBook,pabEntityList.size());
 		Map<String, Location> everyAccountTitleLocationMap = new HashMap<String, Location>();
 		everyAccountTitleLocationMap.put("insertReportTime", new Location(1,0));
 		everyAccountTitleLocationMap.put("name", new Location(2,2));
@@ -99,10 +102,10 @@ public class PABServiceImpl implements PABService{
 		String everyAccountTableType = TableEnum.TABLE_TYPE.T1_1.getValue();
 		boolean haveCount = true;
 		Location textLocation = new Location(12,1);
-		dealEveryAccount(workBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
+		dealEveryAccount(newWorkBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
 				specialColumn,everyAccountTableType,textLocation,beginDate,endDate,haveCount,sourceSheetNumber);
 		List<ThreeTuple<String,Location,String>>  countTitleList = new ArrayList<ThreeTuple<String,Location,String>>();
-		HSSFSheet countSheet = workBook.getSheetAt(0);
+		HSSFSheet countSheet = newWorkBook.getSheetAt(pabEntityList.size());
 		//处理账户总计内容
 		String tableType = TableEnum.TABLE_TYPE.T1_1.getValue();
 		List<Object[]> textList = pabDao.getPABTable("99999",beginDate,endDate,tableType,true);
@@ -123,21 +126,21 @@ public class PABServiceImpl implements PABService{
 		countTitleList.add(checktableNameInfo);
 		countTitleList.add(footTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
+		ExcelUtil.exportExcel(newWorkBook, destExcelPath+destFileName);
 	}
+
+
 
 	private void reportPABTableT1_6(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws Exception {
-		//String filePath = "C://Users//caoqiang//Desktop//ceshi//6.xls";
-		//String filePath2 = "C://Users//caoqiang//Desktop//ceshi//61.xls";
 		Date nowTime = new Date();
 		String nowTimeString = sdf.format(nowTime);
 		ThreeTuple<String,Location,String> insertReportTime = 
 				new ThreeTuple<String,Location,String>(nowTimeString,new Location(1,0),"String");
 		HSSFWorkbook  workBook = ExcelUtil.getNewExcel(tempRelativePath);
 		List<PABEntity> pabEntityList =  pabDao.getBaseInfo();
-		int sourceSheetNumber = 1;
-		copySheet(workBook,pabEntityList.size(),sourceSheetNumber);
+		int sourceSheetNumber = 0;
+		HSSFWorkbook newWorkBook = copySheet(workBook,pabEntityList.size());
 		Map<String, Location> everyAccountTitleLocationMap = new HashMap<String, Location>();
 		everyAccountTitleLocationMap.put("insertReportTime", new Location(1,0));
 		everyAccountTitleLocationMap.put("name", new Location(2,3));
@@ -151,16 +154,16 @@ public class PABServiceImpl implements PABService{
 		String everyAccountTableType = TableEnum.TABLE_TYPE.T1_6.getValue();
 		boolean haveCount = false;
 		Location textLocation = new Location(8,1);
-		dealEveryAccount(workBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
+		dealEveryAccount(newWorkBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
 				specialColumn,everyAccountTableType,textLocation,beginDate,endDate,haveCount,sourceSheetNumber);
 		List<ThreeTuple<String,Location,String>>  countTitleList = new ArrayList<ThreeTuple<String,Location,String>>();
-		HSSFSheet countSheet = workBook.getSheetAt(0);
+		HSSFSheet countSheet = newWorkBook.getSheetAt(pabEntityList.size());
 		//处理账户总计内容
 		String tableType = TableEnum.TABLE_TYPE.T1_6.getValue();
 		List<Object[]> textList = pabDao.getPABTable("99999",beginDate,endDate,tableType,true);
-		Object[] sumList = ExcelUtil.getSumList(textList,columnCount);
+		//Object[] sumList = ExcelUtil.getSumList(textList,columnCount);
 		ExcelUtil.fillUpList(textList,count,columnCount);
-		textList.add(sumList);
+		//textList.add(sumList);
 		specialColumn = "";
 		ExcelUtil.setHorizontalTextValue(countSheet, textList, new Location(8,1),specialColumn);
 		//处理标题
@@ -175,21 +178,19 @@ public class PABServiceImpl implements PABService{
 		countTitleList.add(checktableNameInfo);
 		countTitleList.add(footTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
+		ExcelUtil.exportExcel(newWorkBook, destExcelPath+destFileName);
 	}
 
 	private void reportPABTableT1_9(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws Exception {
-		//String filePath = "C://Users//caoqiang//Desktop//ceshi//SZ_T1_9.xls";
-		//String filePath2 = "C://Users//caoqiang//Desktop//ceshi//A.xls";
 		Date nowTime = new Date();
 		String nowTimeString = sdf.format(nowTime);
 		ThreeTuple<String,Location,String> insertReportTime = 
 				new ThreeTuple<String,Location,String>(nowTimeString,new Location(1,0),"String");
 		HSSFWorkbook  workBook = ExcelUtil.getNewExcel(tempRelativePath);
 		List<PABEntity> pabEntityList =  pabDao.getBaseInfo();
-		int sourceSheetNumber = 1;
-		copySheet(workBook,pabEntityList.size(),sourceSheetNumber);
+		int sourceSheetNumber = 0;
+		HSSFWorkbook  newWorkBook = copySheet(workBook,pabEntityList.size());
 		Map<String, Location> everyAccountTitleLocationMap = new HashMap<String, Location>();
 		everyAccountTitleLocationMap.put("insertReportTime", new Location(1,0));
 		everyAccountTitleLocationMap.put("name", new Location(2,2));
@@ -203,16 +204,16 @@ public class PABServiceImpl implements PABService{
 		String everyAccountTableType = TableEnum.TABLE_TYPE.T1_9.getValue();
 		boolean haveCount = false;
 		Location textLocation = new Location(6,1);
-		dealEveryAccount(workBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
+		dealEveryAccount(newWorkBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
 				specialColumn,everyAccountTableType,textLocation,beginDate,endDate,haveCount,sourceSheetNumber);
 		List<ThreeTuple<String,Location,String>>  countTitleList = new ArrayList<ThreeTuple<String,Location,String>>();
-		HSSFSheet countSheet = workBook.getSheetAt(0);
+		HSSFSheet countSheet = newWorkBook.getSheetAt(pabEntityList.size());
 		//处理账户总计内容
 		String tableType = TableEnum.TABLE_TYPE.T1_9.getValue();
 		List<Object[]> textList = pabDao.getPABTable("99999",beginDate,endDate,tableType,true);
-		Object[] sumList = ExcelUtil.getSumList(textList,columnCount);
+		//Object[] sumList = ExcelUtil.getSumList(textList,columnCount);
 		ExcelUtil.fillUpList(textList,count,columnCount);
-		textList.add(sumList);
+		//textList.add(sumList);
 		specialColumn = "";
 		ExcelUtil.setHorizontalTextValue(countSheet, textList, new Location(6,1),specialColumn);
 		//处理标题
@@ -227,22 +228,20 @@ public class PABServiceImpl implements PABService{
 		countTitleList.add(checktableNameInfo);
 		countTitleList.add(footTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
+		ExcelUtil.exportExcel(newWorkBook, destExcelPath+destFileName);
 		
 	}
 	
 	private void reportPABTableT1_10(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws Exception {
-		//String filePath = "C://Users//caoqiang//Desktop//ceshi//SZ_T1_10.xls";
-		//String filePath2 = "C://Users//caoqiang//Desktop//ceshi//A.xls";
 		Date nowTime = new Date();
 		String nowTimeString = sdf.format(nowTime);
 		ThreeTuple<String,Location,String> insertReportTime = 
 				new ThreeTuple<String,Location,String>(nowTimeString,new Location(1,0),"String");
 		HSSFWorkbook  workBook = ExcelUtil.getNewExcel(tempRelativePath);
 		List<PABEntity> pabEntityList =  pabDao.getBaseInfo();
-		int sourceSheetNumber = 1;
-		copySheet(workBook,pabEntityList.size(),sourceSheetNumber);
+		int sourceSheetNumber = 0;
+		HSSFWorkbook newWorkBook = copySheet(workBook,pabEntityList.size());
 		Map<String, Location> everyAccountTitleLocationMap = new HashMap<String, Location>();
 		everyAccountTitleLocationMap.put("insertReportTime", new Location(1,0));
 		everyAccountTitleLocationMap.put("name", new Location(2,3));
@@ -256,16 +255,16 @@ public class PABServiceImpl implements PABService{
 		String everyAccountTableType = TableEnum.TABLE_TYPE.T1_10.getValue();
 		boolean haveCount = false;
 		Location textLocation = new Location(9,1);
-		dealEveryAccount(workBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
+		dealEveryAccount(newWorkBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
 				specialColumn,everyAccountTableType,textLocation,beginDate,endDate,haveCount,sourceSheetNumber);
 		List<ThreeTuple<String,Location,String>>  countTitleList = new ArrayList<ThreeTuple<String,Location,String>>();
-		HSSFSheet countSheet = workBook.getSheetAt(0);
+		HSSFSheet countSheet = newWorkBook.getSheetAt(pabEntityList.size());
 		//处理账户总计内容
 		String tableType = TableEnum.TABLE_TYPE.T1_10.getValue();
 		List<Object[]> textList = pabDao.getPABTable("99999",beginDate,endDate,tableType,true);
-		Object[] sumList = ExcelUtil.getSumList(textList,columnCount);
+		//Object[] sumList = ExcelUtil.getSumList(textList,columnCount);
 		ExcelUtil.fillUpList(textList,count,columnCount);
-		textList.add(sumList);
+		//textList.add(sumList);
 		specialColumn = "";
 		ExcelUtil.setHorizontalTextValue(countSheet, textList, new Location(9,1),specialColumn);
 		//处理标题
@@ -280,18 +279,16 @@ public class PABServiceImpl implements PABService{
 		countTitleList.add(checktableNameInfo);
 		countTitleList.add(footTime);
 		ExcelUtil.setTitleValue(countTitleList, countSheet);
-		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
+		ExcelUtil.exportExcel(newWorkBook, destExcelPath+destFileName);
 		
 	}
 	
 	private void reportPABTableT1_2_1(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws Exception {
-		//String filePath = "C://Users//caoqiang//Desktop//ceshi//SZ_T1_2_1.xls";
-		//String filePath2 = "C://Users//caoqiang//Desktop//ceshi//A.xls";
 		HSSFWorkbook  workBook = ExcelUtil.getNewExcel(tempRelativePath);
 		List<PABEntity> pabEntityList =  pabDao.getBaseInfo();
 		int sourceSheetNumber = 0;
-		copySheet(workBook,pabEntityList.size(),sourceSheetNumber);
+		HSSFWorkbook newWorkBook = copySheet(workBook,pabEntityList.size());
 		Map<String, Location> everyAccountTitleLocationMap = new HashMap<String, Location>();
 		everyAccountTitleLocationMap.put("insertReportTime", new Location(1,0));
 		everyAccountTitleLocationMap.put("name", new Location(2,2));
@@ -305,9 +302,9 @@ public class PABServiceImpl implements PABService{
 		String everyAccountTableType = TableEnum.TABLE_TYPE.T1_10.getValue();
 		boolean haveCount = false;
 		Location textLocation = new Location(9,1);
-		dealEveryAccount(workBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
+		dealEveryAccount(newWorkBook,pabEntityList,everyAccountTitleLocationMap,count,columnCount,
 				specialColumn,everyAccountTableType,textLocation,beginDate,endDate,haveCount,sourceSheetNumber);
-		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
+		ExcelUtil.exportExcel(newWorkBook, destExcelPath+destFileName);
 		
 	}
 
@@ -315,8 +312,6 @@ public class PABServiceImpl implements PABService{
 
 	private void reportPABTableT1_2(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws IOException {
-		//String filePath = "C://Users//caoqiang//Desktop//ceshi//SZ_T1_2.xls";
-		//String filePath2 = "C://Users//caoqiang//Desktop//ceshi//A.xls";
 		Date nowTime = new Date();
 		String nowTimeString = sdf.format(nowTime);
 		ThreeTuple<String,Location,String> insertReportTime = 
@@ -353,8 +348,6 @@ public class PABServiceImpl implements PABService{
 
 	private void reportPABTableT1_13(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws IOException {
-		//String filePath = "C://Users//caoqiang//Desktop//ceshi//SZ_T1_13.xls";
-		//String filePath2 = "C://Users//caoqiang//Desktop//ceshi//A.xls";
 		Date nowTime = new Date();
 		String nowTimeString = sdf.format(nowTime);
 		ThreeTuple<String,Location,String> insertReportTime = 
@@ -387,21 +380,28 @@ public class PABServiceImpl implements PABService{
 
 	private void reportPABTableT1_3(String tempRelativePath, String destFileName, String destExcelPath,
 			String beginDate, String endDate) throws IOException {
-		//String filePath = "/Users/caoqiang/Desktop/ceshi/SZ_T1_3.xls";
-		//String filePath2 = "/Users/caoqiang/Desktop/ceshi/A.xls";
 		int columnCount = 31;
 		HSSFWorkbook  workBook = ExcelUtil.getNewExcel(tempRelativePath);
 		HSSFSheet targetSheet = workBook.getSheetAt(0);
+		HSSFCellStyle cellStyle = workBook.createCellStyle();
+		cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框    
+		cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框    
+		cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框    
+		cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+		cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);//水平居中  
+		cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+		 HSSFDataFormat format = workBook.createDataFormat();
+		 cellStyle.setDataFormat(format.getFormat("0.000000")); 
 		List<PABEntity> pabEntityList =  pabDao.getBaseInfo();
 		String everyAccountTableType = TableEnum.TABLE_TYPE.T1_3.getValue();
 		boolean isSumFlag = false;
 		int textRowNumber = 4;
 		int lastRowNum = targetSheet.getLastRowNum();
 		for (int i = 0; i < pabEntityList.size(); i++) {
-			Row row = targetSheet.createRow(lastRowNum);
-			Cell cell = row.createCell(4);
+			targetSheet.createRow(lastRowNum);
 			lastRowNum++;
 		}
+		short height = 0;
 		if(null != pabEntityList && 0 != pabEntityList.size()){
 			for (int i=0;i<pabEntityList.size();i++) {
 				PABEntity pabEntity = pabEntityList.get(i);
@@ -410,40 +410,46 @@ public class PABServiceImpl implements PABService{
 				Row row = null;
 				if(0 == i){
 					row = targetSheet.getRow(textRowNumber);
+					height = row.getHeight();
 				}else{
 					targetSheet.shiftRows(textRowNumber, targetSheet.getLastRowNum(), 1,true,false);
 					row = targetSheet.createRow(textRowNumber);
+					row.setHeight(height);
 				}
 				Cell cell =null;
 				cell =row.getCell(0);
 				if(cell == null){
 					cell = row.createCell(0);
 				}
+				cell.setCellStyle(cellStyle);
 				cell.setCellValue(pabEntity.getBankName_S());
 				cell =row.getCell(1);
 				if(cell == null){
 					cell = row.createCell(1);
 				}
+				cell.setCellStyle(cellStyle);
 				cell.setCellValue(pabEntity.getName());
 				cell =row.getCell(2);
 				if(cell == null){
 					cell = row.createCell(2);
 				}
+				cell.setCellStyle(cellStyle);
 				cell.setCellValue(pabEntity.getAD());
 				if(i != 0){
 					cell =row.getCell(3);
 					if(cell == null){
 						cell = row.createCell(3);
 					}
+					cell.setCellStyle(cellStyle);
 					cell.setCellValue("C01");
 				}
-				dealReportPABTableT1_3Data(row,textList,columnCount);
+				dealReportPABTableT1_3Data(row,textList,columnCount,cellStyle);
 				textRowNumber++;
 			}
 			isSumFlag = true;
 			List<Object[]> sumList = pabDao.getPABTable(null,beginDate,endDate,everyAccountTableType,isSumFlag);
 			Row sumRow = targetSheet.getRow(textRowNumber);
-			dealReportPABTableT1_3Data(sumRow,sumList,columnCount);
+			dealReportPABTableT1_3Data(sumRow,sumList,columnCount,cellStyle);
 			dealTopAndFootRow(targetSheet,textRowNumber+1);
 		}
 		ExcelUtil.exportExcel(workBook, destExcelPath+destFileName);
@@ -452,30 +458,30 @@ public class PABServiceImpl implements PABService{
 	
 	private void dealTopAndFootRow(HSSFSheet targetSheet, int textRowNumber) {
 		Row topRow = targetSheet.getRow(textRowNumber);
-		if(null != topRow){
+		if(null == topRow){
 			topRow = targetSheet.createRow(1);
 		}
 		Cell cell = topRow.getCell(0);
-		if(null != cell){
+		if(null == cell){
 			cell = topRow.createCell(0);
 		}
 		cell.setCellValue(sdf.format(new Date()));
 		Row footRow = targetSheet.getRow(textRowNumber);
-		if(null != footRow){
+		if(null == footRow){
 			footRow = targetSheet.createRow(textRowNumber);
 		}
 		Cell cell2 = footRow.getCell(2);
-		if(null != cell2){
+		if(null == cell2){
 			cell2 = footRow.createCell(2);
 		}
 		cell2.setCellValue(writetableName);
 		Cell cell4 = footRow.getCell(4);
-		if(null != cell4){
+		if(null == cell4){
 			cell4 = footRow.createCell(4);
 		}
 		cell4.setCellValue(checktableName);
 		Cell cell6 = footRow.getCell(6);
-		if(null != cell6){
+		if(null == cell6){
 			cell6= footRow.createCell(6);
 		}
 		cell4.setCellValue(sdf.format(new Date()));
@@ -504,7 +510,7 @@ public class PABServiceImpl implements PABService{
 		for (int i=0;i<pabEntityList.size();i++) {
 			HSSFSheet sheet = workBook.getSheetAt(sourceSheetNumber);
 			PABEntity entity = pabEntityList.get(i);
-			workBook.setSheetName(sourceSheetNumber, entity.getName());
+			workBook.setSheetName(sourceSheetNumber, entity.getAD());
 			//处理主题内容
 			boolean isSumFlag = false;
 			List<Object[]> textList = pabDao.getPABTable(entity.getADID(),startDay,endDay,everyAccountTableType,isSumFlag);
@@ -524,24 +530,24 @@ public class PABServiceImpl implements PABService{
 				titleList.add(insertReportTime);
 			}
 			if(everyAccountTitleLocationMap.containsKey("writetableName")){
-				Location writetableNameLocation = everyAccountTitleLocationMap.get("insertReportTime");
-				ThreeTuple<String,Location,String> insertReportTime = 
+				Location writetableNameLocation = everyAccountTitleLocationMap.get("writetableName");
+				ThreeTuple<String,Location,String> writetableNameTime = 
 						new ThreeTuple<String,Location,String>(writetableName,writetableNameLocation,"String");
-				titleList.add(insertReportTime);
+				titleList.add(writetableNameTime);
 			}
 			if(everyAccountTitleLocationMap.containsKey("checktableName")){
-				Location checktableNameLocation = everyAccountTitleLocationMap.get("insertReportTime");
-				ThreeTuple<String,Location,String> insertReportTime = 
+				Location checktableNameLocation = everyAccountTitleLocationMap.get("checktableName");
+				ThreeTuple<String,Location,String> checktableNameTime = 
 						new ThreeTuple<String,Location,String>(checktableName,checktableNameLocation,"String");
-				titleList.add(insertReportTime);
+				titleList.add(checktableNameTime);
 			}
 			if(everyAccountTitleLocationMap.containsKey("footTime")){
-				Location footTimeLocation = everyAccountTitleLocationMap.get("insertReportTime");
+				Location footTimeLocation = everyAccountTitleLocationMap.get("footTime");
 				Date nowTime = new Date();
 				String nowTimeString = sdf.format(nowTime);
-				ThreeTuple<String,Location,String> insertReportTime = 
+				ThreeTuple<String,Location,String> footTime = 
 						new ThreeTuple<String,Location,String>(nowTimeString,footTimeLocation,"String");
-				titleList.add(insertReportTime);
+				titleList.add(footTime);
 			}
 			ExcelUtil.setTitleValue(titleList, sheet);
 			sourceSheetNumber++;
@@ -581,21 +587,25 @@ public class PABServiceImpl implements PABService{
 		return titleList;
 	}
 	
-	
-	//复制sheet
-	private void copySheet(HSSFWorkbook workBook, int size,int sourceSheetNumber) throws Exception {
-		HSSFSheet sourceSheet = workBook.getSheetAt(sourceSheetNumber);
-		for (int i=0;i<size-1;i++) {
-			HSSFSheet targetSheet = workBook.createSheet();
-			POIUtil.copySheet(sourceSheet, targetSheet, workBook, workBook);
+	private HSSFWorkbook copySheet(HSSFWorkbook SourceWorkBook, int size) throws Exception {
+		int sourceCount = SourceWorkBook.getNumberOfSheets();
+		HSSFSheet sourceSheet = SourceWorkBook.getSheetAt(0);
+		HSSFWorkbook targetWorkbook = new HSSFWorkbook();
+		for (int i = 0; i < size; i++) {
+			HSSFSheet targetSheet = targetWorkbook.createSheet();
+			POIUtil.copySheet(sourceSheet, targetSheet, SourceWorkBook, targetWorkbook);
 		}
+		if(sourceCount != 1){
+			HSSFSheet sumSourceSSheet = SourceWorkBook.getSheetAt(1);
+			HSSFSheet sumTargetSheet = targetWorkbook.createSheet();
+			POIUtil.copySheet(sumSourceSSheet, sumTargetSheet, SourceWorkBook, targetWorkbook);
+			targetWorkbook.setSheetName(size, "COUNT");
+		}
+		return targetWorkbook;
 	}
 
-
-
-
 	//处理表1-3主题数据
-	private void dealReportPABTableT1_3Data(Row row, List<Object[]> textList, int columnCount) {
+	private void dealReportPABTableT1_3Data(Row row, List<Object[]> textList, int columnCount,HSSFCellStyle cellStyle) {
 		int columnNumber = 4;
 		for (Object[] objects : textList) {
 			Cell cell =null;
@@ -603,36 +613,24 @@ public class PABServiceImpl implements PABService{
 			if(cell == null){
 				cell = row.createCell(columnNumber);
 			}
+			cell.setCellStyle(cellStyle);
 			if(null != objects && 0 != objects.length){
 				BigDecimal value = (BigDecimal) objects[0];
 				cell.setCellValue(value.doubleValue());
 			}
 			columnNumber++;
 		}
-		if(columnCount > columnNumber){
+		while(columnCount > columnNumber){
 			Cell cell =null;
 			cell =row.getCell(columnNumber);
 			if(cell == null){
 				cell = row.createCell(columnNumber);
 			}
+			cell.setCellStyle(cellStyle);
 			cell.setCellValue(new Double(0.0));
+			columnNumber++;
 		}
 		
 	}
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
 	
 }
