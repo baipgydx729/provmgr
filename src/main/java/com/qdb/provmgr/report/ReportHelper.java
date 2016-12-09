@@ -45,6 +45,8 @@ public class ReportHelper {
     private String checkUserName;
     @Value("${excel.template.path}")
     private String excelTemplateDir;
+//    @Value("${excel.template.pbc.open}")
+//    private String excelPbcTemplateOpen;
 
     public String getCompanyName() {
         return companyName;
@@ -77,6 +79,14 @@ public class ReportHelper {
     public void setExcelTemplateDir(String excelTemplateDir) {
         this.excelTemplateDir = excelTemplateDir;
     }
+
+//    public String getExcelPbcTemplateOpen() {
+//        return excelPbcTemplateOpen;
+//    }
+//
+//    public void setExcelPbcTemplateOpen(String excelPbcTemplateOpen) {
+//        this.excelPbcTemplateOpen = excelPbcTemplateOpen;
+//    }
 
     /**
      * 将原始数据按照账户分割成N个数组
