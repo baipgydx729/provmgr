@@ -95,7 +95,8 @@ module.exports = {
                         report_list: []
                     };
 
-                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行" ||
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中信银行"){
                         reportList.report_type = mainVm.data.selectedReportTypeIndex;
                     }
 
@@ -141,7 +142,8 @@ module.exports = {
                         report_list: []
                     };
 
-                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行" ||
+                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中信银行"){
                         reportList.report_type = mainVm.data.selectedReportTypeIndex;
                     }
 
@@ -249,7 +251,7 @@ module.exports = {
                     }
                 },
                 getOKBankList: function () {
-                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "上海浦东发展银行"];
+                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "上海浦东发展银行", "中信银行"];
                     var okBankList = [];
 
                     var allBankList = pbcModule.getBankList();

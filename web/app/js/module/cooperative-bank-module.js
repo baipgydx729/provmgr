@@ -29,7 +29,7 @@ module.exports = {
     download: function (bankName, reportType, accountId, startDay, endDay, reportName) {
         if (cooperativeBankService.downloadable(bankName, reportType, accountId, startDay, endDay, reportName)){
             var url =null;
-            if (bankName=="中国建设银行"){
+            if (bankName=="中国建设银行" || bankName=="中信银行"){
                 if(reportType==0){
                     url = "/report/"+commonModule.getBankAbbreviation(bankName)
                         +"/download?report_type="+reportType
