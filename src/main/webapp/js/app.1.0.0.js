@@ -20017,7 +20017,7 @@
 	
 	  $.fn.monthpicker = function(options) {
 	
-	    var months = options.months || ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'],
+	    var months = options.months || ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
 	
 	      Monthpicker = function(el) {
 	        this._el = $(el);
@@ -20669,10 +20669,17 @@
 			return null;
 	    },
 	    getStartDay: function(year, month){
-	        return year+"-"+month+"-1";
+			if(parseInt(month)<10){
+				month = '0'+month;
+			}
+	        return year+"-"+month+"-01";
 	    },
 		getEndDay: function(year, month){
 			var total = new Date(year, month, 0).getDate();
+	
+	        if(parseInt(month)<10){
+	            month = '0'+month;
+	        }
 	
 			return year+"-"+month+"-"+total;
 		}

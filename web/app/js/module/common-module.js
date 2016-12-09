@@ -48,10 +48,17 @@ module.exports = {
 		return null;
     },
     getStartDay: function(year, month){
-        return year+"-"+month+"-1";
+		if(parseInt(month)<10){
+			month = '0'+month;
+		}
+        return year+"-"+month+"-01";
     },
 	getEndDay: function(year, month){
 		var total = new Date(year, month, 0).getDate();
+
+        if(parseInt(month)<10){
+            month = '0'+month;
+        }
 
 		return year+"-"+month+"-"+total;
 	}
