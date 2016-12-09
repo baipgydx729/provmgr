@@ -6,6 +6,18 @@ html, body {
    visibility: hidden;
 }
 
+#monthpicker {
+    background-color: #fff;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+    border: 1px solid #aaa;
+    width: 298px;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+}
+
 .monthpicker {
     background-color: #fff;
 }

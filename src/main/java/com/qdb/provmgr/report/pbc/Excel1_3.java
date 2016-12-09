@@ -11,8 +11,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
@@ -22,19 +20,17 @@ import com.qdb.provmgr.report.PresetContent;
 /**
  * @author mashengli
  */
-public class Excel1_3 {
-
-    private static Logger log = LoggerFactory.getLogger(Excel1_3.class);
+class Excel1_3 {
 
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 5;
+    static int DATA_START_ROW_NUM = 5;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 4;
+    static int DATA_START_COLUMN_NUM = 4;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         if (CollectionUtils.isEmpty(dataList)) {
@@ -90,7 +86,7 @@ public class Excel1_3 {
     /**
      * 数据转化
      * @param dataList 源列表数据
-     * @return
+     * @return map
      */
     private static Map<String, LinkedHashMap> convertData(List<BaseReportEntity> dataList) {
         Map<String, LinkedHashMap> resultMap = new HashMap<>();

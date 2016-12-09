@@ -1,13 +1,11 @@
 <div>
-	<div class="main-content-head"><h4>中国人民银行</h4></div>
+	<div class="main-content-head"><h4>中国人民银行(报表总数: {{@data.totalCount}}，已生成: {{@data.fileCount}})</h4></div>
 
 	<div class="main-content-body">
 		<div class="report-head">
 			<div class="report-head-item">
-				<label>时间区间</label>
-				<input id="datetime-start" class="datetime-picker" type="text" readonly>
-				<hr class="datetime-separator"/>
-				<input id="datetime-end" class="datetime-picker" type="text" readonly>
+				<label>选择月份</label>
+				<a href="#monthpicker" id="monthpicker" class="monthpicker"></a>
 				<button ms-click="@submit()">报送</button>
 				<button ms-click="@downloadAll()">下载全部</button>
 			</div>
@@ -32,10 +30,13 @@
 				</select>
 			</div>
 
-			<div class="report-head-item" ms-visible="@data.selectedReportTypeIndex==1">
+			<div class="report-head-item"
+				 ms-for="(bankIndex, bank) in @data.bankList"
+				 ms-visible="@data.selectedReportTypeIndex==1 && bankIndex==@data.selectedBankIndex">
 				<label>选择账户</label>
-				<select name="account" ms-on-change="@selectAccount()">
-					<option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"
+				<select name="account"
+						ms-on-change="@selectAccount()">
+					<option ms-for="(index, account) in @data.bankList[bankIndex].account_list"
 							ms-attr="{'value': index}">
 						{{account.account_no}}
 					</option>

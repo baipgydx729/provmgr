@@ -2,43 +2,56 @@ var cooperativeBankService = require("../service/cooperative-bank-service");
 var commonModule = require("./common-module");
 
 module.exports = {
-    getReportList: function (bankName) {
-        var startDay;
-        var endDay;
+    getReportList: function (bankName, reportType, accountId) {
+        if ($('#monthpicker').html()!=undefined && $('#monthpicker').html()!=''){
+            var year = $('#monthpicker').html().split("-")[0];
+            var month = $('#monthpicker').html().split("-")[1];
 
-        if ($("#datetime-start").val()!=undefined
-            && $("#datetime-start").val()!=""
-            && $("#datetime-end").val()!=undefined
-            && $("#datetime-end").val()!=""
-        ){
-            startDay = $("#datetime-start").val();
-            endDay = $("#datetime-end").val();
+            startDay = commonModule.getStartDay(year, month);
+            endDay = commonModule.getEndDay(year, month);
         } else {
             var dateObj = new Date();
             var year = dateObj.getFullYear();
             var month = dateObj.getMonth()+1;
-            var day = dateObj.getDate();
 
-            startDay = year+"-"+month+"-01";
-            endDay = year+"-"+month+"-"+day;
+            startDay = commonModule.getStartDay(year, month);
+            endDay = commonModule.getEndDay(year, month);
         }
 
-        return cooperativeBankService.getReportList(bankName, startDay, endDay);
+        return cooperativeBankService.getReportList(bankName, reportType, accountId, startDay, endDay);
     },
     generateReport: function(bankName, reportList){
-        cooperativeBankService.generateReport(bankName, reportList);
+        return cooperativeBankService.generateReport(bankName, reportList);
     },
     submitReport: function(bankName, startDay, endDay){
         cooperativeBankService.submitReport(bankName, startDay, endDay);
     },
-    download: function (bankName, startDay, endDay, reportName) {
-        if (cooperativeBankService.downloadable(bankName, startDay, endDay, reportName)){
-            window.open(
-                "/report/"+commonModule.getBankAbbreviation(bankName)
-                +"/download?start_day="+startDay
-                +"&end_day="+endDay
-                +"&report_name="+reportName
-            );
+    download: function (bankName, reportType, accountId, startDay, endDay, reportName) {
+        if (cooperativeBankService.downloadable(bankName, reportType, accountId, startDay, endDay, reportName)){
+            var url =null;
+            if (bankName=="中国建设银行"){
+                if(reportType==0){
+                    url = "/report/"+commonModule.getBankAbbreviation(bankName)
+                        +"/download?report_type="+reportType
+                        +"&start_day="+startDay
+                        +"&end_day="+endDay
+                        +"&report_name="+reportName;
+                }else {
+                    url = "/report/"+commonModule.getBankAbbreviation(bankName)
+                        +"/download?report_type="+reportType
+                        +"&account_id="+accountId
+                        +"&start_day="+startDay
+                        +"&end_day="+endDay
+                        +"&report_name="+reportName;
+                }
+            }else {
+                url = "/report/"+commonModule.getBankAbbreviation(bankName)
+                    +"/download?start_day="+startDay
+                    +"&end_day="+endDay
+                    +"&report_name="+reportName;
+            }
+
+            window.open(url);
         }
     },
     downloadAll: function (bankName, startDay, endDay) {

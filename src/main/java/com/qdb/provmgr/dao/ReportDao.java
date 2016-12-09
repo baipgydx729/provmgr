@@ -74,7 +74,7 @@ public class ReportDao {
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), tableMode.getEntityClass());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return result;
     }
@@ -115,7 +115,7 @@ public class ReportDao {
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), BaseReportEntity.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return result;
     }
@@ -167,7 +167,7 @@ public class ReportDao {
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), AccountInfoEntity.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return result;
     }
@@ -184,7 +184,7 @@ public class ReportDao {
         try {
             return MapUtil.mapToObject(dbUtil.query(SQL.toString(), new Object[]{ADID}), AccountInfoEntity.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return null;
     }

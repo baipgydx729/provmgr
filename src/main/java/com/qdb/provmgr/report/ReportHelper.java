@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -26,6 +28,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 /**
  * @author mashengli
  */
+@Component
 public class ReportHelper {
 
     private static Logger log = LoggerFactory.getLogger(ReportHelper.class);
@@ -33,6 +36,47 @@ public class ReportHelper {
     public static final String REPORT_FTP_ROOT_PATH = "/备付金报表";
 
     public static final String FILEPATH_SEPRATOR = "/";
+
+    @Value("${report.company.name}")
+    private String companyName;
+    @Value("${report.writetable.name}")
+    private String reportUserName;
+    @Value("${report.checktable.name}")
+    private String checkUserName;
+    @Value("${excel.template.path}")
+    private String excelTemplateDir;
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getReportUserName() {
+        return reportUserName;
+    }
+
+    public void setReportUserName(String reportUserName) {
+        this.reportUserName = reportUserName;
+    }
+
+    public String getCheckUserName() {
+        return checkUserName;
+    }
+
+    public void setCheckUserName(String checkUserName) {
+        this.checkUserName = checkUserName;
+    }
+
+    public String getExcelTemplateDir() {
+        return excelTemplateDir;
+    }
+
+    public void setExcelTemplateDir(String excelTemplateDir) {
+        this.excelTemplateDir = excelTemplateDir;
+    }
 
     /**
      * 将原始数据按照账户分割成N个数组
