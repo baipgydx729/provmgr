@@ -1,3 +1,5 @@
+require('../lib/jquery.simplePagination');
+
 var pbcModule = require("../module/pbc-module");
 var commonModule = require("../module/common-module");
 
@@ -25,6 +27,7 @@ module.exports = {
 					],
 					selectedReportTypeIndex: 0,
 					reportList: [],
+                    pageReportList: [],
 					totalCount: 11,
 					fileCount: 0,
 					checkedReportIndexList: []
@@ -43,6 +46,8 @@ module.exports = {
 
                     mainVm.data.reportList = reportListObj.reportList;
                     mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				selectAccount: function () {
 					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[mainVm.data.selectedBankIndex].value;
@@ -55,6 +60,8 @@ module.exports = {
 
                     mainVm.data.reportList = reportListObj.reportList;
                     mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				selectReportType: function(){
 					mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
@@ -73,6 +80,8 @@ module.exports = {
 
                     mainVm.data.reportList = reportListObj.reportList;
                     mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -138,6 +147,8 @@ module.exports = {
 
                         mainVm.data.reportList = reportListObj.reportList;
                         mainVm.data.fileCount = reportListObj.fileCount;
+
+                        mainVm.data.getReportListByPage(1);
 					}
                 },
 				batchGenerate: function () {
@@ -186,6 +197,8 @@ module.exports = {
 
                         mainVm.data.reportList = reportListObj.reportList;
                         mainVm.data.fileCount = reportListObj.fileCount;
+
+                        mainVm.data.getReportListByPage(1);
                     }
 				},
 				submit: function () {
@@ -261,6 +274,27 @@ module.exports = {
 				}
 			});
 
+            var getReportListByPage = function(index, event){
+                var pageSize = 10;
+                var startPosition = (index-1)*pageSize;
+                var endPosition = startPosition+pageSize>=mainVm.data.reportList.length ? mainVm.data.reportList.length : startPosition+pageSize;
+                mainVm.data.pageReportList = mainVm.data.reportList.slice(startPosition, endPosition);
+
+                $('#pagination').pagination({
+                    items: mainVm.data.reportList.length,
+                    currentPage: index,
+                    itemsOnPage: pageSize,
+                    cssStyle: 'light-theme',
+                    prevText: '<',
+                    nextText: '>',
+                    onPageClick: getReportListByPage
+                });
+
+                $('#pagination a').attr("href", "#!/");
+            };
+
+            mainVm.data.getReportListByPage = getReportListByPage;
+
 			var reportListObj = pbcModule.getReportList(0);
             mainVm.data.reportList = reportListObj.reportList;
             mainVm.data.fileCount = reportListObj.fileCount;
@@ -298,6 +332,8 @@ module.exports = {
                         mainVm.data.fileCount = reportListObj.fileCount;
                     }
                 });
+
+                mainVm.data.getReportListByPage(1);
 			});
 
 			avalon.scan(document.body);

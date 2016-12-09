@@ -20202,8 +20202,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var pbcRouter = __webpack_require__(10);
-	var depositoryBankRouter = __webpack_require__(21);
-	var cooperativeBankRouter = __webpack_require__(24);
+	var depositoryBankRouter = __webpack_require__(22);
+	var cooperativeBankRouter = __webpack_require__(25);
 	
 	pbcRouter.init();
 	depositoryBankRouter.init();
@@ -20213,8 +20213,10 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {var pbcModule = __webpack_require__(11);
-	var commonModule = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function($) {__webpack_require__(11);
+	
+	var pbcModule = __webpack_require__(12);
+	var commonModule = __webpack_require__(13);
 	
 	module.exports = {
 		init: function(){
@@ -20225,7 +20227,7 @@
 	
 				var mainVm = avalon.define({
 					$id: 'main',
-					template: __webpack_require__(18),
+					template: __webpack_require__(19),
 					data: {
 						bankList: pbcModule.getBankList(null, null),
 						selectedBankIndex: 0,
@@ -20240,6 +20242,7 @@
 						],
 						selectedReportTypeIndex: 0,
 						reportList: [],
+	                    pageReportList: [],
 						totalCount: 11,
 						fileCount: 0,
 						checkedReportIndexList: []
@@ -20258,6 +20261,8 @@
 	
 	                    mainVm.data.reportList = reportListObj.reportList;
 	                    mainVm.data.fileCount = reportListObj.fileCount;
+	
+	                    mainVm.data.getReportListByPage(1);
 					},
 					selectAccount: function () {
 						mainVm.data.selectedAccountIndex = document.getElementsByName("account")[mainVm.data.selectedBankIndex].value;
@@ -20270,6 +20275,8 @@
 	
 	                    mainVm.data.reportList = reportListObj.reportList;
 	                    mainVm.data.fileCount = reportListObj.fileCount;
+	
+	                    mainVm.data.getReportListByPage(1);
 					},
 					selectReportType: function(){
 						mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
@@ -20288,6 +20295,8 @@
 	
 	                    mainVm.data.reportList = reportListObj.reportList;
 	                    mainVm.data.fileCount = reportListObj.fileCount;
+	
+	                    mainVm.data.getReportListByPage(1);
 					},
 					checkAll: function () {
 						mainVm.data.checkedReportIndexList=[];
@@ -20353,6 +20362,8 @@
 	
 	                        mainVm.data.reportList = reportListObj.reportList;
 	                        mainVm.data.fileCount = reportListObj.fileCount;
+	
+	                        mainVm.data.getReportListByPage(1);
 						}
 	                },
 					batchGenerate: function () {
@@ -20401,6 +20412,8 @@
 	
 	                        mainVm.data.reportList = reportListObj.reportList;
 	                        mainVm.data.fileCount = reportListObj.fileCount;
+	
+	                        mainVm.data.getReportListByPage(1);
 	                    }
 					},
 					submit: function () {
@@ -20435,7 +20448,7 @@
 	                        }
 						});
 	
-						var submitTemplate = __webpack_require__(20);
+						var submitTemplate = __webpack_require__(21);
 	
 						$('#modal').html(submitTemplate).modal({fadeDuration: 100});
 						avalon.scan(document.getElementById("modal").firstChild);
@@ -20476,6 +20489,27 @@
 					}
 				});
 	
+	            var getReportListByPage = function(index, event){
+	                var pageSize = 10;
+	                var startPosition = (index-1)*pageSize;
+	                var endPosition = startPosition+pageSize>=mainVm.data.reportList.length ? mainVm.data.reportList.length : startPosition+pageSize;
+	                mainVm.data.pageReportList = mainVm.data.reportList.slice(startPosition, endPosition);
+	
+	                $('#pagination').pagination({
+	                    items: mainVm.data.reportList.length,
+	                    currentPage: index,
+	                    itemsOnPage: pageSize,
+	                    cssStyle: 'light-theme',
+	                    prevText: '<',
+	                    nextText: '>',
+	                    onPageClick: getReportListByPage
+	                });
+	
+	                $('#pagination a').attr("href", "#!/");
+	            };
+	
+	            mainVm.data.getReportListByPage = getReportListByPage;
+	
 				var reportListObj = pbcModule.getReportList(0);
 	            mainVm.data.reportList = reportListObj.reportList;
 	            mainVm.data.fileCount = reportListObj.fileCount;
@@ -20513,6 +20547,8 @@
 	                        mainVm.data.fileCount = reportListObj.fileCount;
 	                    }
 	                });
+	
+	                mainVm.data.getReportListByPage(1);
 				});
 	
 				avalon.scan(document.body);
@@ -20525,8 +20561,408 @@
 /* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(12);
-	var pbcService = __webpack_require__(17);
+	/* WEBPACK VAR INJECTION */(function(jQuery) {/**
+	* simplePagination.js v1.6
+	* A simple jQuery pagination plugin.
+	* http://flaviusmatis.github.com/simplePagination.js/
+	*
+	* Copyright 2012, Flavius Matis
+	* Released under the MIT license.
+	* http://flaviusmatis.github.com/license.html
+	*/
+	
+	(function($){
+	
+		var methods = {
+			init: function(options) {
+				var o = $.extend({
+					items: 1,
+					itemsOnPage: 1,
+					pages: 0,
+					displayedPages: 5,
+					edges: 2,
+					currentPage: 0,
+					hrefTextPrefix: '#page-',
+					hrefTextSuffix: '',
+					prevText: 'Prev',
+					nextText: 'Next',
+					ellipseText: '&hellip;',
+					ellipsePageSet: true,
+					cssStyle: 'light-theme',
+					listStyle: '',
+					labelMap: [],
+					selectOnClick: true,
+					nextAtFront: false,
+					invertPageOrder: false,
+					useStartEdge : true,
+					useEndEdge : true,
+					onPageClick: function(pageNumber, event) {
+						// Callback triggered when a page is clicked
+						// Page number is given as an optional parameter
+					},
+					onInit: function() {
+						// Callback triggered immediately after initialization
+					}
+				}, options || {});
+	
+				var self = this;
+	
+				o.pages = o.pages ? o.pages : Math.ceil(o.items / o.itemsOnPage) ? Math.ceil(o.items / o.itemsOnPage) : 1;
+				if (o.currentPage)
+					o.currentPage = o.currentPage - 1;
+				else
+					o.currentPage = !o.invertPageOrder ? 0 : o.pages - 1;
+				o.halfDisplayed = o.displayedPages / 2;
+	
+				this.each(function() {
+					self.addClass(o.cssStyle + ' simple-pagination').data('pagination', o);
+					methods._draw.call(self);
+				});
+	
+				o.onInit();
+	
+				return this;
+			},
+	
+			selectPage: function(page) {
+				methods._selectPage.call(this, page - 1);
+				return this;
+			},
+	
+			prevPage: function() {
+				var o = this.data('pagination');
+				if (!o.invertPageOrder) {
+					if (o.currentPage > 0) {
+						methods._selectPage.call(this, o.currentPage - 1);
+					}
+				} else {
+					if (o.currentPage < o.pages - 1) {
+						methods._selectPage.call(this, o.currentPage + 1);
+					}
+				}
+				return this;
+			},
+	
+			nextPage: function() {
+				var o = this.data('pagination');
+				if (!o.invertPageOrder) {
+					if (o.currentPage < o.pages - 1) {
+						methods._selectPage.call(this, o.currentPage + 1);
+					}
+				} else {
+					if (o.currentPage > 0) {
+						methods._selectPage.call(this, o.currentPage - 1);
+					}
+				}
+				return this;
+			},
+	
+			getPagesCount: function() {
+				return this.data('pagination').pages;
+			},
+	
+			setPagesCount: function(count) {
+				this.data('pagination').pages = count;
+			},
+	
+			getCurrentPage: function () {
+				return this.data('pagination').currentPage + 1;
+			},
+	
+			destroy: function(){
+				this.empty();
+				return this;
+			},
+	
+			drawPage: function (page) {
+				var o = this.data('pagination');
+				o.currentPage = page - 1;
+				this.data('pagination', o);
+				methods._draw.call(this);
+				return this;
+			},
+	
+			redraw: function(){
+				methods._draw.call(this);
+				return this;
+			},
+	
+			disable: function(){
+				var o = this.data('pagination');
+				o.disabled = true;
+				this.data('pagination', o);
+				methods._draw.call(this);
+				return this;
+			},
+	
+			enable: function(){
+				var o = this.data('pagination');
+				o.disabled = false;
+				this.data('pagination', o);
+				methods._draw.call(this);
+				return this;
+			},
+	
+			updateItems: function (newItems) {
+				var o = this.data('pagination');
+				o.items = newItems;
+				o.pages = methods._getPages(o);
+				this.data('pagination', o);
+				methods._draw.call(this);
+			},
+	
+			updateItemsOnPage: function (itemsOnPage) {
+				var o = this.data('pagination');
+				o.itemsOnPage = itemsOnPage;
+				o.pages = methods._getPages(o);
+				this.data('pagination', o);
+				methods._selectPage.call(this, 0);
+				return this;
+			},
+	
+			getItemsOnPage: function() {
+				return this.data('pagination').itemsOnPage;
+			},
+	
+			_draw: function() {
+				var	o = this.data('pagination'),
+					interval = methods._getInterval(o),
+					i,
+					tagName;
+	
+				methods.destroy.call(this);
+	
+				tagName = (typeof this.prop === 'function') ? this.prop('tagName') : this.attr('tagName');
+	
+				var $panel = tagName === 'UL' ? this : $('<ul' + (o.listStyle ? ' class="' + o.listStyle + '"' : '') + '></ul>').appendTo(this);
+	
+				// Generate Prev link
+				if (o.prevText) {
+					methods._appendItem.call(this, !o.invertPageOrder ? o.currentPage - 1 : o.currentPage + 1, {text: o.prevText, classes: 'prev'});
+				}
+	
+				// Generate Next link (if option set for at front)
+				if (o.nextText && o.nextAtFront) {
+					methods._appendItem.call(this, !o.invertPageOrder ? o.currentPage + 1 : o.currentPage - 1, {text: o.nextText, classes: 'next'});
+				}
+	
+				// Generate start edges
+				if (!o.invertPageOrder) {
+					if (interval.start > 0 && o.edges > 0) {
+						if(o.useStartEdge) {
+							var end = Math.min(o.edges, interval.start);
+							for (i = 0; i < end; i++) {
+								methods._appendItem.call(this, i);
+							}
+						}
+						if (o.edges < interval.start && (interval.start - o.edges != 1)) {
+							$panel.append('<li class="disabled"><span class="ellipse">' + o.ellipseText + '</span></li>');
+						} else if (interval.start - o.edges == 1) {
+							methods._appendItem.call(this, o.edges);
+						}
+					}
+				} else {
+					if (interval.end < o.pages && o.edges > 0) {
+						if(o.useStartEdge) {
+							var begin = Math.max(o.pages - o.edges, interval.end);
+							for (i = o.pages - 1; i >= begin; i--) {
+								methods._appendItem.call(this, i);
+							}
+						}
+	
+						if (o.pages - o.edges > interval.end && (o.pages - o.edges - interval.end != 1)) {
+							$panel.append('<li class="disabled"><span class="ellipse">' + o.ellipseText + '</span></li>');
+						} else if (o.pages - o.edges - interval.end == 1) {
+							methods._appendItem.call(this, interval.end);
+						}
+					}
+				}
+	
+				// Generate interval links
+				if (!o.invertPageOrder) {
+					for (i = interval.start; i < interval.end; i++) {
+						methods._appendItem.call(this, i);
+					}
+				} else {
+					for (i = interval.end - 1; i >= interval.start; i--) {
+						methods._appendItem.call(this, i);
+					}
+				}
+	
+				// Generate end edges
+				if (!o.invertPageOrder) {
+					if (interval.end < o.pages && o.edges > 0) {
+						if (o.pages - o.edges > interval.end && (o.pages - o.edges - interval.end != 1)) {
+							$panel.append('<li class="disabled"><span class="ellipse">' + o.ellipseText + '</span></li>');
+						} else if (o.pages - o.edges - interval.end == 1) {
+							methods._appendItem.call(this, interval.end);
+						}
+						if(o.useEndEdge) {
+							var begin = Math.max(o.pages - o.edges, interval.end);
+							for (i = begin; i < o.pages; i++) {
+								methods._appendItem.call(this, i);
+							}
+						}
+					}
+				} else {
+					if (interval.start > 0 && o.edges > 0) {
+						if (o.edges < interval.start && (interval.start - o.edges != 1)) {
+							$panel.append('<li class="disabled"><span class="ellipse">' + o.ellipseText + '</span></li>');
+						} else if (interval.start - o.edges == 1) {
+							methods._appendItem.call(this, o.edges);
+						}
+	
+						if(o.useEndEdge) {
+							var end = Math.min(o.edges, interval.start);
+							for (i = end - 1; i >= 0; i--) {
+								methods._appendItem.call(this, i);
+							}
+						}
+					}
+				}
+	
+				// Generate Next link (unless option is set for at front)
+				if (o.nextText && !o.nextAtFront) {
+					methods._appendItem.call(this, !o.invertPageOrder ? o.currentPage + 1 : o.currentPage - 1, {text: o.nextText, classes: 'next'});
+				}
+	
+				if (o.ellipsePageSet && !o.disabled) {
+					methods._ellipseClick.call(this, $panel);
+				}
+	
+			},
+	
+			_getPages: function(o) {
+				var pages = Math.ceil(o.items / o.itemsOnPage);
+				return pages || 1;
+			},
+	
+			_getInterval: function(o) {
+				return {
+					start: Math.ceil(o.currentPage > o.halfDisplayed ? Math.max(Math.min(o.currentPage - o.halfDisplayed, (o.pages - o.displayedPages)), 0) : 0),
+					end: Math.ceil(o.currentPage > o.halfDisplayed ? Math.min(o.currentPage + o.halfDisplayed, o.pages) : Math.min(o.displayedPages, o.pages))
+				};
+			},
+	
+			_appendItem: function(pageIndex, opts) {
+				var self = this, options, $link, o = self.data('pagination'), $linkWrapper = $('<li></li>'), $ul = self.find('ul');
+	
+				pageIndex = pageIndex < 0 ? 0 : (pageIndex < o.pages ? pageIndex : o.pages - 1);
+	
+				options = {
+					text: pageIndex + 1,
+					classes: ''
+				};
+	
+				if (o.labelMap.length && o.labelMap[pageIndex]) {
+					options.text = o.labelMap[pageIndex];
+				}
+	
+				options = $.extend(options, opts || {});
+	
+				if (pageIndex == o.currentPage || o.disabled) {
+					if (o.disabled || options.classes === 'prev' || options.classes === 'next') {
+						$linkWrapper.addClass('disabled');
+					} else {
+						$linkWrapper.addClass('active');
+					}
+					$link = $('<span class="current">' + (options.text) + '</span>');
+				} else {
+					$link = $('<a href="' + o.hrefTextPrefix + (pageIndex + 1) + o.hrefTextSuffix + '" class="page-link">' + (options.text) + '</a>');
+					$link.click(function(event){
+						return methods._selectPage.call(self, pageIndex, event);
+					});
+				}
+	
+				if (options.classes) {
+					$link.addClass(options.classes);
+				}
+	
+				$linkWrapper.append($link);
+	
+				if ($ul.length) {
+					$ul.append($linkWrapper);
+				} else {
+					self.append($linkWrapper);
+				}
+			},
+	
+			_selectPage: function(pageIndex, event) {
+				var o = this.data('pagination');
+				o.currentPage = pageIndex;
+				if (o.selectOnClick) {
+					methods._draw.call(this);
+				}
+				return o.onPageClick(pageIndex + 1, event);
+			},
+	
+	
+			_ellipseClick: function($panel) {
+				var self = this,
+					o = this.data('pagination'),
+					$ellip = $panel.find('.ellipse');
+				$ellip.addClass('clickable').parent().removeClass('disabled');
+				$ellip.click(function(event) {
+					if (!o.disable) {
+						var $this = $(this),
+							val = (parseInt($this.parent().prev().text(), 10) || 0) + 1;
+						$this
+							.html('<input type="number" min="1" max="' + o.pages + '" step="1" value="' + val + '">')
+							.find('input')
+							.focus()
+							.click(function(event) {
+								// prevent input number arrows from bubbling a click event on $ellip
+								event.stopPropagation();
+							})
+							.keyup(function(event) {
+								var val = $(this).val();
+								if (event.which === 13 && val !== '') {
+									// enter to accept
+									if ((val>0)&&(val<=o.pages))
+									methods._selectPage.call(self, val - 1);
+								} else if (event.which === 27) {
+									// escape to cancel
+									$ellip.empty().html(o.ellipseText);
+								}
+							})
+							.bind('blur', function(event) {
+								var val = $(this).val();
+								if (val !== '') {
+									methods._selectPage.call(self, val - 1);
+								}
+								$ellip.empty().html(o.ellipseText);
+								return false;
+							});
+					}
+					return false;
+				});
+			}
+	
+		};
+	
+		$.fn.pagination = function(method) {
+	
+			// Method calling logic
+			if (methods[method] && method.charAt(0) != '_') {
+				return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+			} else if (typeof method === 'object' || !method) {
+				return methods.init.apply(this, arguments);
+			} else {
+				$.error('Method ' +  method + ' does not exist on jQuery.pagination');
+			}
+	
+		};
+	
+	})(jQuery);
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(13);
+	var pbcService = __webpack_require__(18);
 	
 	module.exports = {
 		getBankList: function () {
@@ -20616,7 +21052,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function($) {module.exports = {
@@ -20631,7 +21067,7 @@
 			});
 	
 	    	errorVm.message = errorMessage;
-	    	var errorTemplate = __webpack_require__(13);
+	    	var errorTemplate = __webpack_require__(14);
 	    	
 	    	$('#modal').html(errorTemplate).modal({fadeDuration: 100});
 	    	avalon.scan(document.getElementById("modal").firstChild);
@@ -20647,7 +21083,7 @@
 	        });
 	
 	        infoVm.message = infoMessage;
-	        var infoTemplate = __webpack_require__(15);
+	        var infoTemplate = __webpack_require__(16);
 	
 	        $('#modal').html(infoTemplate).modal({fadeDuration: 100});
 	        avalon.scan(document.getElementById("modal").firstChild);
@@ -20688,34 +21124,34 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div ms-controller=\"error-controller\">\r\n\t<div class=\"modal-content\">\r\n\t\t<div class=\"modal-message error-message\">\r\n\t\t\t<div class=\"modal-message-left\"><img class=\"icon\" src=\"" + __webpack_require__(14) + "\">{{@message}}</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
+	module.exports = "<div ms-controller=\"error-controller\">\r\n\t<div class=\"modal-content\">\r\n\t\t<div class=\"modal-message error-message\">\r\n\t\t\t<div class=\"modal-message-left\"><img class=\"icon\" src=\"" + __webpack_require__(15) + "\">{{@message}}</div>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACTElEQVRYR82XwVLbQAyGfzn1wgWaY2fapuTCxLfwBE2eoOFN2icgPEH7JqRPgHkCuCXTC65pZ3pM4VLWddTZtZNxHAfvrpmCL5kkK+mTVpIlwhM/9MT2YQUwfYUDEv4HMEYanNDXn4yr/PuEZfI1+IXI1DEjgOmbFwMiOgHRwEgxc8jMp8GPv2Hd+QcBrtto3+/5Z8aGy9aYw5275Lg7x3wbyFaAb6/9/qJFZwAO6ryo+T/yUj4+/Jlk11R6KgEy4zgHqN3QeC7Ocy/FsApiA0CHfV9cPoLnZfZo51Yela9jA2D61g+J6H2d5wx8h5RZUgoREvCuTgbMYe8mGRbPrQHobPe881pFuvJwGsRyrM5OO2JMwImR3GIxLFbHOoCh97mhiKXU3pAQCtosWUtRWAFkTUZcm3jR9AxL2V02qxXArON/BOhzU+Vm8vypFydfdPSWAqbJVzTgpXykvi9apKrG+GHmi+Am0QncCKAXSy0/6wg2tq4SuApg1vHnAL20UeQKACDqxbK7FoH/CaB6SBBLXTXP5wpcktD1CrblgHUZugIAVWXo0IhcASobke7pdq0YLgDF8K8loQaweBmp804AD72MbKNg2wnL3m9EQP2gBpI/++LK6P1u0bVU7e/eyn7tQKJ05iNZaNsZt/Pwby/FwGgkWypREGmLJk0joTxvpTyyGkqXEPo69vyJyYhW5b268927ZOQ0lhcVquoA0dgURBkG87jxYlL2Kl/NRrxazSgbw5j1KkYEtZpNHn01s0h266NGu6G1VguBfz8tKDBD89nnAAAAAElFTkSuQmCC"
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div ms-controller=\"info-controller\">\n    <div class=\"modal-content\">\n        <div class=\"modal-message info-message\">\n            <div class=\"modal-message-left\"><img class=\"icon\" src=\"" + __webpack_require__(16) + "\">{{@message}}</div>\n        </div>\n    </div>\n</div>";
+	module.exports = "<div ms-controller=\"info-controller\">\n    <div class=\"modal-content\">\n        <div class=\"modal-message info-message\">\n            <div class=\"modal-message-left\"><img class=\"icon\" src=\"" + __webpack_require__(17) + "\">{{@message}}</div>\n        </div>\n    </div>\n</div>";
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACUUlEQVRYR8WXTW7TUBDH/xPHbrsiG6SWDekCKezCCUhOQHoEbgAnoD1BuUnMCQgnILtaYoFZuRIbs3JkJxk0/kj8FfvZTpS3iWL7vfnN55shnHnRmeWjEcA1j4YU8AeAZgJOoLH8MngZKcIm6/TtmSxbVTElgOtgNCHGFwJNVA5m8IIJD8+6taj7vhJgwMPBVXA5VxWcFyYgnr66c8l2D4EcBHjpvxn3WZsT0bBOi6r3zGyvaXP31/gVuyn7dSmACNfR/w5g0EV4aq8bYD0tgygAhGb3L3921bzgDmbbM1bv8u4oANz4owWB3h9J88wxEhOOYU3TDzMAEu09JjH9ydaWeJrOjgzAKbVPNMpbYQcgRaYX0O+TqZ46eKvzbVKsdgA3/ttPBDx2B+B/ATYTjbTBIXcy8Nkxnr5G1TRexzF/JFzSrSqeGPzDMaywqh4RYC+8ro6UArzyRy5AL9q5QF14eGUx286FdZuxQBXAFvxxg81Sh7YoQjYTHgHgj3PxFJZ4JRckuRuZNg3RXHgI0CIGdrV8DwEkAVfn85JbsiwIa9MwAyGHSrQ3FR5ZoCQNFQtR5lZrI1wASguRvFCsBSGEpmtuL6A5gLAtU11p/2eCUP6c/TJqYAVVhTPf5bUvWEAeRA3J1ZIIr1tJObBJct8zvHFtQyL7i/neFWVfL/In1TSlfbOrJUTzNa1njZrShDJuy822LZr43NNXs1ZtedpU8WByrwoigplw33kwyfsrGs1kLONwNAPHMwNxPIqRyTqbRx/NuoZg1X6l2fCUAP8Bh55gMLtj2AwAAAAASUVORK5CYII="
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(13);
 	
 	module.exports = {
 	    getBankList: function (startDay, endDay) {
@@ -20872,28 +21308,28 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行(报表总数: {{@data.totalCount}}，已生成: {{@data.fileCount}})</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\" class=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\"\r\n\t\t\t\t ms-for=\"(bankIndex, bank) in @data.bankList\"\r\n\t\t\t\t ms-visible=\"@data.selectedReportTypeIndex==1 && bankIndex==@data.selectedBankIndex\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\"\r\n\t\t\t\t\t\tms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[bankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.reportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-click=\"@generate(index)\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\t</div>\r\n</div>";
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfUlEQVRYR82XTXLTMBTH/8/G2ZIlMzShbCBZkZyA5ASUG7QnAE5AuUFvUG5AOUHNCZquAqxCAjMs062F/BjZ8VcsWYpTJnhpS+//e3pfMuHADx1YHzsBfH8cjNinV8w8AaEL0Ch1gGdgrIkoJMmfn/0SM1fHnADmveCUiN4DOHY0vCCW756v5JVtfSPA/BGOKQguQTSxGdJ+Zw5ZiLPhbyxM+40A6rhjH9cAdVuJ55t47UlMTWHRAqTidLOfcHW3J3msg6gBJMfeCW7293wbn9ccifF2OOoAvSAkopf36X0RDQ4HKzEt264AbLL98p+Ib4wSy9fl6qgC9DsLAp7oADiOpz7TOvYRAvRQD8l3nsREEnfJ864NjiwGy+hp9i0HsCWeAhj+/BNuqkMDkYqrRJsfPZg0AKCckDnAvN85J0A1G8NTlFMdohB3KV8GPgyX0bkSKgCckk8HAWSeu4gnjZv5y3AlkuaWA3ztBTMQvbAnYBVCrVfH7iqezY7BUoyrAP0O28WzFdXutpt4amOwjBLnixPYDSBPOGXEnJhml+oA7iHIxZXwVggaSrQEw3w7WIlk765JWBFPh1WShMmwcT0JfRIeBRfw6E1DGWrEs0nZVKJ1i9oytDWirHmYE66AaNWIFOfc0oqTmHn0yTwpU4imVszAj+Eyym9W/9cwSk7BqSO6d4zyynLy1YZR9mJzIZmZJ147cYDvOBIj64WkaCwHupJl/rnWtP08ikmpW2u9liMIPra9oqmYQ4jTVtfyMu23nn8Sk39hui1te6ZKzWP5du8fk23DKizSpxMwTwjo5uOb+ZaBNYhCX/LVvf+a2ePcfoXTv2F78/adfwEPZoswq99u9AAAAABJRU5ErkJggg=="
+	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行(报表总数: {{@data.totalCount}}，已生成: {{@data.fileCount}})</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\" class=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\"\r\n\t\t\t\t ms-for=\"(bankIndex, bank) in @data.bankList\"\r\n\t\t\t\t ms-visible=\"@data.selectedReportTypeIndex==1 && bankIndex==@data.selectedBankIndex\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\"\r\n\t\t\t\t\t\tms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[bankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.pageReportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(17) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-click=\"@generate(index)\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"pagination\" id=\"pagination\"></div>\r\n\t</div>\r\n</div>";
 
 /***/ },
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div>报送之前请先下载所有报表，并仔细检查数据是否正确</div>\r\n        </div>\r\n        <div class=\"modal-message error-message\">\r\n            <div>\r\n                <input name=\"check-report\" type=\"checkbox\" ms-click=\"@checkReport()\"/>&nbsp;&nbsp;检查无误，确认报送\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\">\r\n                <button ms-if=\"@checkReportFlag==0\" disabled>确定</button>\r\n                <button ms-if=\"@checkReportFlag==1\" ms-click=\"@submit()\">确定</button>\r\n            </a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAACfUlEQVRYR82XTXLTMBTH/8/G2ZIlMzShbCBZkZyA5ASUG7QnAE5AuUFvUG5AOUHNCZquAqxCAjMs062F/BjZ8VcsWYpTJnhpS+//e3pfMuHADx1YHzsBfH8cjNinV8w8AaEL0Ch1gGdgrIkoJMmfn/0SM1fHnADmveCUiN4DOHY0vCCW756v5JVtfSPA/BGOKQguQTSxGdJ+Zw5ZiLPhbyxM+40A6rhjH9cAdVuJ55t47UlMTWHRAqTidLOfcHW3J3msg6gBJMfeCW7293wbn9ccifF2OOoAvSAkopf36X0RDQ4HKzEt264AbLL98p+Ib4wSy9fl6qgC9DsLAp7oADiOpz7TOvYRAvRQD8l3nsREEnfJ864NjiwGy+hp9i0HsCWeAhj+/BNuqkMDkYqrRJsfPZg0AKCckDnAvN85J0A1G8NTlFMdohB3KV8GPgyX0bkSKgCckk8HAWSeu4gnjZv5y3AlkuaWA3ztBTMQvbAnYBVCrVfH7iqezY7BUoyrAP0O28WzFdXutpt4amOwjBLnixPYDSBPOGXEnJhml+oA7iHIxZXwVggaSrQEw3w7WIlk765JWBFPh1WShMmwcT0JfRIeBRfw6E1DGWrEs0nZVKJ1i9oytDWirHmYE66AaNWIFOfc0oqTmHn0yTwpU4imVszAj+Eyym9W/9cwSk7BqSO6d4zyynLy1YZR9mJzIZmZJ147cYDvOBIj64WkaCwHupJl/rnWtP08ikmpW2u9liMIPra9oqmYQ4jTVtfyMu23nn8Sk39hui1te6ZKzWP5du8fk23DKizSpxMwTwjo5uOb+ZaBNYhCX/LVvf+a2ePcfoXTv2F78/adfwEPZoswq99u9AAAAABJRU5ErkJggg=="
 
 /***/ },
 /* 21 */
+/***/ function(module, exports) {
+
+	module.exports = "<div ms-controller=\"submit-controller\">\r\n    <div class=\"modal-content\">\r\n        <div class=\"modal-message error-message\">\r\n            <div>报送之前请先下载所有报表，并仔细检查数据是否正确</div>\r\n        </div>\r\n        <div class=\"modal-message error-message\">\r\n            <div>\r\n                <input name=\"check-report\" type=\"checkbox\" ms-click=\"@checkReport()\"/>&nbsp;&nbsp;检查无误，确认报送\r\n            </div>\r\n        </div>\r\n        <div class=\"modal-button\">\r\n            <a href=\"#close-modal\" rel=\"modal:close\">\r\n                <button ms-if=\"@checkReportFlag==0\" disabled>确定</button>\r\n                <button ms-if=\"@checkReportFlag==1\" ms-click=\"@submit()\">确定</button>\r\n            </a>\r\n            <a href=\"#close-modal\" rel=\"modal:close\"><button href=\"#close-modal\" rel=\"modal:close\">取消</button></a>\r\n        </div>\r\n    </div>\r\n</div>";
+
+/***/ },
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var depositoryBankModule = __webpack_require__(22);
+	var depositoryBankModule = __webpack_require__(23);
 	
 	module.exports = {
 	    init: function(){
@@ -20904,7 +21340,7 @@
 	
 	            var mainVm = avalon.define({
 	                $id: 'main',
-	                template: __webpack_require__(23),
+	                template: __webpack_require__(24),
 	                data: ""
 	            });
 	
@@ -20916,7 +21352,7 @@
 	};
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	module.exports = {
@@ -20924,18 +21360,18 @@
 	};
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>备付金存管银行</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div style=\"margin-top: 100px;font-size: 20px;text-align: center;\">即将上线，敬请期待！</div>\r\n\t</div>\r\n</div>";
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {var pbcModule = __webpack_require__(11);
-	var cooperativeBankModule = __webpack_require__(25);
-	var commonModule = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function($) {var pbcModule = __webpack_require__(12);
+	var cooperativeBankModule = __webpack_require__(26);
+	var commonModule = __webpack_require__(13);
 	
 	module.exports = {
 	    init: function(){
@@ -20946,7 +21382,7 @@
 	
 	            var mainVm = avalon.define({
 	                $id: 'main',
-	                template: __webpack_require__(27),
+	                template: __webpack_require__(28),
 	                data: {
 	                    bankList: [],
 	                    selectedBankIndex: 0,
@@ -21145,7 +21581,7 @@
 	                        }
 	                    });
 	
-	                    var submitTemplate = __webpack_require__(20);
+	                    var submitTemplate = __webpack_require__(21);
 	
 	                    $('#modal').html(submitTemplate).modal({fadeDuration: 100});
 	                    avalon.scan(document.getElementById("modal").firstChild);
@@ -21242,11 +21678,11 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {var cooperativeBankService = __webpack_require__(26);
-	var commonModule = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function($) {var cooperativeBankService = __webpack_require__(27);
+	var commonModule = __webpack_require__(13);
 	
 	module.exports = {
 	    getReportList: function (bankName, reportType, accountId) {
@@ -21314,10 +21750,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function($) {var commonModule = __webpack_require__(13);
 	
 	module.exports = {
 	    getReportList: function (bankName, reportType, accountId, startDay, endDay) {
@@ -21472,10 +21908,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\"\r\n                        ms-if=\"@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'\r\n                            || @data.bankList[@data.selectedBankIndex].bank_name!='中信银行'\">\r\n                    报送\r\n                </button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\r\n                            || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行'\">\r\n                <label>报表类型</label>\r\n                <select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n                    <option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{reportType.label}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"(@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\r\n                                || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行')\r\n                            && @data.selectedReportTypeIndex==1\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_no}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-click=\"@generate(index)\">生成</button>\r\n                            <button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n                            <button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\"\r\n                        ms-if=\"@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'\r\n                            || @data.bankList[@data.selectedBankIndex].bank_name!='中信银行'\">\r\n                    报送\r\n                </button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\r\n                            || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行'\">\r\n                <label>报表类型</label>\r\n                <select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n                    <option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{reportType.label}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"(@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\r\n                                || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行')\r\n                            && @data.selectedReportTypeIndex==1\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_no}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(17) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-click=\"@generate(index)\">生成</button>\r\n                            <button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n                            <button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }
 /******/ ]);
