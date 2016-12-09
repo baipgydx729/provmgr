@@ -25,7 +25,7 @@ public class DBUtil {
     @Autowired
     private DruidDataSource dataSource;
 
-    final Logger log = LoggerFactory.getLogger(DBUtil.class);
+    private Logger log = LoggerFactory.getLogger(DBUtil.class);
 
     /***
      * 获取数据库连接

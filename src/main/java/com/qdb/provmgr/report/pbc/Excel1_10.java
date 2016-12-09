@@ -14,26 +14,26 @@ import com.qdb.provmgr.report.PresetContent;
 /**
  * @author mashengli
  */
-public class Excel1_10 {
+class Excel1_10 {
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 13;
+    static int DATA_START_ROW_NUM = 13;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 43;
+    static int DATA_END_ROW_NUM = 43;
 
     /**
      * 数据区域起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束列数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 24;
+    static int DATA_END_COLUMN_NUM = 24;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -55,7 +55,6 @@ public class Excel1_10 {
                 for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                     BigDecimal value = getDoubleDataByColumnIndex(dataTable1_10, j);
                     sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
         }
@@ -86,9 +85,8 @@ public class Excel1_10 {
      *
      * @param dataTable1_10 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
         switch (index) {
             case 1:
                 return dataTable1_10.getK01();
