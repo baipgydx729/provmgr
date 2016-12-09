@@ -60,8 +60,6 @@ public class PbcReportController {
 
     private Logger log = LoggerFactory.getLogger(PbcReportController.class);
 
-    public static String FILE_SUFFIX = ".xls";
-
     @Autowired
     private ReportService reportService;
     @Autowired
@@ -269,7 +267,7 @@ public class PbcReportController {
         }
         String ftpPath = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
         File tempFile = FileUtil.createTempFile(pbcReportHelper.getPbcZipFileName(startDate, endDate, reportHelper.getCompanyName()));
-        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), FILE_SUFFIX);
+        ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), PbcReportHelper.FILE_SUFFIX);
 
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
         if (!result) {
@@ -360,7 +358,7 @@ public class PbcReportController {
             Date endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(startDateStr)));
             String ftpPath = pbcReportHelper.getPbcFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
             String fileName = pbcReportHelper.getPbcZipFileName(startDate, endDate, reportHelper.getCompanyName());
-            ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, FILE_SUFFIX);
+            ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, PbcReportHelper.FILE_SUFFIX);
         } catch (Exception e) {
             log.error("下载异常", e);
         }
