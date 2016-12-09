@@ -25,7 +25,15 @@ module.exports = {
         if (reportType==0){
             parameterList = "start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
         } else {
-            parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
+            parameterList = "start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
+
+            if(bankName!=null){
+                parameterList += "&bank_name="+bankName;
+            }
+
+            if (accountId!=null){
+                parameterList += "&account_id="+accountId;
+            }
         }
 
         var data = {

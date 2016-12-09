@@ -1,3 +1,5 @@
+require('../lib/jquery.simplePagination');
+
 var pbcModule = require("../module/pbc-module");
 var commonModule = require("../module/common-module");
 
@@ -13,8 +15,8 @@ module.exports = {
 				template: require('../../template/pbc.html'),
 				data: {
 					bankList: pbcModule.getBankList(null, null),
-					selectedBankIndex: 0,
-					selectedAccountIndex: 0,
+					selectedBankIndex: -1,
+					selectedAccountIndex: -1,
 					reportTypeList: [
 						{
 							label: "汇总报表"
@@ -25,6 +27,7 @@ module.exports = {
 					],
 					selectedReportTypeIndex: 0,
 					reportList: [],
+                    pageReportList: [],
 					totalCount: 11,
 					fileCount: 0,
 					checkedReportIndexList: []
@@ -32,47 +35,54 @@ module.exports = {
 				selectBank: function () {
 					mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
 
-                    document.getElementsByName("account")[mainVm.data.selectedBankIndex].value = 0;
-                    mainVm.data.selectedAccountIndex = 0;
+					if (mainVm.data.selectedBankIndex!=-1) {
+                        document.getElementsByName("account")[mainVm.data.selectedBankIndex].value = 0;
+                    }
+                    mainVm.data.selectedAccountIndex = -1;
 
+                    var bankName = mainVm.data.selectedBankIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name;
                     var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        bankName,
+                        null
                     );
 
                     mainVm.data.reportList = reportListObj.reportList;
                     mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				selectAccount: function () {
 					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[mainVm.data.selectedBankIndex].value;
 
-                    var reportListObj = pbcModule.getReportList(
+                    var accountId = mainVm.data.selectedAccountIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id;
+					var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        accountId
                     );
 
                     mainVm.data.reportList = reportListObj.reportList;
                     mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				selectReportType: function(){
 					mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
 
-                    mainVm.data.selectedBankIndex = 0;
-                    document.getElementsByName("bank")[0].value = 0;
-
-                    mainVm.data.selectedAccountIndex = 0;
-                    document.getElementsByName("account")[0].value = 0;
+                    mainVm.data.selectedBankIndex = -1;
+                    mainVm.data.selectedAccountIndex = -1;
 
                     var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
-						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+						null,
+                        null
 					);
 
                     mainVm.data.reportList = reportListObj.reportList;
                     mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -138,6 +148,8 @@ module.exports = {
 
                         mainVm.data.reportList = reportListObj.reportList;
                         mainVm.data.fileCount = reportListObj.fileCount;
+
+                        mainVm.data.getReportListByPage(1);
 					}
                 },
 				batchGenerate: function () {
@@ -186,6 +198,8 @@ module.exports = {
 
                         mainVm.data.reportList = reportListObj.reportList;
                         mainVm.data.fileCount = reportListObj.fileCount;
+
+                        mainVm.data.getReportListByPage(1);
                     }
 				},
 				submit: function () {
@@ -261,6 +275,27 @@ module.exports = {
 				}
 			});
 
+            var getReportListByPage = function(index, event){
+                var pageSize = 10;
+                var startPosition = (index-1)*pageSize;
+                var endPosition = startPosition+pageSize>=mainVm.data.reportList.length ? mainVm.data.reportList.length : startPosition+pageSize;
+                mainVm.data.pageReportList = mainVm.data.reportList.slice(startPosition, endPosition);
+
+                $('#pagination').pagination({
+                    items: mainVm.data.reportList.length,
+                    currentPage: index,
+                    itemsOnPage: pageSize,
+                    cssStyle: 'light-theme',
+                    prevText: '<',
+                    nextText: '>',
+                    onPageClick: getReportListByPage
+                });
+
+                $('#pagination a').attr("href", "#!/");
+            };
+
+            mainVm.data.getReportListByPage = getReportListByPage;
+
 			var reportListObj = pbcModule.getReportList(0);
             mainVm.data.reportList = reportListObj.reportList;
             mainVm.data.fileCount = reportListObj.fileCount;
@@ -279,7 +314,7 @@ module.exports = {
                 var dateObj = new Date();
                 var currentYear = dateObj.getFullYear();
 
-				var years = []
+				var years = [];
 				for (var i=0; i<=currentYear-2008; i++){
 					years.push(currentYear-i);
 				}
@@ -298,6 +333,8 @@ module.exports = {
                         mainVm.data.fileCount = reportListObj.fileCount;
                     }
                 });
+
+                mainVm.data.getReportListByPage(1);
 			});
 
 			avalon.scan(document.body);

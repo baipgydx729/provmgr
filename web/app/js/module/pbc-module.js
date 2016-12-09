@@ -39,13 +39,6 @@ module.exports = {
 	    if (reportType==0){
             return pbcService.getReportList(reportType, startDay, endDay);
         } else {
-	        if (bankName==undefined || accountId==undefined){
-                return {
-                    reportList: [],
-                    fileCount: 0
-                };
-            }
-
             return pbcService.getReportList(reportType, startDay, endDay, bankName, accountId);
         }
     },
