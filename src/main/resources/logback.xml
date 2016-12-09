@@ -14,28 +14,28 @@
 	<appender name="logFile"
 	        class="ch.qos.logback.core.rolling.RollingFileAppender">
 	        <!-- provmgr应为系统的简称 -->
-	        <File>/opt/application/provmgr/log/info/info.log</File>
+	        <File>/Users/fanjunjian/log/info/info.log</File>
 	        <encoder>
 	        		<pattern>%date %level[%thread] %msg at %logger{36}[%file:%line]%n</pattern>
 	                <charset>UTF-8</charset>
 	        </encoder>
 	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 	        		<!-- provmgr应为系统的简称 -->
-	                <fileNamePattern>/opt/application/provmgr/log/info/%d{yyyy-MM-dd}.log</fileNamePattern>
+	                <fileNamePattern>/Users/fanjunjian/log/info/%d{yyyy-MM-dd}.log</fileNamePattern>
 	        </rollingPolicy>
 	</appender>
 	<!-- 错误日志 -->
 	<appender name="errorFile"
 	        class="ch.qos.logback.core.rolling.RollingFileAppender">
 	        <!-- provmgr应为系统的简称 -->
-	        <File>/opt/application/provmgr/log/error/error.log</File>
+	        <File>/Users/fanjunjian/log/error/error.log</File>
 	        <encoder>
 	        		<pattern>%date %level[%thread] %msg at %logger{36}[%file:%line]%n</pattern>
 	                <charset>UTF-8</charset>
 	        </encoder>
 	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 	        		<!-- provmgr应为系统的简称 -->
-	                <fileNamePattern>/opt/application/provmgr/log/error/%d{yyyy-MM-dd}.log</fileNamePattern>
+	                <fileNamePattern>/Users/fanjunjian/log/error/%d{yyyy-MM-dd}.log</fileNamePattern>
 	        </rollingPolicy>
 	        <!-- 日志过滤器 ,只输出error级别的日志 -->
 	        <filter class="ch.qos.logback.classic.filter.LevelFilter">
@@ -49,14 +49,14 @@
 	<appender name="slowsqlFile"
 	        class="ch.qos.logback.core.rolling.RollingFileAppender">
 	        <!-- provmgr应为系统的简称 -->
-	        <File>/opt/application/provmgr/log/slow/slow.log</File>
+	        <File>/Users/fanjunjian/log/slow/slow.log</File>
 	        <encoder>
 	        		<pattern>%date %level[%thread] %msg at %logger{36}[%file:%line]%n</pattern>
 	                <charset>UTF-8</charset>
 	        </encoder>
 	        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 	        		<!-- provmgr应为系统的简称 -->
-	                <fileNamePattern>/opt/application/provmgr/log/slow/%d{yyyy-MM-dd}.log</fileNamePattern>
+	                <fileNamePattern>/Users/fanjunjian/log/slow/%d{yyyy-MM-dd}.log</fileNamePattern>
 	        </rollingPolicy>
 	</appender>
 	
