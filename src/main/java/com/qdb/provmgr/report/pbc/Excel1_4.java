@@ -15,27 +15,27 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_4 {
+class Excel1_4 {
 
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 5;
+    static int DATA_START_ROW_NUM = 5;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 36;
+    static int DATA_END_ROW_NUM = 36;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 4;
+    static int DATA_END_COLUMN_NUM = 4;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -59,7 +59,6 @@ public class Excel1_4 {
                 for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                     BigDecimal value = getDoubleDataByColumnIndex(dataTable1_4, j);
                     sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
             //合计行
@@ -92,7 +91,7 @@ public class Excel1_4 {
      * @param index        下标
      * @return
      */
-    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_4 dataTable1_4, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_4 dataTable1_4, int index) {
         switch (index) {
             case 1:
                 return dataTable1_4.getD01();

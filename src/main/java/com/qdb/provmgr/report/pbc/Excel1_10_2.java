@@ -15,26 +15,26 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_10_2 extends ReportHelper {
+class Excel1_10_2 {
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 8;
+    static int DATA_START_ROW_NUM = 8;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 38;
+    static int DATA_END_ROW_NUM = 38;
 
     /**
      * 数据区域起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束列数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 24;
+    static int DATA_END_COLUMN_NUM = 24;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -81,9 +81,8 @@ public class Excel1_10_2 extends ReportHelper {
      *
      * @param dataTable1_10 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
         switch (index) {
             case 1:
                 return dataTable1_10.getK01();

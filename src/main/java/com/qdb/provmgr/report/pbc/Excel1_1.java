@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_1;
@@ -17,29 +15,27 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_1 {
-
-    private static Logger log = LoggerFactory.getLogger(Excel1_1.class);
+class Excel1_1 {
 
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 15;
+    static int DATA_START_ROW_NUM = 15;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 46;
+    static int DATA_END_ROW_NUM = 46;
 
     /**
      * 数据区域起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束列数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 22;
+    static int DATA_END_COLUMN_NUM = 22;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -71,7 +67,6 @@ public class Excel1_1 {
                 for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                     BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
                     sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
             //合计行
@@ -87,7 +82,7 @@ public class Excel1_1 {
      *
      * @param dataTable1_1 数据
      * @param index        下标
-     * @return
+     * @return 数据
      */
     private static BigDecimal getDoubleDataByColumnIndex(DataTable1_1 dataTable1_1, int index) {
         switch (index) {

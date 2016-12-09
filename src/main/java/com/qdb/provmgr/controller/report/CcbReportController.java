@@ -259,6 +259,7 @@ public class CcbReportController {
                     message = destFileName + "上传至FTP失败!";
                     resultMap.put(CODE, code);
                     resultMap.put(MESSAGE, message);
+
                     this.updateCreateStatus(reportType, tableType, createStatus);
 
                     return JSONObject.toJSONString(resultMap);

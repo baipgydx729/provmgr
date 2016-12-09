@@ -15,27 +15,27 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_5 extends ReportHelper {
+class Excel1_5 {
 
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 6;
+    static int DATA_START_ROW_NUM = 6;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 36;
+    static int DATA_END_ROW_NUM = 36;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 6;
+    static int DATA_END_COLUMN_NUM = 6;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -55,11 +55,10 @@ public class Excel1_5 extends ReportHelper {
             DataTable1_5 total = new DataTable1_5();
             for (int i = 0; i < size; i++) {
                 DataTable1_5 dataTable1_5 = (DataTable1_5) dataList.get(i);
-                total = addData(total, dataTable1_5);
+                total = ReportHelper.addData(total, dataTable1_5);
                 for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
                     BigDecimal value = getDoubleDataByColumnIndex(dataTable1_5, j);
                     sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
             //合计行
@@ -90,9 +89,8 @@ public class Excel1_5 extends ReportHelper {
      *
      * @param dataTable1_5 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_5 dataTable1_5, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_5 dataTable1_5, int index) {
         switch (index) {
             case 1:
                 return dataTable1_5.getE01();

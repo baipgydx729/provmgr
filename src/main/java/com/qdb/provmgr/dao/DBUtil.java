@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class DBUtil {
     @Autowired
     private DruidDataSource dataSource;
 
-    final Logger log = LoggerFactory.getLogger(DBUtil.class);
+    private Logger log = LoggerFactory.getLogger(DBUtil.class);
 
     /***
      * 获取数据库连接
@@ -209,6 +211,37 @@ public class DBUtil {
             }
         }
     }
+    
+    public <T> T query(String sql, Object paras[], ResultSetHandler<T> rsh) {
+		QueryRunner qu = new QueryRunner(true);
+		T result = null;
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			result = (T) qu.query(conn, sql, rsh, paras);
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+		} finally {
+			close(conn);
+		}
 
+		return result;
+	}
+    
+    public <T> T query(String sql, ResultSetHandler<T> rsh) {
+		QueryRunner qu = new QueryRunner(true);
+		T result = null;
+		Connection conn = null;
+		try {
+			conn = getConnection();
+			result = (T) qu.query(conn, sql, rsh);
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+		} finally {
+			close(conn);
+		}
+
+		return result;
+	}
 
 }

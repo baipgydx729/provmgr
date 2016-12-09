@@ -8,6 +8,7 @@ target/
 .settings/
 *.DS_Store
 *.properties
+.externalToolBuilders
 
 web/dist
 web/generate

@@ -32,7 +32,7 @@ module.exports = {
 				selectBank: function () {
 					mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
 
-                    document.getElementsByName("account")[0].value = 0;
+                    document.getElementsByName("account")[mainVm.data.selectedBankIndex].value = 0;
                     mainVm.data.selectedAccountIndex = 0;
 
                     var reportListObj = pbcModule.getReportList(
@@ -45,7 +45,7 @@ module.exports = {
                     mainVm.data.fileCount = reportListObj.fileCount;
 				},
 				selectAccount: function () {
-					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
+					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[mainVm.data.selectedBankIndex].value;
 
                     var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
