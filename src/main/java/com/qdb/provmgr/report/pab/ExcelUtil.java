@@ -183,7 +183,7 @@ public class ExcelUtil {
 							value = 0.0;
 						}else{
 							BigDecimal BigDecimalValue = (BigDecimal)object[i];
-							value = BigDecimalValue.doubleValue();
+							value = BigDecimalValue.doubleValue()/10000;//填表单位是万
 						}
 						if(null != value){//判空为了给不需要填值的地方留的
 							Row row = sheet.getRow(rowNum);
