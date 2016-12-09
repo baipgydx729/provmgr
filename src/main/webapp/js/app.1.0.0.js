@@ -20230,8 +20230,8 @@
 					template: __webpack_require__(19),
 					data: {
 						bankList: pbcModule.getBankList(null, null),
-						selectedBankIndex: 0,
-						selectedAccountIndex: 0,
+						selectedBankIndex: -1,
+						selectedAccountIndex: -1,
 						reportTypeList: [
 							{
 								label: "汇总报表"
@@ -20250,13 +20250,16 @@
 					selectBank: function () {
 						mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
 	
-	                    document.getElementsByName("account")[mainVm.data.selectedBankIndex].value = 0;
-	                    mainVm.data.selectedAccountIndex = 0;
+						if (mainVm.data.selectedBankIndex!=-1) {
+	                        document.getElementsByName("account")[mainVm.data.selectedBankIndex].value = 0;
+	                    }
+	                    mainVm.data.selectedAccountIndex = -1;
 	
+	                    var bankName = mainVm.data.selectedBankIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name;
 	                    var reportListObj = pbcModule.getReportList(
 	                        mainVm.data.selectedReportTypeIndex,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        bankName,
+	                        null
 	                    );
 	
 	                    mainVm.data.reportList = reportListObj.reportList;
@@ -20267,10 +20270,11 @@
 					selectAccount: function () {
 						mainVm.data.selectedAccountIndex = document.getElementsByName("account")[mainVm.data.selectedBankIndex].value;
 	
-	                    var reportListObj = pbcModule.getReportList(
+	                    var accountId = mainVm.data.selectedAccountIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id;
+						var reportListObj = pbcModule.getReportList(
 	                        mainVm.data.selectedReportTypeIndex,
 	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                        accountId
 	                    );
 	
 	                    mainVm.data.reportList = reportListObj.reportList;
@@ -20281,16 +20285,13 @@
 					selectReportType: function(){
 						mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
 	
-	                    mainVm.data.selectedBankIndex = 0;
-	                    document.getElementsByName("bank")[0].value = 0;
-	
-	                    mainVm.data.selectedAccountIndex = 0;
-	                    document.getElementsByName("account")[0].value = 0;
+	                    mainVm.data.selectedBankIndex = -1;
+	                    mainVm.data.selectedAccountIndex = -1;
 	
 	                    var reportListObj = pbcModule.getReportList(
 	                        mainVm.data.selectedReportTypeIndex,
-							mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+							null,
+	                        null
 						);
 	
 	                    mainVm.data.reportList = reportListObj.reportList;
@@ -20528,7 +20529,7 @@
 	                var dateObj = new Date();
 	                var currentYear = dateObj.getFullYear();
 	
-					var years = []
+					var years = [];
 					for (var i=0; i<=currentYear-2008; i++){
 						years.push(currentYear-i);
 					}
@@ -21002,13 +21003,6 @@
 		    if (reportType==0){
 	            return pbcService.getReportList(reportType, startDay, endDay);
 	        } else {
-		        if (bankName==undefined || accountId==undefined){
-	                return {
-	                    reportList: [],
-	                    fileCount: 0
-	                };
-	            }
-	
 	            return pbcService.getReportList(reportType, startDay, endDay, bankName, accountId);
 	        }
 	    },
@@ -21178,7 +21172,15 @@
 	        if (reportType==0){
 	            parameterList = "start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
 	        } else {
-	            parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
+	            parameterList = "start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
+	
+	            if(bankName!=null){
+	                parameterList += "&bank_name="+bankName;
+	            }
+	
+	            if (accountId!=null){
+	                parameterList += "&account_id="+accountId;
+	            }
 	        }
 	
 	        var data = {
@@ -21311,7 +21313,7 @@
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行(报表总数: {{@data.totalCount}}，已生成: {{@data.fileCount}})</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\" class=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\"\r\n\t\t\t\t ms-for=\"(bankIndex, bank) in @data.bankList\"\r\n\t\t\t\t ms-visible=\"@data.selectedReportTypeIndex==1 && bankIndex==@data.selectedBankIndex\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\"\r\n\t\t\t\t\t\tms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[bankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.pageReportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(17) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-click=\"@generate(index)\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"pagination\" id=\"pagination\"></div>\r\n\t</div>\r\n</div>";
+	module.exports = "<div>\r\n\t<div class=\"main-content-head\"><h4>中国人民银行(报表总数: {{@data.totalCount}}，已生成: {{@data.fileCount}})</h4></div>\r\n\r\n\t<div class=\"main-content-body\">\r\n\t\t<div class=\"report-head\">\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>选择月份</label>\r\n\t\t\t\t<a href=\"#monthpicker\" id=\"monthpicker\" class=\"monthpicker\"></a>\r\n\t\t\t\t<button ms-click=\"@submit()\">报送</button>\r\n\t\t\t\t<button ms-click=\"@downloadAll()\">下载全部</button>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\">\r\n\t\t\t\t<label>报表类型</label>\r\n\t\t\t\t<select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n\t\t\t\t\t<option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{reportType.label}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\" ms-visible=\"@data.selectedReportTypeIndex==1\">\r\n\t\t\t\t<label>选择银行</label>\r\n\t\t\t\t<select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n\t\t\t\t\t<option value=\"-1\" selected>所有银行</option>\r\n\t\t\t\t\t<option ms-for=\"(index, bank) in @data.bankList\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{bank.bank_name}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\r\n\t\t\t<div class=\"report-head-item\"\r\n\t\t\t\t ms-for=\"(bankIndex, bank) in @data.bankList\"\r\n\t\t\t\t ms-visible=\"@data.selectedReportTypeIndex==1 && bankIndex==@data.selectedBankIndex\">\r\n\t\t\t\t<label>选择账户</label>\r\n\t\t\t\t<select name=\"account\"\r\n\t\t\t\t\t\tms-on-change=\"@selectAccount()\">\r\n\t\t\t\t\t<option value=\"-1\" selected>所有账户</option>\r\n\t\t\t\t\t<option ms-for=\"(index, account) in @data.bankList[bankIndex].account_list\"\r\n\t\t\t\t\t\t\tms-attr=\"{'value': index}\">\r\n\t\t\t\t\t\t{{account.account_no}}\r\n\t\t\t\t\t</option>\r\n\t\t\t\t</select>\r\n\t\t\t</div>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"report-body\">\r\n\t\t\t<div class=\"operation\">\r\n\t\t\t\t<div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n\t\t\t\t<div class=\"right\">\r\n\t\t\t\t\t<input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n\t\t\t\t\t<button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n\t\t\t\t</div>\r\n\t\t\t</div>\r\n\t\t\t<table>\r\n\t\t\t\t<thead>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<th>\r\n\t\t\t\t\t\t<input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n\t\t\t\t\t</th>\r\n\t\t\t\t\t<th>银行</th>\r\n\t\t\t\t\t<th>账户</th>\r\n\t\t\t\t\t<th>报表</th>\r\n\t\t\t\t\t<th>状态</th>\r\n\t\t\t\t\t<th>操作</th>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</thead>\r\n\t\t\t\t<tbody>\r\n\t\t\t\t<tr ms-for=\"(index, report) in @data.pageReportList\">\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<input type=\"checkbox\"\r\n\t\t\t\t\t\t\t   name=\"check-one\"\r\n\t\t\t\t\t\t\t   ms-click=\"@checkOne()\"/>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>{{report.bank_name}}</td>\r\n\t\t\t\t\t<td>{{report.account_no ? report.account_no : '--'}}</td>\r\n\t\t\t\t\t<td>{{report.report_name}}</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==1\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(17) + "\">已生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td ms-if=\"report.report_status==0\">\r\n\t\t\t\t\t\t<img class=\"icon\" src=\"" + __webpack_require__(20) + "\">未生成\r\n\t\t\t\t\t</td>\r\n\t\t\t\t\t<td>\r\n\t\t\t\t\t\t<button ms-click=\"@generate(index)\">生成</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n\t\t\t\t\t\t<button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n\t\t\t\t\t</td>\r\n\t\t\t\t</tr>\r\n\t\t\t\t</tbody>\r\n\t\t\t</table>\r\n\t\t</div>\r\n\r\n\t\t<div class=\"pagination\" id=\"pagination\"></div>\r\n\t</div>\r\n</div>";
 
 /***/ },
 /* 20 */
