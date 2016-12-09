@@ -15,26 +15,26 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_12 extends ReportHelper {
+class Excel1_12 {
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 4;
+    static int DATA_START_ROW_NUM = 4;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 23;
+    static int DATA_END_ROW_NUM = 23;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 2;
+    static int DATA_START_COLUMN_NUM = 2;
 
     /**
      * 数据区域结束数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 32;
+    static int DATA_END_COLUMN_NUM = 32;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -56,7 +56,6 @@ public class Excel1_12 extends ReportHelper {
                 for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
                     BigDecimal value = getDoubleDataByRowIndex(dataTable1_12, j);
                     sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
-
                 }
             }
         }
@@ -82,9 +81,8 @@ public class Excel1_12 extends ReportHelper {
      *
      * @param dataTable1_12 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByRowIndex(DataTable1_12 dataTable1_12, int index) {
+    private static BigDecimal getDoubleDataByRowIndex(DataTable1_12 dataTable1_12, int index) {
         switch (index) {
             case 4:
                 return dataTable1_12.getM1();
