@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import com.qdb.provmgr.dao.TableModeEnum;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.report.PresetContent;
+import com.qdb.provmgr.util.ExcelTemplate;
 import com.qdb.provmgr.util.FileUtil;
+import com.qdb.provmgr.util.MapUtil;
 import com.qdb.provmgr.util.POIUtil;
 
 /**
@@ -27,6 +29,14 @@ public class PbcExcelUtil {
     private static Logger log = LoggerFactory.getLogger(PbcExcelUtil.class);
 
     public static File createExcelFile(TableModeEnum tableMode, String templateFile, String targetFileName, PresetContent presetContent, List<BaseReportEntity> dataList) throws Exception {
+        //use excel template to create excel
+//        if (TableModeEnum.Table1_1.equals(tableMode) || TableModeEnum.Table1_1_2.equals(tableMode)
+//                || TableModeEnum.Table1_2.equals(tableMode) || TableModeEnum.Table1_2_1.equals(tableMode)
+//                || TableModeEnum.Table1_4.equals(tableMode) || TableModeEnum.Table1_5.equals(tableMode)
+//                || TableModeEnum.Table1_10.equals(tableMode) || TableModeEnum.Table1_10_2.equals(tableMode)
+//                || TableModeEnum.Table1_13.equals(tableMode)) {
+//            return createExcelByTemplate(templateFile, targetFileName, presetContent, ReportHelper.mergeAndSumByDate(dataList));
+//        }
         File tempFile = FileUtil.createTempFile(targetFileName);
         InputStream is = null;
         OutputStream os = null;
@@ -53,6 +63,24 @@ public class PbcExcelUtil {
         } finally {
             IOUtils.closeQuietly(os);
             IOUtils.closeQuietly(is);
+        }
+        return tempFile;
+    }
+
+    /**
+     * 根据模板创建文件
+     * @param templateFile
+     * @param targetFileName
+     * @param presetContent
+     * @param dataList
+     * @return
+     */
+    private static File createExcelByTemplate(String templateFile, String targetFileName, PresetContent presetContent, List<BaseReportEntity> dataList) {
+        File tempFile = FileUtil.createTempFile(targetFileName);
+        try {
+            ExcelTemplate.createExcel(templateFile, tempFile.getAbsolutePath(), "sheet", dataList, MapUtil.objectToMap(presetContent));
+        } catch (Exception e) {
+            log.error("创建报表异常", e);
         }
         return tempFile;
     }

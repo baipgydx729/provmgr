@@ -6,15 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.qdb.provmgr.dao.entity.report.DataTable1_1;
 
 import net.sf.jxls.transformer.XLSTransformer;
 
@@ -35,8 +39,8 @@ public class ExcelTemplate {
      * @param templateFilePath 模板文件路径
      * @param targetFilePath 目标文件路径
      * @param sheetName sheet
-     * @param dataList 数据
-     * @param map 其他数据
+     * @param dataList 数据列表，其实数据的key或变量名称必须与模板中的键值完全相同才能成功找到并设置
+     * @param map 其他分散数据，key值必须与excel模板中的键值完全相同才能成功找到并设置
      * @throws IOException
      */
     public static void createExcel(String templateFilePath, String targetFilePath, String sheetName, List dataList, Map<String, Object> map) throws InvalidFormatException, IOException {
@@ -98,5 +102,29 @@ public class ExcelTemplate {
             splitDataList.add(sheetDataList);
             sheetNameList.add(sheetName + (i + 1));
         }
+    }
+
+    public static void main(String[] args) {
+        String templateFile = "/Users/mashengli/Desktop/TEMPLATE_1_1.xls";
+        String targetFile = "/Users/mashengli/Desktop/table_1_1.xls";
+        List<DataTable1_1> dataList = new ArrayList<>();
+        for (int i = 0; i < 32; i++) {
+            DataTable1_1 dataTable1_1 = new DataTable1_1();
+            dataTable1_1.setNatuDate((i+ 1) + "日");
+            dataTable1_1.setA01(new BigDecimal("0.1" + i));
+            dataList.add(dataTable1_1);
+        }
+        Map<String, Object> map = new HashedMap();
+        map.put("companyName", "北京钱袋宝");
+        map.put("tranPireod", "201611");
+        map.put("reportUserName", "201611");
+        try {
+            ExcelTemplate.createExcel(templateFile, targetFile, "sheet", dataList, map);
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
