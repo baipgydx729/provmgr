@@ -98,4 +98,7 @@ public class CCBReportService {
         return rowEntity13;
     }
 
+    public void queryAccountNoList(String bankName) {
+
+    }
 }
