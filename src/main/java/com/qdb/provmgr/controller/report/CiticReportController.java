@@ -62,6 +62,8 @@ public class CiticReportController {
     private ReportService reportService;
     @Autowired
     private PbcReportService pbcReportService;
+    @Autowired
+    private ReportHelper reportHelper;
 
     @RequestMapping(value = "list")
     @ResponseBody
@@ -141,12 +143,12 @@ public class CiticReportController {
             total++;
             TableModeEnum tableMode = TableModeEnum.getEnumByTableName(map.get("report_name"));
             PresetContent presetContent = new PresetContent();
-            presetContent.setCompanyName(ReportHelper.getCompanyName());
-            presetContent.setReportUserName(ReportHelper.getReportUserName());
-            presetContent.setCheckUserName(ReportHelper.getCheckUserName());
+            presetContent.setCompanyName(reportHelper.getCompanyName());
+            presetContent.setReportUserName(reportHelper.getReportUserName());
+            presetContent.setCheckUserName(reportHelper.getCheckUserName());
             presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
             presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
-            presetContent.setAuthCompanyName(ReportHelper.getCompanyName());
+            presetContent.setAuthCompanyName(reportHelper.getCompanyName());
             presetContent.setAccountId(map.get("account_id"));
             presetContent.setBankName(map.get(CiticReportHelper.CITIC_BANK_NAME));
             presetContent.setAccount(map.get("account_no"));
@@ -158,7 +160,7 @@ public class CiticReportController {
             List<BaseReportEntity> dataList = getDataList(tableMode, startDate, endDate, ADIDs);
             boolean uploadResult = false;
             String dir = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate), presetContent.getAccount());
-            String fileName = citicReportHelper.getCiticFileName(startDate, endDate, tableMode, ReportHelper.getCompanyName(), presetContent.getAccount());
+            String fileName = citicReportHelper.getCiticFileName(startDate, endDate, tableMode, reportHelper.getCompanyName(), presetContent.getAccount());
             try {
                 File tempFile = PbcExcelUtil.createExcelFile(tableMode,
                         citicReportHelper.getCiticTemplateFile(tableMode),
@@ -212,7 +214,7 @@ public class CiticReportController {
             e.printStackTrace();
         }
         String ftpPath = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
-        File tempFile = FileUtil.createTempFile(citicReportHelper.getCiticZipFileName(startDate, endDate, ReportHelper.getCompanyName()));
+        File tempFile = FileUtil.createTempFile(citicReportHelper.getCiticZipFileName(startDate, endDate, reportHelper.getCompanyName()));
         ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), CiticReportHelper.FILE_SUFFIX);
 
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
@@ -256,7 +258,7 @@ public class CiticReportController {
                 AccountInfoEntity accountInfoEntity = reportService.queryAccountById(Integer.valueOf(ADID));
                 ftpPath = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate), accountInfoEntity.getAD());
                 fileName = citicReportHelper.getCiticFileName(startDate, endDate, tableModeEnum,
-                        ReportHelper.getCompanyName(), accountInfoEntity.getAD());
+                        reportHelper.getCompanyName(), accountInfoEntity.getAD());
             }
             if (StringUtils.isBlank(fileName) || !ftpFileService.isFileExists(ftpPath, fileName)) {
                 resultMap.put("code", 400);
@@ -297,7 +299,7 @@ public class CiticReportController {
             Date startDate = sdf.parse(DateUtils.getFirstDayOfMonth(sdf.parse(startDateStr)));
             Date endDate = sdf.parse(DateUtils.getLastDayOfMonth(sdf.parse(startDateStr)));
             String ftpPath = citicReportHelper.getCiticFtpDir(new SimpleDateFormat("yyyyMM").format(startDate));
-            String fileName = citicReportHelper.getCiticZipFileName(startDate, endDate, ReportHelper.getCompanyName());
+            String fileName = citicReportHelper.getCiticZipFileName(startDate, endDate, reportHelper.getCompanyName());
             ftpFileService.downloadAndCompressFromFtp(request, response, ftpPath, fileName, CiticReportHelper.FILE_SUFFIX);
         } catch (Exception e) {
             log.error("下载异常", e);
@@ -317,7 +319,7 @@ public class CiticReportController {
             String dir = citicReportHelper.getCiticFtpDir(sdf.format(startDate), baseReportEntity.getAD());
             String[] fileNames = new String[tables.size()];
             for (int i = 0; i < tables.size(); i++) {
-                fileNames[i] = citicReportHelper.getCiticFileName(startDate, endDate, tables.get(i), ReportHelper.getCompanyName(), baseReportEntity.getAD());
+                fileNames[i] = citicReportHelper.getCiticFileName(startDate, endDate, tables.get(i), reportHelper.getCompanyName(), baseReportEntity.getAD());
             }
             String[][] status = ftpFileService.checkFileStatus(dir, fileNames);
             for (int i = 0; i < fileNames.length; i++) {

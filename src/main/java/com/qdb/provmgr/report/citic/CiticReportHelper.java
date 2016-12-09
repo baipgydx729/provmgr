@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.qdb.provmgr.dao.TableModeEnum;
@@ -15,6 +16,9 @@ import com.qdb.provmgr.report.ReportHelper;
  */
 @Component
 public class CiticReportHelper {
+
+    @Autowired
+    private ReportHelper reportHelper;
 
     static final String CITIC_REPORT_ROOT_PATH = "/备付金报表/中信银行/";
 
@@ -87,25 +91,25 @@ public class CiticReportHelper {
 
     public String getCiticTemplateFile(TableModeEnum tableModeEnum) {
         if (TableModeEnum.Table1_1.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_1.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_1.xls";
         }
         if (TableModeEnum.Table1_2_1.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_2_1.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_2_1.xls";
         }
         if (TableModeEnum.Table1_3.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_3.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_3.xls";
         }
         if (TableModeEnum.Table1_6.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_6.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_6.xls";
         }
         if (TableModeEnum.Table1_9.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_9.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_9.xls";
         }
         if (TableModeEnum.Table1_10.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_10.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_10.xls";
         }
         if (TableModeEnum.Table1_13.equals(tableModeEnum)) {
-            return ROOT_PATH + ReportHelper.getExcelTemplateDir() + "/pbc/template_1_13.xls";
+            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_13.xls";
         }
         return "";
     }

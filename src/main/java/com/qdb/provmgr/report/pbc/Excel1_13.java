@@ -15,7 +15,7 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_13 extends ReportHelper {
+public class Excel1_13 {
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
