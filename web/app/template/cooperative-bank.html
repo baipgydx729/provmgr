@@ -16,11 +16,17 @@
             <div class="report-head-item">
                 <label>选择月份</label>
                 <a href="#monthpicker" id="monthpicker"></a>
-                <button ms-click="@submit()" ms-if="@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'">报送</button>
+                <button ms-click="@submit()"
+                        ms-if="@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'
+                            || @data.bankList[@data.selectedBankIndex].bank_name!='中信银行'">
+                    报送
+                </button>
                 <button ms-click="@downloadAll()">下载全部</button>
             </div>
 
-            <div class="report-head-item" ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'">
+            <div class="report-head-item"
+                 ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'
+                            || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行'">
                 <label>报表类型</label>
                 <select name="report-type" ms-on-change="@selectReportType()">
                     <option ms-for="(index, reportType) in @data.reportTypeList"
@@ -31,7 +37,9 @@
             </div>
 
             <div class="report-head-item"
-                 ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行' && @data.selectedReportTypeIndex==1">
+                 ms-visible="(@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'
+                                || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行')
+                            && @data.selectedReportTypeIndex==1">
                 <label>选择账户</label>
                 <select name="account" ms-on-change="@selectAccount()">
                     <option ms-for="(index, account) in @data.bankList[@data.selectedBankIndex].account_list"

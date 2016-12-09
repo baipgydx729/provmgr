@@ -36,7 +36,8 @@ module.exports = {
             {name: "中国建设银行", abbreviation: "ccb"},
             {name: "平安银行", abbreviation: "pab"},
             {name: "江苏银行", abbreviation: "bojs"},
-            {name: "上海浦东发展银行", abbreviation: "spdb"}
+            {name: "上海浦东发展银行", abbreviation: "spdb"},
+            {name: "中信银行", abbreviation: "citic"}
 		];
 
 		for (var i=0; i<bankList.length; i++){

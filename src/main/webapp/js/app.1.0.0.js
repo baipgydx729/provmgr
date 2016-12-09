@@ -20657,7 +20657,8 @@
 	            {name: "中国建设银行", abbreviation: "ccb"},
 	            {name: "平安银行", abbreviation: "pab"},
 	            {name: "江苏银行", abbreviation: "bojs"},
-	            {name: "上海浦东发展银行", abbreviation: "spdb"}
+	            {name: "上海浦东发展银行", abbreviation: "spdb"},
+	            {name: "中信银行", abbreviation: "citic"}
 			];
 	
 			for (var i=0; i<bankList.length; i++){
@@ -21029,7 +21030,8 @@
 	                        report_list: []
 	                    };
 	
-	                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+	                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行" ||
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中信银行"){
 	                        reportList.report_type = mainVm.data.selectedReportTypeIndex;
 	                    }
 	
@@ -21075,7 +21077,8 @@
 	                        report_list: []
 	                    };
 	
-	                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行"){
+	                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中国建设银行" ||
+	                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中信银行"){
 	                        reportList.report_type = mainVm.data.selectedReportTypeIndex;
 	                    }
 	
@@ -21183,7 +21186,7 @@
 	                    }
 	                },
 	                getOKBankList: function () {
-	                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "上海浦东发展银行"];
+	                    var okBankNameList = ["中国建设银行", "平安银行", "江苏银行", "上海浦东发展银行", "中信银行"];
 	                    var okBankList = [];
 	
 	                    var allBankList = pbcModule.getBankList();
@@ -21273,7 +21276,7 @@
 	    download: function (bankName, reportType, accountId, startDay, endDay, reportName) {
 	        if (cooperativeBankService.downloadable(bankName, reportType, accountId, startDay, endDay, reportName)){
 	            var url =null;
-	            if (bankName=="中国建设银行"){
+	            if (bankName=="中国建设银行" || bankName=="中信银行"){
 	                if(reportType==0){
 	                    url = "/report/"+commonModule.getBankAbbreviation(bankName)
 	                        +"/download?report_type="+reportType
@@ -21321,7 +21324,7 @@
 	        var data = [];
 	
 	        var url =null;
-	        if (bankName=="中国建设银行"){
+	        if (bankName=="中国建设银行" || bankName=="中信银行"){
 	            if(reportType==0){
 	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
 	                        +"/list?report_type="+reportType
@@ -21404,7 +21407,7 @@
 	        var result = true;
 	
 	        var url =null;
-	        if (bankName=="中国建设银行"){
+	        if (bankName=="中国建设银行" || bankName=="中信银行"){
 	            if(reportType==0){
 	                url = "/report/"+commonModule.getBankAbbreviation(bankName)
 	                    +"/download?report_type="+reportType
@@ -21472,7 +21475,7 @@
 /* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\" ms-if=\"@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'\">报送</button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\" ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\">\r\n                <label>报表类型</label>\r\n                <select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n                    <option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{reportType.label}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行' && @data.selectedReportTypeIndex==1\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_no}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-click=\"@generate(index)\">生成</button>\r\n                            <button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n                            <button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
+	module.exports = "<div>\r\n    <div class=\"main-content-head\"><h4>备付金合作银行</h4></div>\r\n\r\n    <div class=\"main-content-body\">\r\n        <div class=\"report-head\">\r\n            <div class=\"report-head-item\">\r\n                <label>选择银行</label>\r\n                <select name=\"bank\" ms-on-change=\"@selectBank()\">\r\n                    <option ms-for=\"(index, bank) in @data.bankList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{bank.bank_name}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\">\r\n                <label>选择月份</label>\r\n                <a href=\"#monthpicker\" id=\"monthpicker\"></a>\r\n                <button ms-click=\"@submit()\"\r\n                        ms-if=\"@data.bankList[@data.selectedBankIndex].bank_name!='中国建设银行'\r\n                            || @data.bankList[@data.selectedBankIndex].bank_name!='中信银行'\">\r\n                    报送\r\n                </button>\r\n                <button ms-click=\"@downloadAll()\">下载全部</button>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\r\n                            || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行'\">\r\n                <label>报表类型</label>\r\n                <select name=\"report-type\" ms-on-change=\"@selectReportType()\">\r\n                    <option ms-for=\"(index, reportType) in @data.reportTypeList\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{reportType.label}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n            <div class=\"report-head-item\"\r\n                 ms-visible=\"(@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'\r\n                                || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行')\r\n                            && @data.selectedReportTypeIndex==1\">\r\n                <label>选择账户</label>\r\n                <select name=\"account\" ms-on-change=\"@selectAccount()\">\r\n                    <option ms-for=\"(index, account) in @data.bankList[@data.selectedBankIndex].account_list\"\r\n                            ms-attr=\"{'value': index}\">\r\n                        {{account.account_no}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n\r\n        <div class=\"report-body\">\r\n            <div class=\"operation\">\r\n                <div><button ms-click=\"@batchGenerate()\">批量生成</button></div>\r\n                <div class=\"right\">\r\n                    <input type=\"text\" placeholder=\"可按报表类型检索\" id=\"filter\">\r\n                    <button class=\"search-button\" ms-click=\"@filter()\"></button>\r\n                </div>\r\n            </div>\r\n            <table>\r\n                <thead>\r\n                <tr>\r\n                    <th>\r\n                        <input name=\"check-all\" type=\"checkbox\" ms-click=\"@checkAll()\"/>&nbsp;&nbsp;全选\r\n                    </th>\r\n                    <th>报表</th>\r\n                    <th>状态</th>\r\n                    <th>操作</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr ms-for=\"(index, report) in @data.reportList\">\r\n                        <td>\r\n                            <input type=\"checkbox\"\r\n                                   name=\"check-one\"\r\n                                   ms-click=\"@checkOne()\"/>\r\n                        </td>\r\n                        <td>{{report.report_name}}</td>\r\n                        <td ms-if=\"report.report_status==1\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(16) + "\">已生成\r\n                        </td>\r\n                        <td ms-if=\"report.report_status==0\">\r\n                            <img class=\"icon\" src=\"" + __webpack_require__(19) + "\">未生成\r\n                        </td>\r\n                        <td>\r\n                            <button ms-click=\"@generate(index)\">生成</button>\r\n                            <button ms-if=\"report.report_status==0\" disabled>下载</button>\r\n                            <button ms-if=\"report.report_status==1\" ms-click=\"@download(report.report_name)\">下载</button>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 
 /***/ }
 /******/ ]);
