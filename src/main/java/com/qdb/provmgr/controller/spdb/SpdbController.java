@@ -31,7 +31,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.qdb.provmgr.constant.spdb.TableConstant;
-import com.qdb.provmgr.controller.spdb.bean.CreatedStatus;
 import com.qdb.provmgr.controller.spdb.bean.TableStatus;
 import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
@@ -39,7 +38,6 @@ import com.qdb.provmgr.service.spdb.SpdbFtpService;
 import com.qdb.provmgr.service.spdb.SpdbReportService;
 import com.qdb.provmgr.util.spdb.SpdbDateUtil;
 import com.qdb.provmgr.util.spdb.SpdbFileUtil;
-import com.qdb.provmgr.util.spdb.SpdbFtpUtil;
 import com.qdb.provmgr.util.spdb.SpdbZipUtil;
 
 /**
@@ -81,7 +79,6 @@ public class SpdbController {
 		} else {
 			return "{\"code\": 400,\"message\": \"无法处理该银行请求\"}";
 		}
-
 		Date date = new Date();
 		String checkedMonth = SpdbDateUtil.getYYYYMM(start_day);
 		String currenMonth = SpdbDateUtil.getYYYYMM(date);
@@ -92,7 +89,8 @@ public class SpdbController {
 			log.error("计算月差出错");
 			return "{\"code\":\"400\",\"message\":\"查询失败，请确认时间\"}";
 		}
-		List<CreatedStatus> statusList = null;	
+		//List<CreatedStatus> statusList = null;
+		StringBuilder buffer = new StringBuilder();
 		if (diff == 0) {
 			return "{\"code\":\"400\",\"message\":\"当月数据无法生成\"}";
 		} else if (diff == 1) {
@@ -101,7 +99,7 @@ public class SpdbController {
 			String fileName_prefix = null;
 			JSONObject data = null;
 			JSONArray dataArray = json.getJSONArray("report_list");
-			statusList = new ArrayList<>();
+			//statusList = new ArrayList<>();
 			for (int i = 0; i < dataArray.size(); i++) {
 				data = dataArray.getJSONObject(i);
 				String report_name = data.getString("report_name");
@@ -151,37 +149,42 @@ public class SpdbController {
 						SpdbFileUtil.writeToFile(tempFile, content);
 					} catch (IOException e) {
 						log.error("----------------{}临时文件生成失败------------", fileName);
-						statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+						//statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+						buffer.append(report_name + ":失败;");
 						continue;
 					}
 					String MonthDir = SpdbDateUtil.getYYYYMM(start_day);
 					boolean result = false;
 					try {
-						result = spdbFtpService.uploadFileToFtp(tempFile, MonthDir, fileName, fileName_prefix);
+						result = spdbFtpService.uploadFileToFtp(bankNameParam,tempFile, MonthDir, fileName, fileName_prefix);
 					} catch (IOException e) {
 						log.error("----------------{}文件上传失败------------", fileName);
-						statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+						//statusList.add(new CreatedStatus(report_name, report_name + "失败"));
+						buffer.append(report_name + ":失败;");
 						continue;
 					}
 					if (!result) {
 						log.error("----------------{}文件上传失败返回false------------", fileName);
-						statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+						//statusList.add(new CreatedStatus(report_name, report_name + "失败"));
+						buffer.append(report_name + ":失败;");
 						continue;
 					}
 				} else {
 					log.error("----------------{}文件没有取到数据------------", fileName);
-					statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+					//statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+					buffer.append(report_name + ":失败;");
 					continue;
 				}
-				new File(spdbFtpService.getSpdbTempPath() + tempFile).delete();
-				statusList.add(new CreatedStatus(report_name, report_name + "文件生成失败"));
+				new File(tempPath + tempFile).delete();
+				//statusList.add(new CreatedStatus(report_name, report_name + "成功"));
+				buffer.append(report_name + ":成功;");
 			}
 
 		} else {
 			return "{\"code\":\"400\",\"message\":\"已报送数据不能再生成\"}";
 		}
-
-		return "{\"code\": 200,\"message\": " + JSONObject.toJSONString(statusList) + "}";
+		
+		return "{\"code\": \"200\",\"message\": " + "\"" + buffer.toString() + "\"" + "}";
 	}
 
 	/**
@@ -196,6 +199,14 @@ public class SpdbController {
 	@RequestMapping("/report/{bankName}/list")
 	public String tableList(@PathVariable("bankName") String bankName, @RequestParam("start_day") String start_day,
 			@RequestParam("end_day") String end_day) {
+		String bankNameParam = null;
+		if (bankName.equals("bojs")) {
+			bankNameParam = BankCodeEnum.JIANGSU.getBankName();
+		} else if (bankName.equals("spdb")) {
+			bankNameParam = BankCodeEnum.PUFA.getBankName();
+		} else {
+			return "{\"code\": 400,\"message\": \"无法处理该银行请求\"}";
+		}
 		Date date = new Date();
 		String checkedMonth = SpdbDateUtil.getYYYYMM(start_day);
 		String currenMonth = SpdbDateUtil.getYYYYMM(date);
@@ -209,11 +220,12 @@ public class SpdbController {
 		String today = SpdbDateUtil.getYYYYMMDD(new Date());
 		String result = null;
 		Map<String, String> status = null;
-		if (diff == 0) {
-			return "{\"code\":\"400\",\"message\":\"当月无法查询\"}";
-		} else if (diff == 1) {
+//		if (diff == 0) {
+//			return "{\"code\":\"400\",\"message\":\"当月无法查询\"}";
+//		}
+		if (diff == 1 || diff == 0) {
 			try {
-				status = spdbFtpService.listTableStatus(checkedMonth, today);
+				status = spdbFtpService.listTableStatus(bankNameParam,checkedMonth, today);
 			} catch (IOException e) {
 				result = "{\"code\":\"400\",\"message\":\"查询失败\"}";
 				return result;
@@ -221,7 +233,7 @@ public class SpdbController {
 
 		} else {
 			try {
-				status = spdbFtpService.listTableStatus(checkedMonth, "");
+				status = spdbFtpService.listTableStatus(bankNameParam,checkedMonth, "");
 			} catch (IOException e) {
 				result = "{\"code\":\"400\",\"message\":\"查询失败\"}";
 				return result;
@@ -264,6 +276,14 @@ public class SpdbController {
 	public String downLoadFile(@PathVariable("bankName") String bankName, @RequestParam("start_day") String start_day,
 			@RequestParam("end_day") String end_day, @RequestParam("report_name") String report_name,
 			HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+		String bankNameParam = null;
+		if (bankName.equals("bojs")) {
+			bankNameParam = BankCodeEnum.JIANGSU.getBankName();
+		} else if (bankName.equals("spdb")) {
+			bankNameParam = BankCodeEnum.PUFA.getBankName();
+		} else {
+			return "{\"code\": 400,\"message\": \"无法处理该银行请求\"}";
+		}
 		Date date = new Date();
 		String checkedMonth = SpdbDateUtil.getYYYYMM(start_day);
 		String currenMonth = SpdbDateUtil.getYYYYMM(date);
@@ -276,30 +296,29 @@ public class SpdbController {
 			return "{\"code\":\"400\",\"message\":\"下载失败，请确认时间\"}";
 		}
 
-		FTPClient ftp = SpdbFtpUtil.getConnection(spdbFtpService.getIp(), spdbFtpService.getPort(),
-				spdbFtpService.getUserName(), spdbFtpService.getPassword());
+		FTPClient ftp = spdbFtpService.getFtpConnection();
 		String fileName = null;
 		if (diff == 0) {
 			return "{\"code\":\"400\",\"message\":\"当月无法下载\"}";
 		} else if (diff == 1) {
-			fileName = spdbFtpService.getFileName(ftp, checkedMonth, report_name, today);
+			fileName = spdbFtpService.getFileName(bankNameParam,ftp, checkedMonth, report_name, today);
 
 		} else {
-			fileName = spdbFtpService.getFileName(ftp, checkedMonth, report_name, "");
+			fileName = spdbFtpService.getFileName(bankNameParam,ftp, checkedMonth, report_name, "");
 		}
 
 		if (fileName == null) {
-			SpdbFtpUtil.close(ftp);
+			spdbFtpService.close(ftp);
 			return "{\"code\": \"400\",\"message\": \"文件不存在\"}";
 		}
 		InputStream in = null;
 		try {
-			in = spdbFtpService.downLoad(checkedMonth, fileName);
+			in = spdbFtpService.downLoad(bankNameParam,checkedMonth, fileName);
 		} catch (Exception e) {
 			return "{\"code\": \"400\",\"message\": \"" + e.getMessage() + "\"}";
 		}
 		if (in == null) {
-			SpdbFtpUtil.close(ftp);
+			spdbFtpService.close(ftp);
 			return "{\"code\": \"400\",\"message\": \"文件下载失败\"}";
 		}
 		response.setHeader("Content-Disposition",
@@ -321,7 +340,7 @@ public class SpdbController {
 			log.error("下载{}文件时写入失败", fileName);
 			return "{\"code\": \"400\",\"message\": \"文件下载失败\"}";
 		} finally {
-			SpdbFtpUtil.close(ftp);
+			spdbFtpService.close(ftp);
 			try {
 				if (in != null) {
 					in.close();
@@ -344,15 +363,27 @@ public class SpdbController {
 			@RequestParam("end_day") String end_day,
 			HttpServletRequest request, 
 			HttpServletResponse response) throws UnsupportedEncodingException {
+		
+		String bankNameParam = null;
+		String ftpPath = null;
+		if (bankName.equals("bojs")) {
+			bankNameParam = BankCodeEnum.JIANGSU.getBankName();
+			ftpPath = spdbFtpService.getjSFtpPath();
+		} else if (bankName.equals("spdb")) {
+			bankNameParam = BankCodeEnum.PUFA.getBankName();
+			ftpPath = spdbFtpService.getSpdbFtpPath();
+		} else {
+			return "{\"code\": 400,\"message\": \"无法处理该银行请求\"}";
+		}
+		String tempPath = spdbFtpService.getSpdbTempPath();
 		String checkedMonth = SpdbDateUtil.getYYYYMM(start_day);;
 		String target = null;
-		boolean getSuccess = spdbFtpService.getFtpFileToLocal(checkedMonth, target);
+		boolean getSuccess = spdbFtpService.getFtpFileToLocal(bankName,checkedMonth, target);
 		if(!getSuccess){
 			return "{\"code\": \"400\",\"message\": \"文件下载失败，获取远程文件出错\"}";
 		}
-		
-		String fileName = checkedMonth + "_" + UUID.randomUUID().toString() + ".zip";
-		SpdbZipUtil.compress(spdbFtpService.getSpdbFtpPath() + checkedMonth, spdbFtpService.getSpdbTempPath() + fileName);
+		String fileName = checkedMonth + "_" + bankNameParam + UUID.randomUUID().toString() + ".zip";
+		SpdbZipUtil.compress(ftpPath + checkedMonth, tempPath + fileName);
 		
 		response.setHeader("Content-Disposition",
 				"attachment; filename=" + new String(fileName.getBytes("iso8859-1"), "UTF-8"));
@@ -360,7 +391,7 @@ public class SpdbController {
 		InputStream in = null;
 		try {
 			out = response.getOutputStream();
-			in = new FileInputStream(new File(spdbFtpService.getSpdbTempPath() + fileName));
+			in = new FileInputStream(new File(tempPath + fileName));
 		} catch (IOException e) {
 			log.error("下载{}文件时获取输出流失败", fileName);
 			return "{\"code\": \"400\",\"message\": \"文件下载失败\"}";
@@ -386,7 +417,7 @@ public class SpdbController {
 			} catch (IOException e) {
 				log.error("下载{}文件时写入失败", fileName);
 			}
-			new File(spdbFtpService.getSpdbTempPath() + fileName).delete();
+			new File(tempPath + fileName).delete();
 		}
 		
 		return "{\"code\": \"200\",\"message\": \"文件下载成功\"}";

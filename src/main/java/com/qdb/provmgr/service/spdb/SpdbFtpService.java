@@ -17,9 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
 import com.qdb.provmgr.util.FTPUtil;
-import com.qdb.provmgr.util.spdb.SpdbFtpUtil;
 
 @Service
 public class SpdbFtpService {
@@ -34,10 +34,33 @@ public class SpdbFtpService {
 	private String userName;
 	@Value("${ftp.pwd}")
 	private String password;
+	
+	
 	@Value("${spdb.ftp.path}")
 	private String spdbFtpPath;
+	@Value("${js.ftp.path}")
+	private String jSFtpPath;
 	@Value("${spdb.temp.path}")
 	private String spdbTempPath;
+	
+	private String ftpPath;
+	
+	
+	public String getFtpPath() {
+		return ftpPath;
+	}
+
+	public void setFtpPath(String ftpPath) {
+		this.ftpPath = ftpPath;
+	}
+
+	public String getjSFtpPath() {
+		return jSFtpPath;
+	}
+
+	public void setjSFtpPath(String jSFtpPath) {
+		this.jSFtpPath = jSFtpPath;
+	}
 
 	public String getIp() {
 		return ip;
@@ -79,12 +102,51 @@ public class SpdbFtpService {
 		return spdbFtpPath;
 	}
 
-
+	/**
+	 * 获取ftp
+	 * @return
+	 */
 	public FTPClient getFtpConnection(){
-		FTPClient ftpClient = SpdbFtpUtil.getConnection(ip, port, userName, password);
-		return ftpClient;
+		FTPClient ftp = new FTPClient();
+		ftp.setControlEncoding("utf-8");
+		boolean login = false;
+		try {
+			ftp.connect(ip, port);
+			login = ftp.login(userName, password);
+		} catch (IOException e) {
+			log.error("-------------------ftp服务器连接失败");
+			return null;
+		}
+		// 此处不需要再调用 FTPReply.isPositiveCompletion(reply)，具体查看源代码
+		if (!login) {
+			return null;
+		}
+		return ftp;
+		
+	}
+	/**
+	 * 关闭ftp连接
+	 * @param ftp
+	 */
+	public  void close(FTPClient ftp){
+		if(ftp != null && ftp.isConnected()){
+			try {
+				ftp.disconnect();
+			} catch (IOException e) {
+				log.error("----------------ftp 关闭断开连接错误");
+			}
+		}
 	}
 	
+	public void turn(String bankName){
+		if(BankCodeEnum.JIANGSU.getBankName().equals(bankName)){
+			ftpPath = jSFtpPath;
+		}else if(BankCodeEnum.PUFA.getBankName().equals(bankName)){
+			ftpPath = spdbFtpPath;
+		}else{
+			return;
+		}
+	}
 	
 	/**
 	 * 获取报表状态：是否生成
@@ -92,13 +154,13 @@ public class SpdbFtpService {
 	 * @return	date  yyyyMMdd 日期
 	 * @throws IOException
 	 */
-	public Map<String, String> listTableStatus(String dirName,String date) throws IOException{
-		
+	public Map<String, String> listTableStatus(String bankName,String dirName,String date) throws IOException{
+		turn(bankName);
 		FTPClient ftp = getFtpConnection();
 		Map<String, String> tableStatus = null;
 		if(ftp != null){
 			tableStatus = new LinkedHashMap<>();
-			boolean dirIsExist = dirIsExist(ftp, spdbFtpPath, dirName);
+			boolean dirIsExist = dirIsExist(ftp, ftpPath, dirName);
 			if(!dirIsExist){
 				for(TableEnum table: TableEnum.values()){
 					tableStatus.put(table.getKey(), "0");
@@ -107,7 +169,7 @@ public class SpdbFtpService {
 			}else{
 				for(TableEnum table: TableEnum.values()){
 					String fileRegex = table.getKey() + "_" + date;
-					boolean fileIsExist = fileIsExist(ftp, spdbFtpPath + dirName, fileRegex);
+					boolean fileIsExist = fileIsExist(ftp, ftpPath + dirName, fileRegex);
 					if(fileIsExist){
 						tableStatus.put(table.getKey(), "1");
 					}else{
@@ -130,26 +192,27 @@ public class SpdbFtpService {
 	 * @return
 	 * @throws IOException
 	 */
-	public boolean uploadFileToFtp(String localFile, String timeDir, String fileName,String preffix)throws IOException {
+	public boolean uploadFileToFtp(String bankName,String localFile, String timeDir, String fileName,String preffix)throws IOException {
+		turn(bankName);
 		FTPClient ftp = getFtpConnection();
 		boolean success = false;
 		if(ftp != null){
-			boolean dirIsExist = dirIsExist(ftp, spdbFtpPath, timeDir);
+			boolean dirIsExist = dirIsExist(ftp, ftpPath, timeDir);
 			if(!dirIsExist){
 				//文件夹不存在创建文件夹
-				boolean dirSuccess = ftp.makeDirectory(spdbFtpPath + timeDir);
+				boolean dirSuccess = ftp.makeDirectory(ftpPath + timeDir);
 				//ftp.deleteFile(spdbFtpPath + timeDir + Constant.SYSTEM_PATH_SEPARATOR + fileName);
 				if(!dirSuccess){
 					return false;
 				}
 			}else{
-				FTPFile[] ftpFiles = ftp.listFiles(spdbFtpPath + timeDir);
+				FTPFile[] ftpFiles = ftp.listFiles(ftpPath + timeDir);
 				for(FTPFile ftpFile : ftpFiles){
 					if(ftpFile != null && ftpFile.isFile()){
 //						Matcher matcher = pattern.matcher(ftpFile.getName());
 						boolean fileExist = ftpFile.getName().startsWith(preffix + "_") && ftpFile.getName().endsWith(".dat");
 						if(fileExist){
-							boolean dele = ftp.deleteFile(spdbFtpPath + timeDir +Constant.SYSTEM_PATH_SEPARATOR + ftpFile.getName());
+							boolean dele = ftp.deleteFile(ftpPath + timeDir +Constant.SYSTEM_PATH_SEPARATOR + ftpFile.getName());
 							if(!dele){
 								return false;
 							}
@@ -160,7 +223,7 @@ public class SpdbFtpService {
 			}
 			InputStream in = new FileInputStream(new File(localFile));
 			try {
-				success = ftp.storeFile(spdbFtpPath + timeDir + Constant.SYSTEM_PATH_SEPARATOR + fileName, in);
+				success = ftp.storeFile(ftpPath + timeDir + Constant.SYSTEM_PATH_SEPARATOR + fileName, in);
 			} catch (IOException e) {
 				return false;
 			}finally{
@@ -168,7 +231,7 @@ public class SpdbFtpService {
 					in.close();
 				}
 			}
-			SpdbFtpUtil.close(ftp);
+			close(ftp);
 		}
 		return success;
 	}
@@ -180,12 +243,13 @@ public class SpdbFtpService {
 	 * @return
 	 * @throws Exception 
 	 */
-	public InputStream downLoad(String dir, String fileName) throws Exception{
+	public InputStream downLoad(String bankName,String dir, String fileName) throws Exception{
+		turn(bankName);
 		InputStream in = null;
 		FTPClient ftp = getFtpConnection();
 		if(fileName != null){
 			try {
-				in = ftp.retrieveFileStream(spdbFtpPath + dir + Constant.SYSTEM_PATH_SEPARATOR + fileName);
+				in = ftp.retrieveFileStream(ftpPath + dir + Constant.SYSTEM_PATH_SEPARATOR + fileName);
 			} catch (IOException e) {
 				log.error("-------获取{}文件ftp输入流失败-------",fileName);
 				return in;
@@ -197,7 +261,8 @@ public class SpdbFtpService {
 		return in;
 	}
 	
-	public String getFileName(FTPClient ftp, String dir, String fileType, String date){
+	public String getFileName(String bankName,FTPClient ftp, String dir, String fileType, String date){
+		turn(bankName);
 		String fileKey = null;
 		for(TableEnum table: TableEnum.values()){
 			if(table.getProvTable().equals(fileType)){
@@ -208,7 +273,7 @@ public class SpdbFtpService {
 		FTPFile[] ftpFiles = null;
 		String fileName = null;
 		try {
-			ftpFiles = ftp.listFiles(spdbFtpPath + dir);
+			ftpFiles = ftp.listFiles(ftpPath + dir);
 		} catch (IOException e) {
 			log.error("获取文件名称失败");
 			return fileName;
@@ -269,13 +334,14 @@ public class SpdbFtpService {
 	 * @param local
 	 * @return
 	 */
-	public boolean getFtpFileToLocal(String remote, String local){
-		FTPClient ftp = SpdbFtpUtil.getConnection(ip, port, userName, password);
+	public boolean getFtpFileToLocal(String bankName,String remote, String local){
+		turn(bankName);
+		FTPClient ftp = getFtpConnection();
 		boolean cd = false;
 		try {
-			cd = ftp.changeWorkingDirectory(spdbFtpPath + remote);
+			cd = ftp.changeWorkingDirectory(ftpPath + remote);
 		} catch (IOException e) {
-			log.info("全部下载时ftp上不存在此路径:{}",spdbFtpPath + remote);
+			log.info("全部下载时ftp上不存在此路径:{}",ftpPath + remote);
 			return false;
 		}
 		if(!cd){
@@ -288,7 +354,7 @@ public class SpdbFtpService {
 			for(FTPFile file : files){
 				if(file.isFile()){
 					out = new FileOutputStream(local + file.getName());
-					ftp.retrieveFile(spdbFtpPath + remote + Constant.SYSTEM_PATH_SEPARATOR + file.getName(),out);
+					ftp.retrieveFile(ftpPath + remote + Constant.SYSTEM_PATH_SEPARATOR + file.getName(),out);
 				}
 			}
 		} catch (IOException e) {
@@ -303,7 +369,7 @@ public class SpdbFtpService {
 				}
 			}
 		}
-		SpdbFtpUtil.close(ftp);
+		close(ftp);
 		return true;
 	}
 	
