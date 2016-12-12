@@ -659,14 +659,16 @@ html, body {
 
 #monthpicker {
   background-color: #fff;
+  color: #000;
   padding: 0;
   box-shadow: none;
   border-radius: 0;
   border: 1px solid #aaa;
-  width: 298px;
+  width: 288px;
   display: inline-block;
   height: 30px;
-  line-height: 30px; }
+  line-height: 30px;
+  padding-left: 10px; }
 
 .monthpicker {
   background-color: #fff; }
@@ -970,8 +972,7 @@ html, body {
               background-repeat: no-repeat;
               background-position: center;
               background-size: 20px 20px;
-              border: 1px solid #999;
-              border-left: none; }
+              border: 1px solid #999; }
         .content .main-content .main-content-body .report-body table {
           width: 100%;
           margin-top: 5px; }
