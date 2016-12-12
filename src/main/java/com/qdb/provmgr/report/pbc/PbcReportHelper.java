@@ -25,7 +25,7 @@ public class PbcReportHelper {
     public static final String FILE_SUFFIX = ".xls";
 
 //    private String ROOT_PATH = "/Users/mashengli/Desktop/workspace/provmgr/src/main/webapp/WEB-INF/";
-    private String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("/").getPath() + "../";
+//    private String ROOT_PATH = Thread.currentThread().getContextClassLoader().getResource("/").getPath() + "../";
 
     /**
      * 获取上报人行的合作行报表文件夹
@@ -131,54 +131,59 @@ public class PbcReportHelper {
         return result;
     }
 
-    public String getPbcTemplateFile(TableModeEnum tableModeEnum) {
+    /**
+     * 获取模板文件相对WEB-INF下的路径
+     * @param tableModeEnum
+     * @return
+     */
+    public String getRelativePbcTemplateFile(TableModeEnum tableModeEnum) {
         if (TableModeEnum.Table1_1.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_1.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_1.xls";
         }
         if (TableModeEnum.Table1_1_2.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_1_2.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_1_2.xls";
         }
         if (TableModeEnum.Table1_2.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_2.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_2.xls";
         }
         if (TableModeEnum.Table1_2_1.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_2_1.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_2_1.xls";
         }
         if (TableModeEnum.Table1_3.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_3.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_3.xls";
         }
         if (TableModeEnum.Table1_4.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_4.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_4.xls";
         }
         if (TableModeEnum.Table1_5.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_5.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_5.xls";
         }
         if (TableModeEnum.Table1_6.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_6.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_6.xls";
         }
         if (TableModeEnum.Table1_6_2.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_6_2.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_6_2.xls";
         }
         if (TableModeEnum.Table1_9.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_9.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_9.xls";
         }
         if (TableModeEnum.Table1_9_2.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_9_2.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_9_2.xls";
         }
         if (TableModeEnum.Table1_10.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_10.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_10.xls";
         }
         if (TableModeEnum.Table1_10_2.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_10_2.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_10_2.xls";
         }
         if (TableModeEnum.Table1_11.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_11.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_11.xls";
         }
         if (TableModeEnum.Table1_12.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_12.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_12.xls";
         }
         if (TableModeEnum.Table1_13.equals(tableModeEnum)) {
-            return ROOT_PATH + reportHelper.getExcelTemplateDir() + "/pbc/template_1_13.xls";
+            return reportHelper.getExcelTemplateDir() + "/pbc/template_1_13.xls";
         }
         return "";
     }
