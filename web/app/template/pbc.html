@@ -23,6 +23,7 @@
 			<div class="report-head-item" ms-visible="@data.selectedReportTypeIndex==1">
 				<label>选择银行</label>
 				<select name="bank" ms-on-change="@selectBank()">
+					<option value="-1" selected>所有银行</option>
 					<option ms-for="(index, bank) in @data.bankList"
 							ms-attr="{'value': index}">
 						{{bank.bank_name}}
@@ -36,6 +37,7 @@
 				<label>选择账户</label>
 				<select name="account"
 						ms-on-change="@selectAccount()">
+					<option value="-1" selected>所有账户</option>
 					<option ms-for="(index, account) in @data.bankList[bankIndex].account_list"
 							ms-attr="{'value': index}">
 						{{account.account_no}}
@@ -66,7 +68,7 @@
 				</tr>
 				</thead>
 				<tbody>
-				<tr ms-for="(index, report) in @data.reportList">
+				<tr ms-for="(index, report) in @data.pageReportList">
 					<td>
 						<input type="checkbox"
 							   name="check-one"
@@ -90,5 +92,7 @@
 				</tbody>
 			</table>
 		</div>
+
+		<div class="pagination" id="pagination"></div>
 	</div>
 </div>
