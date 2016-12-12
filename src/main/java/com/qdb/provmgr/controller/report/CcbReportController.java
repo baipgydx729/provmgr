@@ -238,7 +238,7 @@ public class CcbReportController {
                 }catch(Exception e){
                     createStatus = 0;
                     code = 400;
-                    message = destFileName + "创建失败";
+                    message = destFileName + "创建失败:" +e.getMessage();
                     resultMap.put(CODE, code);
                     resultMap.put(MESSAGE, message);
 
@@ -254,6 +254,7 @@ public class CcbReportController {
                 boolean isSuccess = ftpFileService.uploadFileToFtp(destExcelPath, remotePath);
                 if (!isSuccess) {
                     logger.error("建设银行备付金报表上传至FTP失败,报表名称:{}!", destExcelPath);
+
                     createStatus = 0;
                     code = 400;
                     message = destFileName + "上传至FTP失败!";
@@ -299,7 +300,7 @@ public class CcbReportController {
         dataMap.put("checkTable", checktable);
         dataMap.put("accountNo", StringUtils.isEmpty(accountNo)? "(本表为客户级报表，该栏位不必输)" : accountNo);
 
-        if ("1_3".equals(tableType)) {
+        if (CCBReportConstant.ITemplateFileNames.T1_3.equals(tableType)) {
             //合计
             List<Map<String, Object>> dataList = ccbReportService.findTableDataList(tableType, bankName, accountName, accountId, accountNo, beginDate, endDate);
             if (CollectionUtils.isEmpty(dataList)){
@@ -379,7 +380,7 @@ public class CcbReportController {
         dataMap.put("checkTable", checktable);
         dataMap.put("accountNo", StringUtils.isEmpty(accountNo)? "(本表为客户级报表，该栏位不必输)" : accountNo);
         try {
-            if ("1_3".equals(tableType)) {
+            if (CCBReportConstant.ITemplateFileNames.T1_3.equals(tableType)) {
                 List<Map<String, Object>> dataList = ccbReportService.findTableDataList(tableType, BANK_NAME, ACCOUNT_NAME, ACCOUNT_ID, null, startDay, endDay);
                 if (CollectionUtils.isEmpty(dataList)){
                     throw new Exception("尚无数据");

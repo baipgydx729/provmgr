@@ -172,7 +172,7 @@ public class PbcReportController {
                 String fileName =  pbcReportHelper.getPbcFileNameDP(startDate, endDate, tableMode, reportHelper.getCompanyName());
                 boolean uploadResult = false;
                 try {
-                    File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
+                    File tempFile = PbcExcelUtil.createExcelFile(tableMode, request.getServletContext().getRealPath("/WEB-INF/") + pbcReportHelper.getRelativePbcTemplateFile(tableMode),
                             fileName, presetContent, getDataList(tableMode, startDate, endDate, Collections.EMPTY_LIST));
                     uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), dir + fileName);
                     if (uploadResult) {
@@ -214,7 +214,7 @@ public class PbcReportController {
                 String fileName =  pbcReportHelper.getPbcFileNameCorp(startDate, endDate, tableMode,
                         reportHelper.getCompanyName(), presetContent.getBankName(), presetContent.getAccount());
                 try {
-                    File tempFile = PbcExcelUtil.createExcelFile(tableMode, pbcReportHelper.getPbcTemplateFile(tableMode),
+                    File tempFile = PbcExcelUtil.createExcelFile(tableMode, request.getServletContext().getRealPath("/WEB-INF/") + pbcReportHelper.getRelativePbcTemplateFile(tableMode),
                             fileName, presetContent, dataList);
                     uploadResult = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(),  dir + fileName);
                     if (uploadResult) {
