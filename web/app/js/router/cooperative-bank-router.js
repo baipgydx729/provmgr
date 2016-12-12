@@ -30,6 +30,14 @@ module.exports = {
                 },
                 selectBank: function () {
                     mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
+                    if (mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name=="中信银行"){
+                        mainVm.data.selectedReportTypeIndex = 1;
+                        document.getElementsByName("report-type")[0].value = 1;
+
+                        mainVm.data.selectedAccountIndex = 0;
+                        document.getElementsByName("account")[0].value = 0;
+                    }
+
                     mainVm.data.reportList = cooperativeBankModule.getReportList(
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
                         mainVm.data.selectedReportTypeIndex,
