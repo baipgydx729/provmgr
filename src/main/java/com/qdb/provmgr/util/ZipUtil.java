@@ -63,17 +63,16 @@ public class ZipUtil {
     public static void createCompressedFile(ZipOutputStream out, File file, String dir) throws Exception {
         //如果当前的是文件夹，则进行进一步处理
         if (file.isDirectory()) {
-            dir = dir + file.getName() + "/";
             //得到文件列表信息
             File[] files = file.listFiles();
             //将文件夹添加到下一级打包目录
-//            out.putNextEntry(new ZipEntry(dir + "/"));
-//            dir = StringUtils.isBlank(dir) ? "" : dir + "/";
+            out.putNextEntry(new ZipEntry(dir + "/"));
+            dir = StringUtils.isBlank(dir) ? "" : dir + "/";
 
             //循环将文件夹中的文件打包
             if (files != null) {
                 for (File file1 : files) {
-                    createCompressedFile(out, file1, dir);//递归处理
+                    createCompressedFile(out, file1, dir + file1.getName());//递归处理
                 }
             }
         } else {   //当前的是文件，打包处理
@@ -84,11 +83,6 @@ public class ZipUtil {
                 out.putNextEntry(new ZipEntry(dir + file.getName()));
                 //进行写操作
                 IOUtils.copy(fis, out);
-//                int j = 0;
-//                byte[] buffer = new byte[1024];
-//                while ((j = fis.read(buffer)) > 0) {
-//                    out.write(buffer, 0, j);
-//                }
                 out.flush();
             } finally {
                 IOUtils.closeQuietly(fis);
