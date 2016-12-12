@@ -118,9 +118,6 @@ public class FtpFileService {
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-Disposition","attachment; filename=" + HttpRequestUtil.getAttachFileName(request, targetFileName));
                 IOUtils.copy(fis, response.getOutputStream());
-
-            } catch (IOException e) {
-                throw e;
             } finally {
                 IOUtils.closeQuietly(fis);
             }
