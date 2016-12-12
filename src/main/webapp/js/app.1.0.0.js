@@ -20352,10 +20352,10 @@
 							});
 	                    } else {
 	                        reportList.report_list.push({
-	                            bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                            account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                            account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
-	                            account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+	                            bank_name: mainVm.data.reportList[index].bank_name,
+	                            account_id: mainVm.data.reportList[index].account_id,
+	                            account_name: mainVm.data.reportList[index].account_name,
+	                            account_no: mainVm.data.reportList[index].account_no,
 	                            report_name: mainVm.data.reportList[index].report_name
 	                        });
 						}
@@ -20365,8 +20365,8 @@
 	                    if (result) {
 	                        var reportListObj =pbcModule.getReportList(
 	                            mainVm.data.selectedReportTypeIndex,
-	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                            mainVm.data.selectedBankIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.selectedBankIndex==-1 || mainVm.data.selectedAccountIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
 	                        );
 	
 	                        mainVm.data.reportList = reportListObj.reportList;
@@ -20401,10 +20401,10 @@
 	                    } else {
 	                        for (var i = 0; i < mainVm.data.checkedReportIndexList.length; i++) {
 	                            reportList.report_list.push({
-	                                bank_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                                account_id: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-	                                account_name: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_name,
-	                                account_no: mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_no,
+	                                bank_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].bank_name,
+	                                account_id: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].account_id,
+	                                account_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].account_name,
+	                                account_no: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].account_no,
 	                                report_name: mainVm.data.reportList[mainVm.data.checkedReportIndexList[i]].report_name
 	                            });
 	                        }
@@ -20415,8 +20415,8 @@
 	                    if (result) {
 	                        var reportListObj = pbcModule.getReportList(
 	                            mainVm.data.selectedReportTypeIndex,
-	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-	                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+	                            mainVm.data.selectedBankIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+	                            mainVm.data.selectedBankIndex==-1 || mainVm.data.selectedAccountIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
 	                        );
 	
 	                        mainVm.data.reportList = reportListObj.reportList;
