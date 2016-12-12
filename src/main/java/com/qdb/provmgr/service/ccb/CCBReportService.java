@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by yuwenzhong on 2016-11-23.
@@ -22,16 +19,6 @@ public class CCBReportService {
 
     @Autowired
     private CCBReportDao ccbReportDao;
-
-    /**
-     * 查询银行的账户列表
-     * @param bankName
-     * @return
-     */
-    public List<String> findAccountList(String bankName){
-        List<String> accountNoList = ccbReportDao.queryAccountNoList(bankName);
-        return accountNoList;
-    }
 
     /**
      * 查询表1、2、3、6、9、10数据
@@ -46,6 +33,9 @@ public class CCBReportService {
      */
     public List<Map<String, Object>> findTableDataList(String tableType, String bankName, String name, String adId, String accountNo, String beginDate, String endDate){
         List<Map<String, Object>> dataList = ccbReportDao.queryDataList(tableType, bankName, name, adId, accountNo, beginDate, endDate);
+        if (CollectionUtils.isEmpty(dataList)){
+            dataList = new ArrayList<>();
+        }
         return dataList;
     }
 
@@ -62,11 +52,12 @@ public class CCBReportService {
     public List<DataTable3Entity> findTable3Data(String tableType, String bankName, String name, String adId, String beginDate, String endDate){
         List<DataTable3Entity> resultList = null;
 
-        List<String> accountList = this.findAccountList(bankName);
-        if(!CollectionUtils.isEmpty(accountList)){
+        List<Map<String, Object>> bankInfoList = ccbReportDao.queryBankInfoList(null, null, bankName);
+        if(!CollectionUtils.isEmpty(bankInfoList)){
             resultList = new ArrayList<>();
-            for (String actNo : accountList) {
-                List<Map<String, Object>> dataList = this.findTableDataList(tableType, bankName, name, adId, actNo, beginDate, endDate);
+            for (Map<String, Object> bankMap : bankInfoList) {
+                String accountNo = (String) bankMap.get("AD");
+                List<Map<String, Object>> dataList = this.findTableDataList(tableType, bankName, name, adId, accountNo, beginDate, endDate);
                 DataTable3Entity table3Entity = this.convertResult2Entity(dataList);
                 resultList.add(table3Entity);
             }
@@ -90,15 +81,21 @@ public class CCBReportService {
             dataTable3.setC01((BigDecimal) map.get("C01"));
             rowC01List.add(dataTable3);
         }
+
         Map<String, Object> map = list.get(0);
-        rowEntity13.setBankName((String) map.get("bankName_S"));
-        rowEntity13.setAccountNo((String) map.get("AD"));
+        String bankName = (String) map.get("bankName_S");
+        String accountNo = (String) map.get("AD");
+        List<Map<String, Object>> bankInfoList = ccbReportDao.queryBankInfoList(null, accountNo, bankName);
+        String bankBranch = bankName;
+        if (!CollectionUtils.isEmpty(bankInfoList)){
+            Map<String, Object> bankMap = bankInfoList.get(0);
+            bankBranch = (String) bankMap.get("branch");
+        }
+        rowEntity13.setBankName(bankBranch);
+        rowEntity13.setAccountNo(accountNo);
         rowEntity13.setAccountName((String) map.get("name"));
         rowEntity13.setList(rowC01List);
         return rowEntity13;
     }
 
-    public void queryAccountNoList(String bankName) {
-
-    }
 }
