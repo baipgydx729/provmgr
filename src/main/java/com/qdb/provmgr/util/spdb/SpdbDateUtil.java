@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +107,11 @@ public class SpdbDateUtil {
 //		return lastMonth;
 //	}
 //	
+	/**
+	 * 获取月初第一天
+	 * @param date
+	 * @return
+	 */
 	public static String getFirstDayOfMonth(Date date){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
@@ -115,6 +119,11 @@ public class SpdbDateUtil {
 		return sf_yyyy_MM_dd.format(calendar.getTime());
 	}
 	
+	/**
+	 * 获取月末最后一天
+	 * @param date
+	 * @return
+	 */
 	public static String getLastDayOfMonth(Date date){
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
