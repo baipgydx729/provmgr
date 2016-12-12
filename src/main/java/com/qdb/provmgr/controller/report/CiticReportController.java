@@ -150,10 +150,10 @@ public class CiticReportController {
             presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
             presetContent.setAuthCompanyName(reportHelper.getCompanyName());
             presetContent.setAccountId(map.get("account_id"));
-            presetContent.setBankName(map.get(CiticReportHelper.CITIC_BANK_NAME));
+            presetContent.setBankName(CiticReportHelper.CITIC_BANK_NAME);
             presetContent.setAccount(map.get("account_no"));
             presetContent.setAccountName(map.get("account_name"));
-            presetContent.setLegalPerson(map.get(CiticReportHelper.CITIC_BANK_NAME));
+            presetContent.setLegalPerson(CiticReportHelper.CITIC_BANK_NAME);
 
             List<Integer> ADIDs = new ArrayList<>();
             ADIDs.add(Integer.valueOf(presetContent.getAccountId()));

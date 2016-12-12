@@ -23,12 +23,20 @@ var leftMenuVm = avalon.define({
     ],
     init: function(){
         for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
+        	var found = false;
             if (leftMenuVm.menuList[i].href == window.location.hash) {
                 leftMenuVm.menuList[i].active=true;
+                found = true;
             } else {
                 leftMenuVm.menuList[i].active=false;
             }
         }
+
+        if (!found) {
+            leftMenuVm.menuList[0].active=true;
+		}
+
+        window.location.hash = "#!/";
     },
     active: function(index){
     	for (var i = leftMenuVm.menuList.length - 1; i >= 0; i--) {
@@ -47,7 +55,7 @@ avalon.history.start({
     root: "/mmRouter"
 });
 
-var hash = location.hash.replace(/#!?/, '');
+var hash = window.location.hash.replace(/#!?/, '');
 avalon.router.navigate(hash || '/', 2);
 
 avalon.scan(document.body);

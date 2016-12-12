@@ -15,3 +15,4 @@ web/generate
 web/node_modules
 web/npm-debug.log
 web/server.json
+src/main/webapp/static/
