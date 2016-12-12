@@ -162,7 +162,6 @@
                                 background-position: center;
                                 background-size:20px 20px;
                                 border: 1px solid #999;
-                                border-left: none;
                             }
                         }
                     }
@@ -207,6 +206,10 @@
                                     border: none;
                                     cursor: pointer;
                                     color: #fff;
+
+                                    &:disabled {
+                                        background-color: #999;
+                                    }
                                 }
                             }
                         }

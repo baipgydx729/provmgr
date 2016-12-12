@@ -32,6 +32,7 @@
     "jquery": "^1.12.4",
     "jquery-datetimepicker": "2.5.1",
     "jquery-modal": "^0.8.0",
+    "jquery.monthpicker": "1.0.0",
     "node-sass": "^3.8.0",
     "normalize.css": "^5.0.0",
     "run-sequence": "^1.2.2",

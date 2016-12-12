@@ -1,3 +1,5 @@
+require('../lib/jquery.simplePagination');
+
 var pbcModule = require("../module/pbc-module");
 var commonModule = require("../module/common-module");
 
@@ -12,9 +14,9 @@ module.exports = {
 				$id: 'main',
 				template: require('../../template/pbc.html'),
 				data: {
-					bankList: pbcModule.getBankList(),
-					selectedBankIndex: 0,
-					selectedAccountIndex: 0,
+					bankList: pbcModule.getBankList(null, null),
+					selectedBankIndex: -1,
+					selectedAccountIndex: -1,
 					reportTypeList: [
 						{
 							label: "汇总报表"
@@ -24,43 +26,63 @@ module.exports = {
 						}
 					],
 					selectedReportTypeIndex: 0,
-					reportList: pbcModule.getReportList(0),
+					reportList: [],
+                    pageReportList: [],
+					totalCount: 11,
+					fileCount: 0,
 					checkedReportIndexList: []
 				},
 				selectBank: function () {
 					mainVm.data.selectedBankIndex = document.getElementsByName("bank")[0].value;
-                    document.getElementsByName("account")[0].value = 0;
-                    mainVm.data.selectedAccountIndex = 0;
 
-                    mainVm.data.reportList = pbcModule.getReportList(
+					if (mainVm.data.selectedBankIndex!=-1) {
+                        document.getElementsByName("account")[mainVm.data.selectedBankIndex].value = 0;
+                    }
+                    mainVm.data.selectedAccountIndex = -1;
+
+                    var bankName = mainVm.data.selectedBankIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name;
+                    var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        bankName,
+                        null
                     );
+
+                    mainVm.data.reportList = reportListObj.reportList;
+                    mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				selectAccount: function () {
-					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[0].value;
+					mainVm.data.selectedAccountIndex = document.getElementsByName("account")[mainVm.data.selectedBankIndex].value;
 
-                    mainVm.data.reportList = pbcModule.getReportList(
+                    var accountId = mainVm.data.selectedAccountIndex==-1 ? null : mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id;
+					var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
                         mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        accountId
                     );
+
+                    mainVm.data.reportList = reportListObj.reportList;
+                    mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				selectReportType: function(){
 					mainVm.data.selectedReportTypeIndex = document.getElementsByName("report-type")[0].value;
 
-                    mainVm.data.selectedBankIndex = 0;
-                    document.getElementsByName("bank")[0].value = 0;
+                    mainVm.data.selectedBankIndex = -1;
+                    mainVm.data.selectedAccountIndex = -1;
 
-                    mainVm.data.selectedAccountIndex = 0;
-                    document.getElementsByName("account")[0].value = 0;
-
-					mainVm.data.reportList = pbcModule.getReportList(
+                    var reportListObj = pbcModule.getReportList(
                         mainVm.data.selectedReportTypeIndex,
-						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+						null,
+                        null
 					);
+
+                    mainVm.data.reportList = reportListObj.reportList;
+                    mainVm.data.fileCount = reportListObj.fileCount;
+
+                    mainVm.data.getReportListByPage(1);
 				},
 				checkAll: function () {
 					mainVm.data.checkedReportIndexList=[];
@@ -91,9 +113,12 @@ module.exports = {
 					console.log(mainVm.data.checkedReportIndexList);
 				},
                 generate: function (index) {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     var reportList={
-                        start_day: $('#datetime-start').val(),
-                        end_day: $('#datetime-end').val(),
+                        start_day: commonModule.getStartDay(year, month),
+                        end_day: commonModule.getEndDay(year, month),
                         report_type: mainVm.data.selectedReportTypeIndex,
                         report_list: []
                     };
@@ -112,7 +137,20 @@ module.exports = {
                         });
 					}
 
-                    pbcModule.generateReport(reportList);
+                    var result = pbcModule.generateReport(reportList);
+
+                    if (result) {
+                        var reportListObj =pbcModule.getReportList(
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+
+                        mainVm.data.reportList = reportListObj.reportList;
+                        mainVm.data.fileCount = reportListObj.fileCount;
+
+                        mainVm.data.getReportListByPage(1);
+					}
                 },
 				batchGenerate: function () {
 					if (mainVm.data.checkedReportIndexList.length==0){
@@ -121,9 +159,12 @@ module.exports = {
                         return;
 					}
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
 					var reportList={
-                        start_day: $('#datetime-start').val(),
-                        end_day: $('#datetime-end').val(),
+                        start_day: commonModule.getStartDay(year, month),
+                        end_day: commonModule.getEndDay(year, month),
                         report_type: mainVm.data.selectedReportTypeIndex,
                         report_list: []
 					};
@@ -146,11 +187,24 @@ module.exports = {
                         }
 					}
 
-                    pbcModule.generateReport(reportList);
+                    var result = pbcModule.generateReport(reportList);
+
+                    if (result) {
+                        var reportListObj = pbcModule.getReportList(
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+
+                        mainVm.data.reportList = reportListObj.reportList;
+                        mainVm.data.fileCount = reportListObj.fileCount;
+
+                        mainVm.data.getReportListByPage(1);
+                    }
 				},
 				submit: function () {
-					if($('#datetime-start').val()=='' || $('#datetime-end').val()==''){
-                        commonModule.errorModal("请选择时间区间!");
+					if($('#monthpicker').html()==''){
+                        commonModule.errorModal("请选择月份!");
 
 						return;
 					}
@@ -159,11 +213,17 @@ module.exports = {
 						delete avalon.vmodels['submit-controller'];
 					}
 
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
 					var submitVm = avalon.define({
 						$id: 'submit-controller',
                         checkReportFlag: 0,
 						submit: function () {
-                            pbcModule.submitReport($('#datetime-start').val(), $('#datetime-end').val());
+                            pbcModule.submitReport(
+                            	commonModule.getStartDay(year, month),
+								commonModule.getEndDay(year, month)
+							);
 						},
                         checkReport: function () {
                             if (document.getElementsByName("check-report")[0].checked) {
@@ -180,18 +240,25 @@ module.exports = {
 					avalon.scan(document.getElementById("modal").firstChild);
 				},
                 download: function (reportName) {
-                    pbcModule.download(
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                        mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
-                        $('#datetime-start').val(),
-                        $('#datetime-end').val(),
-                        reportName
-                    );
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
+					pbcModule.download(
+						mainVm.data.selectedReportTypeIndex,
+						mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+						mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id,
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month),
+						reportName
+					);
                 },
 				downloadAll: function () {
+                    var year = $('#monthpicker').html().split("-")[0];
+                    var month = $('#monthpicker').html().split("-")[1];
+
                     pbcModule.downloadAll(
-                        $('#datetime-start').val(),
-                        $('#datetime-end').val()
+                        commonModule.getStartDay(year, month),
+                        commonModule.getEndDay(year, month)
                     );
 				},
 				filter: function () {
@@ -208,6 +275,35 @@ module.exports = {
 				}
 			});
 
+            var getReportListByPage = function(index, event){
+                var pageSize = 10;
+                var startPosition = (index-1)*pageSize;
+                var endPosition = startPosition+pageSize>=mainVm.data.reportList.length ? mainVm.data.reportList.length : startPosition+pageSize;
+                mainVm.data.pageReportList = mainVm.data.reportList.slice(startPosition, endPosition);
+
+                $('#pagination').pagination({
+                    items: mainVm.data.reportList.length,
+                    currentPage: index,
+                    itemsOnPage: pageSize,
+                    cssStyle: 'light-theme',
+                    prevText: '<',
+                    nextText: '>',
+                    onPageClick: getReportListByPage
+                });
+
+                $('#pagination a').attr("href", "#!/");
+            };
+
+            mainVm.data.getReportListByPage = getReportListByPage;
+
+			var reportListObj = pbcModule.getReportList(0);
+            mainVm.data.reportList = reportListObj.reportList;
+            mainVm.data.fileCount = reportListObj.fileCount;
+
+			for (var i=0; i<mainVm.data.bankList.length; i++){
+                mainVm.data.totalCount += mainVm.data.bankList[i].account_list.length*7;
+			}
+
 			mainVm.$watch('onReady', function(){
 				$("#filter").keydown(function(event){
 					if(event.which == "13"){
@@ -215,51 +311,30 @@ module.exports = {
 					}
 				});
 
-				$.datetimepicker.setLocale('ch');
-
-				$('#datetime-start').datetimepicker({
-					timepicker:false,
-					format:'Y-m-d',
-					maxDate:'+1970/01/01',
-					onShow:function(){
-						this.setOptions({
-							maxDate: $('#datetime-end').val() ? $('#datetime-end').val() : '+1970/01/01'
-						});
-					},
-                    onSelectDate: function(){
-                        mainVm.data.reportList = pbcModule.getReportList(
-                            mainVm.data.selectedReportTypeIndex,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
-                        );
-                    }
-				});
-
-				$('#datetime-end').datetimepicker({
-					timepicker:false,
-					format:'Y-m-d',
-					maxDate:'+1970/01/01',
-					onShow:function(){
-						this.setOptions({
-							minDate: $('#datetime-start').val() ? $('#datetime-start').val() : false
-						});
-					},
-                    onSelectDate: function(){
-                        mainVm.data.reportList = pbcModule.getReportList(
-                            mainVm.data.selectedReportTypeIndex,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
-                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
-                        );
-                    }
-				});
-
                 var dateObj = new Date();
-                var year = dateObj.getFullYear();
-                var month = dateObj.getMonth()+1;
-                var day = dateObj.getDate();
+                var currentYear = dateObj.getFullYear();
 
-                $("#datetime-start").val(year+"-"+month+"-01");
-                $("#datetime-end").val(year+"-"+month+"-"+day);
+				var years = [];
+				for (var i=0; i<=currentYear-2008; i++){
+					years.push(currentYear-i);
+				}
+
+                $('#monthpicker').monthpicker({
+                    years: years,
+                    topOffset: 6,
+                    onMonthSelect: function(month, year) {
+                        var reportListObj = pbcModule.getReportList(
+                            mainVm.data.selectedReportTypeIndex,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].bank_name,
+                            mainVm.data.bankList[mainVm.data.selectedBankIndex].account_list[mainVm.data.selectedAccountIndex].account_id
+                        );
+
+                        mainVm.data.reportList = reportListObj.reportList;
+                        mainVm.data.fileCount = reportListObj.fileCount;
+                    }
+                });
+
+                mainVm.data.getReportListByPage(1);
 			});
 
 			avalon.scan(document.body);

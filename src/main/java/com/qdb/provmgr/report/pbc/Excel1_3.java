@@ -1,40 +1,41 @@
 package com.qdb.provmgr.report.pbc;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_3;
+import com.qdb.provmgr.report.DecimalTool;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.util.BigDecimalUtil;
 
 /**
  * @author mashengli
  */
-public class Excel1_3 {
-
-    private static Logger log = LoggerFactory.getLogger(Excel1_3.class);
+class Excel1_3 {
 
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 5;
+    static int DATA_START_ROW_NUM = 5;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 4;
+    static int DATA_START_COLUMN_NUM = 4;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return;
+        }
         Map<String, LinkedHashMap> dataMap = convertData(dataList);
         int rowNum = DATA_START_ROW_NUM;
         //保存合计的数值
@@ -49,7 +50,7 @@ public class Excel1_3 {
                 if (column < DATA_START_COLUMN_NUM) {
                     row.createCell(column++).setCellValue((String)obj);
                 } else {
-                    row.createCell(column++).setCellValue((double)obj);
+                    row.createCell(column++).setCellValue(null != obj ? ((BigDecimal)obj).doubleValue() : 0);
                 }
             }
         }
@@ -61,9 +62,9 @@ public class Excel1_3 {
         totalRow.createCell(columnNum++);
         sheet.addMergedRegion(new CellRangeAddress(DATA_START_ROW_NUM + countAccount, DATA_START_ROW_NUM + countAccount, 0, 2));
 
-        totalRow.createCell(columnNum++);
+        totalRow.createCell(columnNum++).setCellValue("C03");
         for (Object obj : totalDataMap.values()) {
-            totalRow.createCell(columnNum++).setCellValue((double)obj);
+            totalRow.createCell(columnNum++).setCellValue(null != obj ? ((BigDecimal)obj).doubleValue() : 0);
         }
 
         //填充交易时期、填报日期、填表人及审核人
@@ -85,23 +86,22 @@ public class Excel1_3 {
     /**
      * 数据转化
      * @param dataList 源列表数据
-     * @return
+     * @return map
      */
     private static Map<String, LinkedHashMap> convertData(List<BaseReportEntity> dataList) {
         Map<String, LinkedHashMap> resultMap = new HashMap<>();
         //按照日期进行排序
         Collections.sort(dataList);
         //合计数据，计算各个账户同一天累加的数据,只填数据
-        LinkedHashMap<String, Double> totalMap = new LinkedHashMap<>();
+        LinkedHashMap<String, BigDecimal> totalMap = new LinkedHashMap<>();
 
         for (BaseReportEntity baseReportEntity : dataList) {
             DataTable1_3 data = (DataTable1_3) baseReportEntity;
-            double cvalue = null != data.getC01() ? data.getC01().doubleValue() : 0;
             if (totalMap.containsKey(data.getNatuDate())) {
-                double newValue = BigDecimalUtil.add(totalMap.get(data.getNatuDate()), cvalue);
+                BigDecimal newValue = DecimalTool.add(totalMap.get(data.getNatuDate()), data.getC01());
                 totalMap.put(data.getNatuDate(), newValue);
             } else {
-                totalMap.put(data.getNatuDate(), cvalue);
+                totalMap.put(data.getNatuDate(), data.getC01());
             }
             //按照账户进行分组，将同一账户的不同日期进行行列转换，并按照日期顺序进行赋值
             if (resultMap.containsKey(data.getAD())) {
@@ -113,8 +113,8 @@ public class Excel1_3 {
                 row.put("name", data.getName());
                 row.put("AD", data.getAD());
                 row.put("C01", "C01");
-                row.put(data.getNatuDate(), cvalue);
-                resultMap.put(data.getName(), row);
+                row.put(data.getNatuDate(), data.getC01());
+                resultMap.put(data.getAD(), row);
             }
         }
         resultMap.put("total", totalMap);

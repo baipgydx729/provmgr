@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -14,30 +15,30 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_10_2 extends ReportHelper {
+class Excel1_10_2 {
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 8;
+    static int DATA_START_ROW_NUM = 8;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 38;
+    static int DATA_END_ROW_NUM = 38;
 
     /**
      * 数据区域起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束列数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 24;
+    static int DATA_END_COLUMN_NUM = 24;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
-        writeData(sheet, dataList);
+        writeData(sheet, ReportHelper.mergeAndSumByDate(dataList));
     }
 
     /**
@@ -47,13 +48,15 @@ public class Excel1_10_2 extends ReportHelper {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        for (int i = 0; i < size; i++) {
-            DataTable1_10 dataTable1_10 = (DataTable1_10)dataList.get(i);
-            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_10, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            for (int i = 0; i < size; i++) {
+                DataTable1_10 dataTable1_10 = (DataTable1_10) dataList.get(i);
+                for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                    BigDecimal value = getDoubleDataByColumnIndex(dataTable1_10, j);
+                    sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+                }
             }
         }
     }
@@ -78,9 +81,8 @@ public class Excel1_10_2 extends ReportHelper {
      *
      * @param dataTable1_10 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_10 dataTable1_10, int index) {
         switch (index) {
             case 1:
                 return dataTable1_10.getK01();

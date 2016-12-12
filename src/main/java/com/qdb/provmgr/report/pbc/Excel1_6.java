@@ -4,37 +4,37 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
 import com.qdb.provmgr.report.PresetContent;
-import com.qdb.provmgr.report.ReportHelper;
 
 /**
  * @author mashengli
  */
-public class Excel1_6 extends ReportHelper {
+class Excel1_6 {
 
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 9;
+    static int DATA_START_ROW_NUM = 9;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 36;
+    static int DATA_END_ROW_NUM = 36;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 2;
+    static int DATA_START_COLUMN_NUM = 2;
 
     /**
      * 数据区域结束数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 32;
+    static int DATA_END_COLUMN_NUM = 32;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
@@ -48,13 +48,15 @@ public class Excel1_6 extends ReportHelper {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        for (int i = 0; i < size; i++) {
-            DataTable1_6 dataTable1_6 = (DataTable1_6) dataList.get(i);
-            for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
-                BigDecimal value = getDoubleDataByRowIndex(dataTable1_6, j);
-                sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            for (int i = 0; i < size; i++) {
+                DataTable1_6 dataTable1_6 = (DataTable1_6) dataList.get(i);
+                for (int j = DATA_START_ROW_NUM; j <= DATA_END_ROW_NUM; j++) {
+                    BigDecimal value = getDoubleDataByRowIndex(dataTable1_6, j);
+                    sheet.getRow(j).getCell(i + DATA_START_COLUMN_NUM).setCellValue(null != value ? value.doubleValue() : 0);
+                }
             }
         }
     }
@@ -75,7 +77,7 @@ public class Excel1_6 extends ReportHelper {
         sheet.getRow(5).createCell(1).setCellValue(presetContent.getAccountName());
         sheet.getRow(6).createCell(1).setCellValue(presetContent.getAccount());
         sheet.getRow(7).createCell(1).setCellValue(presetContent.getReportDate());
-        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(presetContent.getReportDate());
+        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(presetContent.getReportUserName());
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(presetContent.getCheckUserName());
     }
 
@@ -84,9 +86,8 @@ public class Excel1_6 extends ReportHelper {
      *
      * @param dataTable1_6 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByRowIndex(DataTable1_6 dataTable1_6, int index) {
+    private static BigDecimal getDoubleDataByRowIndex(DataTable1_6 dataTable1_6, int index) {
         switch (index) {
             case 4:
                 return new BigDecimal("0");

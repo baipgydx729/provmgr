@@ -4,9 +4,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable1_1;
@@ -16,33 +15,31 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_1_2 {
-
-    private static Logger log = LoggerFactory.getLogger(Excel1_1_2.class);
+class Excel1_1_2 {
 
     /**
      * 数据区域起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 10;
+    static int DATA_START_ROW_NUM = 10;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 41;
+    static int DATA_END_ROW_NUM = 41;
 
     /**
      * 数据区域起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束列数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 22;
+    static int DATA_END_COLUMN_NUM = 22;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
-        writeData(sheet, dataList);
+        writeData(sheet, ReportHelper.mergeAndSumByDate(dataList));
     }
 
     private static void writePresetContent(HSSFSheet sheet, PresetContent presetContent) {
@@ -55,21 +52,23 @@ public class Excel1_1_2 {
     }
 
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        DataTable1_1 total = new DataTable1_1();
-        for (int i = 0; i < size; i++) {
-            DataTable1_1 dataTable1_1 = (DataTable1_1)dataList.get(i);
-            total = ReportHelper.addData(total, dataTable1_1);
-            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            DataTable1_1 total = new DataTable1_1();
+            for (int i = 0; i < size; i++) {
+                DataTable1_1 dataTable1_1 = (DataTable1_1) dataList.get(i);
+                total = ReportHelper.addData(total, dataTable1_1);
+                for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                    BigDecimal value = getDoubleDataByColumnIndex(dataTable1_1, j);
+                    sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+                }
             }
-        }
-        //合计行
-        for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            BigDecimal value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+            //合计行
+            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                BigDecimal value = getDoubleDataByColumnIndex(total, j);
+                sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+            }
         }
     }
 
@@ -78,7 +77,6 @@ public class Excel1_1_2 {
      *
      * @param dataTable1_1 数据
      * @param index        下标
-     * @return
      */
     private static BigDecimal getDoubleDataByColumnIndex(DataTable1_1 dataTable1_1, int index) {
         switch (index) {

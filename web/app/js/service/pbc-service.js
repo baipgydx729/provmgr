@@ -25,10 +25,21 @@ module.exports = {
         if (reportType==0){
             parameterList = "start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
         } else {
-            parameterList = "bank_name="+bankName+"&account_id="+accountId+"&start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
+            parameterList = "start_day="+startDay+"&end_day="+endDay+"&report_type="+reportType;
+
+            if(bankName!=null){
+                parameterList += "&bank_name="+bankName;
+            }
+
+            if (accountId!=null){
+                parameterList += "&account_id="+accountId;
+            }
         }
 
-        var data = [];
+        var data = {
+            reportList: [],
+            fileCount: 0
+        };
         $.ajax({
             url: "/report/pbc/list?"+parameterList,
             type: 'GET',
@@ -36,7 +47,8 @@ module.exports = {
             dataType: 'json',
             success: function (response) {
                 if (response.code == 200) {
-                    data = response.data;
+                    data.reportList = response.data;
+                    data.fileCount = response.file_count;
                 }
             },
             error: function () {
@@ -47,15 +59,19 @@ module.exports = {
         return data;
     },
     generateReport: function (reportList) {
+        var result = false;
+
         $.ajax({
             url: "/report/pbc/create",
             type: "POST",
+            async: false,
             dataType: 'json',
             contentType: "application/json;charset=utf-8",
             data: JSON.stringify(reportList),
             success: function (data) {
                 if (data.code == 200) {
                     commonModule.infoModal(data.message);
+                    result = true;
                 } else if (data.code == 400) {
                     commonModule.errorModal(data.message);
                 }
@@ -64,6 +80,8 @@ module.exports = {
                 commonModule.errorModal("接口错误！");
             }
         });
+
+        return result;
     },
     submitReport: function(startDay, endDay) {
         $.ajax({
@@ -83,15 +101,27 @@ module.exports = {
             }
         });
     },
-    downloadable: function(bankName, accountId, startDay, endDay, reportName){
+    downloadable: function(reportType, bankName, accountId, startDay, endDay, reportName){
         var result = true;
 
+        var url = null;
+        if (reportType==0){
+            url = "/report/pbc/download?"
+                +"&report_type="+reportType
+                +"&start_day="+startDay
+                +"&end_day="+endDay
+                +"&report_name="+reportName;
+        } else {
+            url = "/report/pbc/download?report_type="+reportType
+                +"&bank_name="+bankName
+                +"&account_id="+accountId
+                +"&start_day="+startDay
+                +"&end_day="+endDay
+                +"&report_name="+reportName;
+        }
+
         $.ajax({
-            url: "/report/pbc/download?bank_name="+bankName
-                    +"&account_id="+accountId
-                    +"&start_day="+startDay
-                    +"&end_day="+endDay
-                    +"&report_name="+reportName,
+            url: url,
             type: 'GET',
             dataType: 'json',
             async: false,

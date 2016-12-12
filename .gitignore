@@ -8,9 +8,11 @@ target/
 .settings/
 *.DS_Store
 *.properties
+.externalToolBuilders
 
 web/dist
 web/generate
 web/node_modules
 web/npm-debug.log
 web/server.json
+src/main/webapp/static/

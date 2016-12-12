@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -14,31 +15,31 @@ import com.qdb.provmgr.report.ReportHelper;
 /**
  * @author mashengli
  */
-public class Excel1_5 extends ReportHelper {
+class Excel1_5 {
 
     /**
      * 数据起始行数下标（下标从0开始）
      */
-    private static int DATA_START_ROW_NUM = 6;
+    static int DATA_START_ROW_NUM = 6;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_ROW_NUM = 36;
+    static int DATA_END_ROW_NUM = 36;
 
     /**
      * 数据起始列数下标（下标从0开始）
      */
-    private static int DATA_START_COLUMN_NUM = 1;
+    static int DATA_START_COLUMN_NUM = 1;
 
     /**
      * 数据区域结束行数下标（下标从0开始）
      */
-    private static int DATA_END_COLUMN_NUM = 6;
+    static int DATA_END_COLUMN_NUM = 6;
 
     public static void writeData(HSSFSheet sheet, PresetContent presetContent, List<BaseReportEntity> dataList) {
         writePresetContent(sheet, presetContent);
-        writeData(sheet, dataList);
+        writeData(sheet, ReportHelper.mergeAndSumByDate(dataList));
     }
 
     /**
@@ -48,21 +49,23 @@ public class Excel1_5 extends ReportHelper {
      * @param dataList 数据列表
      */
     private static void writeData(HSSFSheet sheet, List<BaseReportEntity> dataList) {
-        Collections.sort(dataList);
-        int size = dataList.size();
-        DataTable1_5 total = new DataTable1_5();
-        for (int i = 0; i < size; i++) {
-            DataTable1_5 dataTable1_5 = (DataTable1_5)dataList.get(i);
-            total = addData(total, dataTable1_5);
-            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-                BigDecimal value = getDoubleDataByColumnIndex(dataTable1_5, j);
-                sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+        if (!CollectionUtils.isEmpty(dataList)) {
+            Collections.sort(dataList);
+            int size = dataList.size();
+            DataTable1_5 total = new DataTable1_5();
+            for (int i = 0; i < size; i++) {
+                DataTable1_5 dataTable1_5 = (DataTable1_5) dataList.get(i);
+                total = ReportHelper.addData(total, dataTable1_5);
+                for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                    BigDecimal value = getDoubleDataByColumnIndex(dataTable1_5, j);
+                    sheet.getRow(i + DATA_START_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+                }
             }
-        }
-        //合计行
-        for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
-            BigDecimal value = getDoubleDataByColumnIndex(total, j);
-            sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+            //合计行
+            for (int j = DATA_START_COLUMN_NUM; j <= DATA_END_COLUMN_NUM; j++) {
+                BigDecimal value = getDoubleDataByColumnIndex(total, j);
+                sheet.getRow(DATA_END_ROW_NUM).getCell(j).setCellValue(null != value ? value.doubleValue() : 0);
+            }
         }
     }
 
@@ -77,7 +80,7 @@ public class Excel1_5 extends ReportHelper {
         sheet.getRow(0).createCell(1).setCellValue(presetContent.getCompanyName());
         sheet.getRow(1).createCell(1).setCellValue(presetContent.getTranPeriod());
         sheet.getRow(2).createCell(1).setCellValue(presetContent.getReportDate());
-        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(presetContent.getReportDate());
+        sheet.getRow(DATA_END_ROW_NUM + 1).createCell(1).setCellValue(presetContent.getReportUserName());
         sheet.getRow(DATA_END_ROW_NUM + 2).createCell(1).setCellValue(presetContent.getCheckUserName());
     }
 
@@ -86,9 +89,8 @@ public class Excel1_5 extends ReportHelper {
      *
      * @param dataTable1_5 数据
      * @param index        下标
-     * @return
      */
-    public static BigDecimal getDoubleDataByColumnIndex(DataTable1_5 dataTable1_5, int index) {
+    private static BigDecimal getDoubleDataByColumnIndex(DataTable1_5 dataTable1_5, int index) {
         switch (index) {
             case 1:
                 return dataTable1_5.getE01();

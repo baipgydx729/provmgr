@@ -80,13 +80,9 @@ public class ZipUtil {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(file);
-                out.putNextEntry(new ZipEntry(dir));
+                out.putNextEntry(new ZipEntry(dir + file.getName()));
                 //进行写操作
-                int j = 0;
-                byte[] buffer = new byte[1024];
-                while ((j = fis.read(buffer)) > 0) {
-                    out.write(buffer, 0, j);
-                }
+                IOUtils.copy(fis, out);
                 out.flush();
             } finally {
                 IOUtils.closeQuietly(fis);

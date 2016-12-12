@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.dubbo.common.utils.CollectionUtils;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
@@ -16,7 +18,8 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_10;
 import com.qdb.provmgr.dao.entity.report.DataTable1_11;
 import com.qdb.provmgr.dao.entity.report.DataTable1_12;
 import com.qdb.provmgr.dao.entity.report.DataTable1_13;
-import com.qdb.provmgr.dao.entity.report.DataTable1_2_1;
+import com.qdb.provmgr.dao.entity.report.DataTable1_2;
+import com.qdb.provmgr.dao.entity.report.DataTable1_3;
 import com.qdb.provmgr.dao.entity.report.DataTable1_4;
 import com.qdb.provmgr.dao.entity.report.DataTable1_5;
 import com.qdb.provmgr.dao.entity.report.DataTable1_6;
@@ -25,6 +28,7 @@ import com.qdb.provmgr.dao.entity.report.DataTable1_9;
 /**
  * @author mashengli
  */
+@Component
 public class ReportHelper {
 
     private static Logger log = LoggerFactory.getLogger(ReportHelper.class);
@@ -32,6 +36,57 @@ public class ReportHelper {
     public static final String REPORT_FTP_ROOT_PATH = "/备付金报表";
 
     public static final String FILEPATH_SEPRATOR = "/";
+
+    @Value("${report.company.name}")
+    private String companyName;
+    @Value("${report.writetable.name}")
+    private String reportUserName;
+    @Value("${report.checktable.name}")
+    private String checkUserName;
+    @Value("${excel.template.path}")
+    private String excelTemplateDir;
+//    @Value("${excel.template.pbc.open}")
+//    private String excelPbcTemplateOpen;
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getReportUserName() {
+        return reportUserName;
+    }
+
+    public void setReportUserName(String reportUserName) {
+        this.reportUserName = reportUserName;
+    }
+
+    public String getCheckUserName() {
+        return checkUserName;
+    }
+
+    public void setCheckUserName(String checkUserName) {
+        this.checkUserName = checkUserName;
+    }
+
+    public String getExcelTemplateDir() {
+        return excelTemplateDir;
+    }
+
+    public void setExcelTemplateDir(String excelTemplateDir) {
+        this.excelTemplateDir = excelTemplateDir;
+    }
+
+//    public String getExcelPbcTemplateOpen() {
+//        return excelPbcTemplateOpen;
+//    }
+//
+//    public void setExcelPbcTemplateOpen(String excelPbcTemplateOpen) {
+//        this.excelPbcTemplateOpen = excelPbcTemplateOpen;
+//    }
 
     /**
      * 将原始数据按照账户分割成N个数组
@@ -132,8 +187,11 @@ public class ReportHelper {
         if (data1 instanceof DataTable1_1) {
             return addData((DataTable1_1)data1, (DataTable1_1)data2);
         }
-        if (data1 instanceof DataTable1_2_1) {
-            return addData((DataTable1_2_1)data1, (DataTable1_2_1)data2);
+        if (data1 instanceof DataTable1_2) {
+            return addData((DataTable1_2)data1, (DataTable1_2)data2);
+        }
+        if (data1 instanceof DataTable1_3) {
+            return addData((DataTable1_3)data1, (DataTable1_3)data2);
         }
         if (data1 instanceof DataTable1_4) {
             return addData((DataTable1_4)data1, (DataTable1_4)data2);
@@ -206,7 +264,7 @@ public class ReportHelper {
      * @param data2
      * @return
      */
-    public static DataTable1_2_1 addData(DataTable1_2_1 data1, DataTable1_2_1 data2) {
+    public static DataTable1_2 addData(DataTable1_2 data1, DataTable1_2 data2) {
         if (data1 == null) {
             return data2;
         }
@@ -222,6 +280,23 @@ public class ReportHelper {
         data1.setB07(DecimalTool.add(data1.getB07(), data2.getB07()));
         data1.setB08(DecimalTool.add(data1.getB08(), data2.getB08()));
         data1.setB09(DecimalTool.add(data1.getB09(), data2.getB09()));
+        return data1;
+    }
+
+    /**
+     * 做加法
+     * @param data1
+     * @param data2
+     * @return
+     */
+    public static DataTable1_3 addData(DataTable1_3 data1, DataTable1_3 data2) {
+        if (data1 == null) {
+            return data2;
+        }
+        if (data2 == null) {
+            return data1;
+        }
+        data1.setC01(DecimalTool.add(data1.getC01(), data2.getC01()));
         return data1;
     }
 

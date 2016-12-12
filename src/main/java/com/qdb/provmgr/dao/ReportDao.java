@@ -41,13 +41,13 @@ public class ReportDao {
                 .append(" WHERE t1.natuDate >= ? and t1.natuDate <= ? ");
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
-        if (null != params.getIsTotalCount() && !params.getIsTotalCount()) {
-            SQL.append(" AND t1.ADID!=99999 ");
-        } else {
-            SQL.append(" AND t1.ADID=99999 ");
-        }
         if (!TableModeEnum.Table1_2.equals(tableMode)) {
             SQL.append(" and t1.ADID = t2.ADID and t2.isProvision=1 ");
+            if (null != params.getIsTotalCount() && !params.getIsTotalCount()) {
+                SQL.append(" AND t1.ADID!=99999 ");
+            } else {
+                SQL.append(" AND t1.ADID=99999 ");
+            }
         }
         if (null != params.getADID()) {
             SQL.append(" AND t1.ADID = ? ");
@@ -74,7 +74,7 @@ public class ReportDao {
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), tableMode.getEntityClass());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return result;
     }
@@ -86,10 +86,10 @@ public class ReportDao {
         List<BaseReportEntity> result = new ArrayList<>();
         List<Object> sqlParams = new ArrayList<>();
         StringBuilder SQL = new StringBuilder();
-        SQL.append(" SELECT DISTINCT t1.bankName_S bankName,t1.ADID,t1.AD, t1.name ")
+        SQL.append(" SELECT DISTINCT t1.ADID,t1.AD,t1.bankName_S bankName,t1.name ")
                 .append(" FROM ")
                 .append(ReportSQLConstant.TABLE1_3_NAME)
-                .append(" WHERE t1.ADID != 99999 AND t1.natuDate >= ? and t1.natuDate <= ? ");
+                .append(" WHERE t1.ADID = t2.ADID and t2.isProvision = 1 and t1.ADID != 99999 AND t1.natuDate >= ? and t1.natuDate <= ? ");
         sqlParams.add(params.getStartNatuDate());
         sqlParams.add(params.getEndNatuDate());
         if (null != params.getADID()) {
@@ -115,7 +115,7 @@ public class ReportDao {
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), BaseReportEntity.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return result;
     }
@@ -167,7 +167,7 @@ public class ReportDao {
         try {
             result = MapUtil.mapsToObjects(dbUtil.queryForList(SQL.toString(), sqlParams.toArray()), AccountInfoEntity.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return result;
     }
@@ -184,7 +184,7 @@ public class ReportDao {
         try {
             return MapUtil.mapToObject(dbUtil.query(SQL.toString(), new Object[]{ADID}), AccountInfoEntity.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查询异常", e);
         }
         return null;
     }
