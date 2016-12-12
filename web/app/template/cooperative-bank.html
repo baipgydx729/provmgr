@@ -25,8 +25,7 @@
             </div>
 
             <div class="report-head-item"
-                 ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'
-                            || @data.bankList[@data.selectedBankIndex].bank_name=='中信银行'">
+                 ms-visible="@data.bankList[@data.selectedBankIndex].bank_name=='中国建设银行'">
                 <label>报表类型</label>
                 <select name="report-type" ms-on-change="@selectReportType()">
                     <option ms-for="(index, reportType) in @data.reportTypeList"
