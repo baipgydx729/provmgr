@@ -1,4 +1,4 @@
-package com.qdb.provmgr.controller.spdb;
+package com.qdb.provmgr.controller.report;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,10 +30,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.qdb.provmgr.constant.spdb.TableConstant;
-import com.qdb.provmgr.controller.spdb.bean.TableStatus;
+import com.qdb.provmgr.controller.report.view.spdb.TableStatus;
 import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
+import com.qdb.provmgr.report.spdb.TableConstant;
 import com.qdb.provmgr.service.spdb.SpdbFtpService;
 import com.qdb.provmgr.service.spdb.SpdbReportService;
 import com.qdb.provmgr.util.spdb.SpdbDateUtil;

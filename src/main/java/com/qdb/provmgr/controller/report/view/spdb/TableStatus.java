@@ -1,4 +1,4 @@
-package com.qdb.provmgr.controller.spdb.bean;
+package com.qdb.provmgr.controller.report.view.spdb;
 
 public class TableStatus {
 	
