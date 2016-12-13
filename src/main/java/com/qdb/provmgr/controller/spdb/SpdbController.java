@@ -382,7 +382,7 @@ public class SpdbController {
 		if(!getSuccess){
 			return "{\"code\": \"400\",\"message\": \"文件下载失败，获取远程文件出错\"}";
 		}
-		String fileName = checkedMonth + "_" + bankNameParam + UUID.randomUUID().toString() + ".zip";
+		String fileName = checkedMonth + "_" + UUID.randomUUID().toString() + ".zip";
 		SpdbZipUtil.compress(ftpPath + checkedMonth, tempPath + fileName);
 		
 		response.setHeader("Content-Disposition",
