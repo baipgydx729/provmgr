@@ -7,7 +7,6 @@ target/
 .project
 .settings/
 *.DS_Store
-*.properties
 .externalToolBuilders
 
 web/dist
