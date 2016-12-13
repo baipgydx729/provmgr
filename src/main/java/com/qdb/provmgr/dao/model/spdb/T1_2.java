@@ -7,100 +7,156 @@ import com.qdb.provmgr.constant.spdb.Constant;
  */
 public class T1_2 extends CommonInfo{
 
-    private String B01;
+    private String BB01;
 
-    private String B02;
+    private String BB02;
 
-    private String B03;
+    private String BB03;
 
-    private String B04;
+    private String BB04;
 
-    private String B05;
+    private String BB05;
 
-    private String B06;
+    private String BB06;
 
-    private String B07;
+    private String BB07;
 
-    private String B08;
+    private String BB08;
 
-    private String B09;
+    private String BB09;
+
+    
 
 
-    public String getB01() {
-        return B01;
-    }
+    public String getBB01() {
+		return BB01;
+	}
 
-    public void setB01(String b01) {
-        B01 = b01;
-    }
 
-    public String getB02() {
-        return B02;
-    }
 
-    public void setB02(String b02) {
-        B02 = b02;
-    }
 
-    public String getB03() {
-        return B03;
-    }
+	public void setBB01(String bB01) {
+		BB01 = bB01;
+	}
 
-    public void setB03(String b03) {
-        B03 = b03;
-    }
 
-    public String getB04() {
-        return B04;
-    }
 
-    public void setB04(String b04) {
-        B04 = b04;
-    }
 
-    public String getB05() {
-        return B05;
-    }
+	public String getBB02() {
+		return BB02;
+	}
 
-    public void setB05(String b05) {
-        B05 = b05;
-    }
 
-    public String getB06() {
-        return B06;
-    }
 
-    public void setB06(String b06) {
-        B06 = b06;
-    }
 
-    public String getB07() {
-        return B07;
-    }
+	public void setBB02(String bB02) {
+		BB02 = bB02;
+	}
 
-    public void setB07(String b07) {
-        B07 = b07;
-    }
 
-    public String getB08() {
-        return B08;
-    }
 
-    public void setB08(String b08) {
-        B08 = b08;
-    }
 
-    public String getB09() {
-        return B09;
-    }
+	public String getBB03() {
+		return BB03;
+	}
 
-    public void setB09(String b09) {
-        B09 = b09;
-    }
 
-    @Override
+
+
+	public void setBB03(String bB03) {
+		BB03 = bB03;
+	}
+
+
+
+
+	public String getBB04() {
+		return BB04;
+	}
+
+
+
+
+	public void setBB04(String bB04) {
+		BB04 = bB04;
+	}
+
+
+
+
+	public String getBB05() {
+		return BB05;
+	}
+
+
+
+
+	public void setBB05(String bB05) {
+		BB05 = bB05;
+	}
+
+
+
+
+	public String getBB06() {
+		return BB06;
+	}
+
+
+
+
+	public void setBB06(String bB06) {
+		BB06 = bB06;
+	}
+
+
+
+
+	public String getBB07() {
+		return BB07;
+	}
+
+
+
+
+	public void setBB07(String bB07) {
+		BB07 = bB07;
+	}
+
+
+
+
+	public String getBB08() {
+		return BB08;
+	}
+
+
+
+
+	public void setBB08(String bB08) {
+		BB08 = bB08;
+	}
+
+
+
+
+	public String getBB09() {
+		return BB09;
+	}
+
+
+
+
+	public void setBB09(String bB09) {
+		BB09 = bB09;
+	}
+
+
+
+
+	@Override
     public String toString() {
-        return  getBankCode() +
+        return  getBankCode() + Constant.FIELD_SEPARATOR +
                 getOrganizationId() + Constant.FIELD_SEPARATOR +
                 getTradeDate() + Constant.FIELD_SEPARATOR +
                 getNatuDate() + Constant.FIELD_SEPARATOR +
@@ -108,15 +164,15 @@ public class T1_2 extends CommonInfo{
                 getBusinessType() + Constant.FIELD_SEPARATOR +
                 getName() + Constant.FIELD_SEPARATOR +
                 getAD() + Constant.FIELD_SEPARATOR +
-                B01 + Constant.FIELD_SEPARATOR +
-                B02 + Constant.FIELD_SEPARATOR +
-                B03 + Constant.FIELD_SEPARATOR +
-                B04 + Constant.FIELD_SEPARATOR +
-                B05 + Constant.FIELD_SEPARATOR +
-                B06 + Constant.FIELD_SEPARATOR +
-                B07 + Constant.FIELD_SEPARATOR +
-                B08 + Constant.FIELD_SEPARATOR +
-                B09 + Constant.FIELD_SEPARATOR +
+                BB01 + Constant.FIELD_SEPARATOR +
+                BB02 + Constant.FIELD_SEPARATOR +
+                BB03 + Constant.FIELD_SEPARATOR +
+                BB04 + Constant.FIELD_SEPARATOR +
+                BB05 + Constant.FIELD_SEPARATOR +
+                BB06 + Constant.FIELD_SEPARATOR +
+                BB07 + Constant.FIELD_SEPARATOR +
+                BB08 + Constant.FIELD_SEPARATOR +
+                BB09 + Constant.FIELD_SEPARATOR +
                 getRemark() + Constant.FIELD_SEPARATOR;
     }
 }
