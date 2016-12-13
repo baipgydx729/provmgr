@@ -27,7 +27,7 @@ public class T1_3 extends CommonInfo{
 
     @Override
     public String toString() {
-        return  getBankCode() +
+        return  getBankCode() + Constant.FIELD_SEPARATOR +
                 getOrganizationId() + Constant.FIELD_SEPARATOR +
                 getTradeDate() + Constant.FIELD_SEPARATOR +
                 getNatuDate() + Constant.FIELD_SEPARATOR +

@@ -50,7 +50,7 @@ public class SpdbReportService {
 			log.error("T1_1 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		String bankCode = BankCodeEnum.getBankCode(bankName);
 		for (T1_1 record : result) {
 			record.setBankCode(bankCode);
@@ -73,7 +73,7 @@ public class SpdbReportService {
 			log.error("T1_2 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		for (T1_2 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
@@ -94,7 +94,7 @@ public class SpdbReportService {
 			log.error("T1_3 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		for (T1_3 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
@@ -115,7 +115,7 @@ public class SpdbReportService {
 			log.error("T1_6 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		for (T1_6 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
@@ -136,7 +136,7 @@ public class SpdbReportService {
 			log.error("T1_9 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		for (T1_9 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
@@ -158,7 +158,7 @@ public class SpdbReportService {
 			log.error("T1_10 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		for (T1_10 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
@@ -179,7 +179,7 @@ public class SpdbReportService {
 			log.error("T1_13 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + beginDate + Constant.FIELD_SEPARATOR + endDate + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
 		for (T1_13 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
