@@ -212,7 +212,7 @@ public class PABReportController {
      * @param end_day
      * @return
      */
-    @RequestMapping(value = "/download-all", method = RequestMethod.GET)
+    @RequestMapping(value = "/download-all")
     @ResponseBody
     public String downloadAll(HttpServletRequest request, HttpServletResponse response, String start_day, String end_day) {
     	int code = 400;
@@ -258,8 +258,8 @@ public class PABReportController {
         ftpFileService.retrieveAndCompressFromFtp(ftpPath, tempFile.getAbsolutePath(), FILE_SUFFIX);
         boolean result = ftpFileService.uploadFileToFtp(tempFile.getAbsolutePath(), ftpPath + tempFile.getName());
         if (result) {
-            resultMap.put("code", 200);
-            resultMap.put("message", "成功!");
+        	code = 200;
+        	message = "成功";
         }
         //TODO 调用张梦宇报送接口
         resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
