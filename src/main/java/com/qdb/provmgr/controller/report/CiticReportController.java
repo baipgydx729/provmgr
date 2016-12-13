@@ -149,7 +149,7 @@ public class CiticReportController {
             presetContent.setTranPeriod(new SimpleDateFormat("yyyyMM").format(startDate));
             presetContent.setReportDate(new SimpleDateFormat("yyyyMMdd").format(new Date()));
             presetContent.setAuthCompanyName(reportHelper.getCompanyName());
-            presetContent.setAccountId(map.get("account_id"));
+            presetContent.setAccountId(String.valueOf(map.get("account_id")));
             presetContent.setBankName(CiticReportHelper.CITIC_BANK_NAME);
             presetContent.setAccount(map.get("account_no"));
             presetContent.setAccountName(map.get("account_name"));
