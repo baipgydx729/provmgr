@@ -1,6 +1,6 @@
 package com.qdb.provmgr.dao.model.spdb;
 
-import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 /**
  * Created by fanjunjian on 2016/11/17.
@@ -19,12 +19,12 @@ public class TDate extends CommonInfo{
 
     @Override
     public String toString() {
-        return getBankCode() + Constant.FIELD_SEPARATOR +
-                getOrganizationId() + Constant.FIELD_SEPARATOR +
-                getTradeDate() + Constant.FIELD_SEPARATOR +
-                getCurrencyCode() + Constant.FIELD_SEPARATOR +
-                getBusinessType() + Constant.FIELD_SEPARATOR +
-                dealDate + Constant.FIELD_SEPARATOR +
-                getRemark() + Constant.FIELD_SEPARATOR;
+        return getBankCode() + SpdbConstant.FIELD_SEPARATOR +
+                getOrganizationId() + SpdbConstant.FIELD_SEPARATOR +
+                getTradeDate() + SpdbConstant.FIELD_SEPARATOR +
+                getCurrencyCode() + SpdbConstant.FIELD_SEPARATOR +
+                getBusinessType() + SpdbConstant.FIELD_SEPARATOR +
+                dealDate + SpdbConstant.FIELD_SEPARATOR +
+                getRemark() + SpdbConstant.FIELD_SEPARATOR;
     }
 }

@@ -33,7 +33,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.qdb.provmgr.controller.report.view.spdb.TableStatus;
 import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
-import com.qdb.provmgr.report.spdb.TableConstant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 import com.qdb.provmgr.service.spdb.SpdbFtpService;
 import com.qdb.provmgr.service.spdb.SpdbReportService;
 import com.qdb.provmgr.util.spdb.SpdbDateUtil;
@@ -104,44 +104,44 @@ public class SpdbController {
 				data = dataArray.getJSONObject(i);
 				String report_name = data.getString("report_name");
 				switch (report_name) {
-				case TableConstant.TABLE_1:
+				case SpdbConstant.TABLE_1:
 					fileName_prefix = TableEnum.TABLE1.getKey();
 					content = exportService.getT1_1Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_2:
+				case SpdbConstant.TABLE_2:
 					fileName_prefix = TableEnum.TABLE2.getKey();
 					content = exportService.getT1_2Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_3:
+				case SpdbConstant.TABLE_3:
 					fileName_prefix = TableEnum.TABLE3.getKey();
 					content = exportService.getT1_3Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_6:
+				case SpdbConstant.TABLE_6:
 					fileName_prefix = TableEnum.TABLE6.getKey();
 					content = exportService.getT1_6Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_9:
+				case SpdbConstant.TABLE_9:
 					fileName_prefix = TableEnum.TABLE9.getKey();
 					content = exportService.getT1_9Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_10:
+				case SpdbConstant.TABLE_10:
 					fileName_prefix = TableEnum.TABLE10.getKey();
 					content = exportService.getT1_10Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_13:
+				case SpdbConstant.TABLE_13:
 					fileName_prefix = TableEnum.TABLE13.getKey();
 					content = exportService.getT1_13Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
-				case TableConstant.TABLE_1_ADD:
+				case SpdbConstant.TABLE_1_ADD:
 					fileName_prefix = TableEnum.TABLE1_ADD.getKey();
 					content = exportService.getT1_1ADDData();
 					break;
-				case TableConstant.TABLE_DATE:
+				case SpdbConstant.TABLE_DATE:
 					fileName_prefix = TableEnum.TABLEDATE.getKey();
 					content = exportService.getTDate_Data(tradeDate, bankNameParam, start_day, end_day);
 					break;
 				}
-				String fileName = fileName_prefix + "_" + tradeDate + "_" + TableConstant.ORGANIZATIONID + ".dat";
+				String fileName = fileName_prefix + "_" + tradeDate + "_" + SpdbConstant.ORGANIZATIONID + ".dat";
 				String tempPath = spdbFtpService.getSpdbTempPath();
 				String tempFile = tempPath + UUID.randomUUID().toString() + fileName;
 				if (content != null) {

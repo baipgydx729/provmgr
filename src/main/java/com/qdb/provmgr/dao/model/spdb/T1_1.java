@@ -1,6 +1,6 @@
 package com.qdb.provmgr.dao.model.spdb;
 
-import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 /**
  * 对应备付金入金明细表T1_1
@@ -15,10 +15,10 @@ public class T1_1 extends CommonInfo{
 	private String A03;
 
 	private static String A03_2_name = "";
-	private static String A03_2 = Constant.ZERO_VALUE;
+	private static String A03_2 = SpdbConstant.ZERO_VALUE;
 
 	private static String A03_3_name = "";
-	private static String A03_3 = Constant.ZERO_VALUE;
+	private static String A03_3 = SpdbConstant.ZERO_VALUE;
 
 	private static String A03_num = "3";
 
@@ -29,10 +29,10 @@ public class T1_1 extends CommonInfo{
 	private String A06;
 
 	private static String A06_2_name = "";
-	private static String A06_2 = Constant.ZERO_VALUE;
+	private static String A06_2 = SpdbConstant.ZERO_VALUE;
 
 	private static String A06_3_name = "";
-	private static String A06_3 = Constant.ZERO_VALUE;
+	private static String A06_3 = SpdbConstant.ZERO_VALUE;
 
 	private static String A06_num = "3";
 
@@ -44,10 +44,10 @@ public class T1_1 extends CommonInfo{
 	private String A09;
 
 	private static String A09_2_name = "";
-	private static String A09_2 = Constant.ZERO_VALUE;
+	private static String A09_2 = SpdbConstant.ZERO_VALUE;
 
 	private static String A09_3_name = "";
-	private static String A09_3 = Constant.ZERO_VALUE;
+	private static String A09_3 = SpdbConstant.ZERO_VALUE;
 
 	private static String A09_num = "3";
 
@@ -61,10 +61,10 @@ public class T1_1 extends CommonInfo{
 	private String A13;
 
 	private static String A13_2_name = "";
-	private static String A13_2 = Constant.ZERO_VALUE;
+	private static String A13_2 = SpdbConstant.ZERO_VALUE;
 
 	private static String A13_3_name = "";
-	private static String A13_3 = Constant.ZERO_VALUE;
+	private static String A13_3 = SpdbConstant.ZERO_VALUE;
 
 	private static String A13_num = "3";
 
@@ -377,53 +377,53 @@ public class T1_1 extends CommonInfo{
 
 	@Override
 	public String toString() {
-		return  getBankCode() + Constant.FIELD_SEPARATOR +
-				getOrganizationId() + Constant.FIELD_SEPARATOR +
-				getTradeDate() + Constant.FIELD_SEPARATOR +
-				getNatuDate() + Constant.FIELD_SEPARATOR +
-				getCurrencyCode() + Constant.FIELD_SEPARATOR +
-				getBusinessType() + Constant.FIELD_SEPARATOR + 
-				getName() + Constant.FIELD_SEPARATOR + 
-				getAD() + Constant.FIELD_SEPARATOR + 
-				A01 + Constant.FIELD_SEPARATOR +
-				A02 + Constant.FIELD_SEPARATOR + 
-				A03_1_name + Constant.FIELD_SEPARATOR + 
-				A03 + Constant.FIELD_SEPARATOR + 
-				A03_2_name + Constant.FIELD_SEPARATOR + 
-				A03_2 + Constant.FIELD_SEPARATOR + 
-				A03_3_name + Constant.FIELD_SEPARATOR + 
-				A03_3 + Constant.FIELD_SEPARATOR + 
-				A03_num + Constant.FIELD_SEPARATOR + 
-				A04 + Constant.FIELD_SEPARATOR + 
-				A05 + Constant.FIELD_SEPARATOR + 
-				A06_1_name + Constant.FIELD_SEPARATOR + 
-				A06 + Constant.FIELD_SEPARATOR + 
-				A06_2_name + Constant.FIELD_SEPARATOR + 
-				A06_2 + Constant.FIELD_SEPARATOR + 
-				A06_3_name + Constant.FIELD_SEPARATOR +
-				A06_3 + Constant.FIELD_SEPARATOR + 
-				A06_num + Constant.FIELD_SEPARATOR + 
-				A07 + Constant.FIELD_SEPARATOR + 
-				A08 + Constant.FIELD_SEPARATOR + 
-				A09_1_name + Constant.FIELD_SEPARATOR + 
-				A09 + Constant.FIELD_SEPARATOR + 
-				A09_2_name + Constant.FIELD_SEPARATOR + 
-				A09_2 + Constant.FIELD_SEPARATOR + 
-				A09_3_name + Constant.FIELD_SEPARATOR + 
-				A09_3 + Constant.FIELD_SEPARATOR + 
-				A09_num + Constant.FIELD_SEPARATOR + 
-				A10 + Constant.FIELD_SEPARATOR + 
-				A11 + Constant.FIELD_SEPARATOR + 
-				A12 + Constant.FIELD_SEPARATOR + 
-				A13_1_name + Constant.FIELD_SEPARATOR + 
-				A13 + Constant.FIELD_SEPARATOR + 
-				A13_2_name + Constant.FIELD_SEPARATOR + 
-				A13_2 + Constant.FIELD_SEPARATOR + 
-				A13_3_name + Constant.FIELD_SEPARATOR + 
-				A13_3 + Constant.FIELD_SEPARATOR + 
-				A13_num + Constant.FIELD_SEPARATOR + 
-				A14 + Constant.FIELD_SEPARATOR +
-				getRemark() + Constant.FIELD_SEPARATOR;
+		return  getBankCode() + SpdbConstant.FIELD_SEPARATOR +
+				getOrganizationId() + SpdbConstant.FIELD_SEPARATOR +
+				getTradeDate() + SpdbConstant.FIELD_SEPARATOR +
+				getNatuDate() + SpdbConstant.FIELD_SEPARATOR +
+				getCurrencyCode() + SpdbConstant.FIELD_SEPARATOR +
+				getBusinessType() + SpdbConstant.FIELD_SEPARATOR + 
+				getName() + SpdbConstant.FIELD_SEPARATOR + 
+				getAD() + SpdbConstant.FIELD_SEPARATOR + 
+				A01 + SpdbConstant.FIELD_SEPARATOR +
+				A02 + SpdbConstant.FIELD_SEPARATOR + 
+				A03_1_name + SpdbConstant.FIELD_SEPARATOR + 
+				A03 + SpdbConstant.FIELD_SEPARATOR + 
+				A03_2_name + SpdbConstant.FIELD_SEPARATOR + 
+				A03_2 + SpdbConstant.FIELD_SEPARATOR + 
+				A03_3_name + SpdbConstant.FIELD_SEPARATOR + 
+				A03_3 + SpdbConstant.FIELD_SEPARATOR + 
+				A03_num + SpdbConstant.FIELD_SEPARATOR + 
+				A04 + SpdbConstant.FIELD_SEPARATOR + 
+				A05 + SpdbConstant.FIELD_SEPARATOR + 
+				A06_1_name + SpdbConstant.FIELD_SEPARATOR + 
+				A06 + SpdbConstant.FIELD_SEPARATOR + 
+				A06_2_name + SpdbConstant.FIELD_SEPARATOR + 
+				A06_2 + SpdbConstant.FIELD_SEPARATOR + 
+				A06_3_name + SpdbConstant.FIELD_SEPARATOR +
+				A06_3 + SpdbConstant.FIELD_SEPARATOR + 
+				A06_num + SpdbConstant.FIELD_SEPARATOR + 
+				A07 + SpdbConstant.FIELD_SEPARATOR + 
+				A08 + SpdbConstant.FIELD_SEPARATOR + 
+				A09_1_name + SpdbConstant.FIELD_SEPARATOR + 
+				A09 + SpdbConstant.FIELD_SEPARATOR + 
+				A09_2_name + SpdbConstant.FIELD_SEPARATOR + 
+				A09_2 + SpdbConstant.FIELD_SEPARATOR + 
+				A09_3_name + SpdbConstant.FIELD_SEPARATOR + 
+				A09_3 + SpdbConstant.FIELD_SEPARATOR + 
+				A09_num + SpdbConstant.FIELD_SEPARATOR + 
+				A10 + SpdbConstant.FIELD_SEPARATOR + 
+				A11 + SpdbConstant.FIELD_SEPARATOR + 
+				A12 + SpdbConstant.FIELD_SEPARATOR + 
+				A13_1_name + SpdbConstant.FIELD_SEPARATOR + 
+				A13 + SpdbConstant.FIELD_SEPARATOR + 
+				A13_2_name + SpdbConstant.FIELD_SEPARATOR + 
+				A13_2 + SpdbConstant.FIELD_SEPARATOR + 
+				A13_3_name + SpdbConstant.FIELD_SEPARATOR + 
+				A13_3 + SpdbConstant.FIELD_SEPARATOR + 
+				A13_num + SpdbConstant.FIELD_SEPARATOR + 
+				A14 + SpdbConstant.FIELD_SEPARATOR +
+				getRemark() + SpdbConstant.FIELD_SEPARATOR;
 
 	}
 

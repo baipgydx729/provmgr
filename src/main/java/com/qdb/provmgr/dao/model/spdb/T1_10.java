@@ -1,11 +1,11 @@
 package com.qdb.provmgr.dao.model.spdb;
 
-import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 /**
  * Created by fanjunjian on 2016/11/17.
  */
-public class T1_10 extends CommonInfo{
+public class T1_10 extends CommonInfo {
 
     private String K01;
 
@@ -54,7 +54,6 @@ public class T1_10 extends CommonInfo{
     private String K23;
 
     private String K24;
-
 
 
     public String getK01() {
@@ -249,40 +248,40 @@ public class T1_10 extends CommonInfo{
         K24 = k24;
     }
 
-  
-    public String toString(){
-        return getBankCode() + Constant.FIELD_SEPARATOR +
-                getOrganizationId() + Constant.FIELD_SEPARATOR +
-                getTradeDate() + Constant.FIELD_SEPARATOR +
-                getNatuDate() + Constant.FIELD_SEPARATOR +
-                getCurrencyCode() + Constant.FIELD_SEPARATOR +
-                getBusinessType() + Constant.FIELD_SEPARATOR +
-                getName() + Constant.FIELD_SEPARATOR +
-                getAD() + Constant.FIELD_SEPARATOR +
-                K01 + Constant.FIELD_SEPARATOR +
-                K02 + Constant.FIELD_SEPARATOR +
-                K03 + Constant.FIELD_SEPARATOR +
-                K04 + Constant.FIELD_SEPARATOR +
-                K05 + Constant.FIELD_SEPARATOR +
-                K06 + Constant.FIELD_SEPARATOR +
-                K07 + Constant.FIELD_SEPARATOR +
-                K08 + Constant.FIELD_SEPARATOR +
-                K09 + Constant.FIELD_SEPARATOR +
-                K10 + Constant.FIELD_SEPARATOR +
-                K11 + Constant.FIELD_SEPARATOR +
-                K12 + Constant.FIELD_SEPARATOR +
-                K13 + Constant.FIELD_SEPARATOR +
-                K14 + Constant.FIELD_SEPARATOR +
-                K15 + Constant.FIELD_SEPARATOR +
-                K16 + Constant.FIELD_SEPARATOR +
-                K17 + Constant.FIELD_SEPARATOR +
-                K18 + Constant.FIELD_SEPARATOR +
-                K19 + Constant.FIELD_SEPARATOR +
-                K20 + Constant.FIELD_SEPARATOR +
-                K21 + Constant.FIELD_SEPARATOR +
-                K22 + Constant.FIELD_SEPARATOR +
-                K23 + Constant.FIELD_SEPARATOR +
-                K24 + Constant.FIELD_SEPARATOR +
-                getRemark() +Constant.FIELD_SEPARATOR;
+
+    public String toString() {
+        return getBankCode() + SpdbConstant.FIELD_SEPARATOR +
+                getOrganizationId() + SpdbConstant.FIELD_SEPARATOR +
+                getTradeDate() + SpdbConstant.FIELD_SEPARATOR +
+                getNatuDate() + SpdbConstant.FIELD_SEPARATOR +
+                getCurrencyCode() + SpdbConstant.FIELD_SEPARATOR +
+                getBusinessType() + SpdbConstant.FIELD_SEPARATOR +
+                getName() + SpdbConstant.FIELD_SEPARATOR +
+                getAD() + SpdbConstant.FIELD_SEPARATOR +
+                K01 + SpdbConstant.FIELD_SEPARATOR +
+                K02 + SpdbConstant.FIELD_SEPARATOR +
+                K03 + SpdbConstant.FIELD_SEPARATOR +
+                K04 + SpdbConstant.FIELD_SEPARATOR +
+                K05 + SpdbConstant.FIELD_SEPARATOR +
+                K06 + SpdbConstant.FIELD_SEPARATOR +
+                K07 + SpdbConstant.FIELD_SEPARATOR +
+                K08 + SpdbConstant.FIELD_SEPARATOR +
+                K09 + SpdbConstant.FIELD_SEPARATOR +
+                K10 + SpdbConstant.FIELD_SEPARATOR +
+                K11 + SpdbConstant.FIELD_SEPARATOR +
+                K12 + SpdbConstant.FIELD_SEPARATOR +
+                K13 + SpdbConstant.FIELD_SEPARATOR +
+                K14 + SpdbConstant.FIELD_SEPARATOR +
+                K15 + SpdbConstant.FIELD_SEPARATOR +
+                K16 + SpdbConstant.FIELD_SEPARATOR +
+                K17 + SpdbConstant.FIELD_SEPARATOR +
+                K18 + SpdbConstant.FIELD_SEPARATOR +
+                K19 + SpdbConstant.FIELD_SEPARATOR +
+                K20 + SpdbConstant.FIELD_SEPARATOR +
+                K21 + SpdbConstant.FIELD_SEPARATOR +
+                K22 + SpdbConstant.FIELD_SEPARATOR +
+                K23 + SpdbConstant.FIELD_SEPARATOR +
+                K24 + SpdbConstant.FIELD_SEPARATOR +
+                getRemark() + SpdbConstant.FIELD_SEPARATOR;
     }
 }

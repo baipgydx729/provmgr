@@ -9,7 +9,7 @@ import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 public class SpdbZipUtil {
 	
@@ -53,7 +53,7 @@ static final int BUFFER = 10240;
         File[] files = dir.listFiles();     
         for (int i = 0; i < files.length; i++) {     
             /* 递归 */    
-            compress(files[i], out, basedir + dir.getName() + Constant.SYSTEM_PATH_SEPARATOR);     
+            compress(files[i], out, basedir + dir.getName() + SpdbConstant.SYSTEM_PATH_SEPARATOR);
         }     
     }     
     

@@ -1,6 +1,6 @@
 package com.qdb.provmgr.dao.model.spdb;
 
-import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 /**
  * Created by fanjunjian on 2016/11/17.
@@ -26,10 +26,10 @@ public class T1_6 extends CommonInfo{
     private String F08;
 
     private static String F08_2_name = "";
-    private static String F08_2 = Constant.ZERO_VALUE;
+    private static String F08_2 = SpdbConstant.ZERO_VALUE;
 
     private static String F08_3_name = "";
-    private static String F08_3 = Constant.ZERO_VALUE;
+    private static String F08_3 = SpdbConstant.ZERO_VALUE;
 
     private static String F08_num = "3";
 
@@ -69,7 +69,7 @@ public class T1_6 extends CommonInfo{
 
     private static String other = "";
 
-    private static String loan = Constant.ZERO_VALUE;
+    private static String loan = SpdbConstant.ZERO_VALUE;
 
     private static String num = "3";
 
@@ -356,51 +356,51 @@ public class T1_6 extends CommonInfo{
     }
 
     public String toString(){
-        return getBankCode() + Constant.FIELD_SEPARATOR +
-                getOrganizationId() + Constant.FIELD_SEPARATOR +
-                getTradeDate() + Constant.FIELD_SEPARATOR +
-                getNatuDate() + Constant.FIELD_SEPARATOR +
-                getCurrencyCode() + Constant.FIELD_SEPARATOR +
-                getBusinessType() + Constant.FIELD_SEPARATOR +
-                getName() + Constant.FIELD_SEPARATOR +
-                getAD() + Constant.FIELD_SEPARATOR +
-                F01 + Constant.FIELD_SEPARATOR +
-                F02 + Constant.FIELD_SEPARATOR +
-                F03 + Constant.FIELD_SEPARATOR +
-                F04 + Constant.FIELD_SEPARATOR +
-                F05 + Constant.FIELD_SEPARATOR +
-                F06 + Constant.FIELD_SEPARATOR +
-                F07 + Constant.FIELD_SEPARATOR +
-                F08 + Constant.FIELD_SEPARATOR +
-                F08_1_name + Constant.FIELD_SEPARATOR +
-                F08 + Constant.FIELD_SEPARATOR +
-                F08_2_name + Constant.FIELD_SEPARATOR +
-                F08_2 + Constant.FIELD_SEPARATOR +
-                F08_2 + Constant.FIELD_SEPARATOR +
-                F08_3_name + Constant.FIELD_SEPARATOR +
-                F08_3 + Constant.FIELD_SEPARATOR +
-                F08_num + Constant.FIELD_SEPARATOR +
-                F10 + Constant.FIELD_SEPARATOR +
-                G01 + Constant.FIELD_SEPARATOR +
-                G02 + Constant.FIELD_SEPARATOR +
-                G03 + Constant.FIELD_SEPARATOR +
-                G04 + Constant.FIELD_SEPARATOR +
-                G05 + Constant.FIELD_SEPARATOR +
-                G06 + Constant.FIELD_SEPARATOR +
-                G07 + Constant.FIELD_SEPARATOR +
-                G08 + Constant.FIELD_SEPARATOR +
-                G09 + Constant.FIELD_SEPARATOR +
-                G10 + Constant.FIELD_SEPARATOR +
-                G11_name + Constant.FIELD_SEPARATOR +
-                G11 + Constant.FIELD_SEPARATOR +
-                G12_name + Constant.FIELD_SEPARATOR +
-                G12 + Constant.FIELD_SEPARATOR +
-                G13_name + Constant.FIELD_SEPARATOR +
-                G13 + Constant.FIELD_SEPARATOR +
-                other + Constant.FIELD_SEPARATOR +
-                loan + Constant.FIELD_SEPARATOR +
-                num + Constant.FIELD_SEPARATOR +
-                G14 + Constant.FIELD_SEPARATOR +
-                getRemark() + Constant.FIELD_SEPARATOR;
+        return getBankCode() + SpdbConstant.FIELD_SEPARATOR +
+                getOrganizationId() + SpdbConstant.FIELD_SEPARATOR +
+                getTradeDate() + SpdbConstant.FIELD_SEPARATOR +
+                getNatuDate() + SpdbConstant.FIELD_SEPARATOR +
+                getCurrencyCode() + SpdbConstant.FIELD_SEPARATOR +
+                getBusinessType() + SpdbConstant.FIELD_SEPARATOR +
+                getName() + SpdbConstant.FIELD_SEPARATOR +
+                getAD() + SpdbConstant.FIELD_SEPARATOR +
+                F01 + SpdbConstant.FIELD_SEPARATOR +
+                F02 + SpdbConstant.FIELD_SEPARATOR +
+                F03 + SpdbConstant.FIELD_SEPARATOR +
+                F04 + SpdbConstant.FIELD_SEPARATOR +
+                F05 + SpdbConstant.FIELD_SEPARATOR +
+                F06 + SpdbConstant.FIELD_SEPARATOR +
+                F07 + SpdbConstant.FIELD_SEPARATOR +
+                F08 + SpdbConstant.FIELD_SEPARATOR +
+                F08_1_name + SpdbConstant.FIELD_SEPARATOR +
+                F08 + SpdbConstant.FIELD_SEPARATOR +
+                F08_2_name + SpdbConstant.FIELD_SEPARATOR +
+                F08_2 + SpdbConstant.FIELD_SEPARATOR +
+                F08_2 + SpdbConstant.FIELD_SEPARATOR +
+                F08_3_name + SpdbConstant.FIELD_SEPARATOR +
+                F08_3 + SpdbConstant.FIELD_SEPARATOR +
+                F08_num + SpdbConstant.FIELD_SEPARATOR +
+                F10 + SpdbConstant.FIELD_SEPARATOR +
+                G01 + SpdbConstant.FIELD_SEPARATOR +
+                G02 + SpdbConstant.FIELD_SEPARATOR +
+                G03 + SpdbConstant.FIELD_SEPARATOR +
+                G04 + SpdbConstant.FIELD_SEPARATOR +
+                G05 + SpdbConstant.FIELD_SEPARATOR +
+                G06 + SpdbConstant.FIELD_SEPARATOR +
+                G07 + SpdbConstant.FIELD_SEPARATOR +
+                G08 + SpdbConstant.FIELD_SEPARATOR +
+                G09 + SpdbConstant.FIELD_SEPARATOR +
+                G10 + SpdbConstant.FIELD_SEPARATOR +
+                G11_name + SpdbConstant.FIELD_SEPARATOR +
+                G11 + SpdbConstant.FIELD_SEPARATOR +
+                G12_name + SpdbConstant.FIELD_SEPARATOR +
+                G12 + SpdbConstant.FIELD_SEPARATOR +
+                G13_name + SpdbConstant.FIELD_SEPARATOR +
+                G13 + SpdbConstant.FIELD_SEPARATOR +
+                other + SpdbConstant.FIELD_SEPARATOR +
+                loan + SpdbConstant.FIELD_SEPARATOR +
+                num + SpdbConstant.FIELD_SEPARATOR +
+                G14 + SpdbConstant.FIELD_SEPARATOR +
+                getRemark() + SpdbConstant.FIELD_SEPARATOR;
     }
 }

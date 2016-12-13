@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.qdb.provmgr.constant.spdb.Constant;
 import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 import com.qdb.provmgr.util.FTPUtil;
 
 @Service
@@ -198,7 +198,7 @@ public class SpdbFtpService {
 			if(!dirIsExist){
 				//文件夹不存在创建文件夹
 				boolean dirSuccess = ftp.makeDirectory(ftpPath + timeDir);
-				//ftp.deleteFile(spdbFtpPath + timeDir + Constant.SYSTEM_PATH_SEPARATOR + fileName);
+				//ftp.deleteFile(spdbFtpPath + timeDir + SpdbConstant.SYSTEM_PATH_SEPARATOR + fileName);
 				if(!dirSuccess){
 					return false;
 				}
@@ -209,7 +209,7 @@ public class SpdbFtpService {
 //						Matcher matcher = pattern.matcher(ftpFile.getName());
 						boolean fileExist = ftpFile.getName().startsWith(preffix + "_") && ftpFile.getName().endsWith(".dat");
 						if(fileExist){
-							boolean dele = ftp.deleteFile(ftpPath + timeDir +Constant.SYSTEM_PATH_SEPARATOR + ftpFile.getName());
+							boolean dele = ftp.deleteFile(ftpPath + timeDir + SpdbConstant.SYSTEM_PATH_SEPARATOR + ftpFile.getName());
 							if(!dele){
 								return false;
 							}
@@ -220,7 +220,7 @@ public class SpdbFtpService {
 			}
 			InputStream in = new FileInputStream(new File(localFile));
 			try {
-				success = ftp.storeFile(ftpPath + timeDir + Constant.SYSTEM_PATH_SEPARATOR + fileName, in);
+				success = ftp.storeFile(ftpPath + timeDir + SpdbConstant.SYSTEM_PATH_SEPARATOR + fileName, in);
 			} catch (IOException e) {
 				return false;
 			}finally{
@@ -246,7 +246,7 @@ public class SpdbFtpService {
 		FTPClient ftp = getFtpConnection();
 		if(fileName != null){
 			try {
-				in = ftp.retrieveFileStream(ftpPath + dir + Constant.SYSTEM_PATH_SEPARATOR + fileName);
+				in = ftp.retrieveFileStream(ftpPath + dir + SpdbConstant.SYSTEM_PATH_SEPARATOR + fileName);
 			} catch (IOException e) {
 				log.error("-------获取{}文件ftp输入流失败-------",fileName);
 				return in;
@@ -351,7 +351,7 @@ public class SpdbFtpService {
 			for(FTPFile file : files){
 				if(file.isFile()){
 					out = new FileOutputStream(local + file.getName());
-					ftp.retrieveFile(ftpPath + remote + Constant.SYSTEM_PATH_SEPARATOR + file.getName(),out);
+					ftp.retrieveFile(ftpPath + remote + SpdbConstant.SYSTEM_PATH_SEPARATOR + file.getName(),out);
 				}
 			}
 		} catch (IOException e) {

@@ -1,6 +1,6 @@
 package com.qdb.provmgr.dao.model.spdb;
 
-import com.qdb.provmgr.constant.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 /**
  * Created by fanjunjian on 2016/11/17.
@@ -69,19 +69,19 @@ public class T1_13 extends CommonInfo{
 
     @Override
     public String toString() {
-        return getBankCode() + Constant.FIELD_SEPARATOR +
-                getOrganizationId() + Constant.FIELD_SEPARATOR +
-                getTradeDate() + Constant.FIELD_SEPARATOR +
-                getNatuDate() + Constant.FIELD_SEPARATOR +
-                getCurrencyCode() + Constant.FIELD_SEPARATOR +
-                getBusinessType() + Constant.FIELD_SEPARATOR +
-                N1 + Constant.FIELD_SEPARATOR +
-                N2 + Constant.FIELD_SEPARATOR +
-                N3 + Constant.FIELD_SEPARATOR +
-                N4 + Constant.FIELD_SEPARATOR +
-                N5 + Constant.FIELD_SEPARATOR +
-                N6 + Constant.FIELD_SEPARATOR +
-                getRemark() + Constant.FIELD_SEPARATOR;
+        return getBankCode() + SpdbConstant.FIELD_SEPARATOR +
+                getOrganizationId() + SpdbConstant.FIELD_SEPARATOR +
+                getTradeDate() + SpdbConstant.FIELD_SEPARATOR +
+                getNatuDate() + SpdbConstant.FIELD_SEPARATOR +
+                getCurrencyCode() + SpdbConstant.FIELD_SEPARATOR +
+                getBusinessType() + SpdbConstant.FIELD_SEPARATOR +
+                N1 + SpdbConstant.FIELD_SEPARATOR +
+                N2 + SpdbConstant.FIELD_SEPARATOR +
+                N3 + SpdbConstant.FIELD_SEPARATOR +
+                N4 + SpdbConstant.FIELD_SEPARATOR +
+                N5 + SpdbConstant.FIELD_SEPARATOR +
+                N6 + SpdbConstant.FIELD_SEPARATOR +
+                getRemark() + SpdbConstant.FIELD_SEPARATOR;
                 
     }
 }

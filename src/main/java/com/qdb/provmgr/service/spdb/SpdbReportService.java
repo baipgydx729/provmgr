@@ -21,9 +21,8 @@ import com.qdb.provmgr.dao.model.spdb.TDate;
 import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
 import com.qdb.provmgr.dao.spdb.SpdbQueryDao;
-import com.qdb.provmgr.report.spdb.Constant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 import com.qdb.provmgr.util.spdb.SpdbDateUtil;
-
 
 /**
  * 数据 导出service
@@ -50,13 +49,13 @@ public class SpdbReportService {
 			log.error("T1_1 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		String bankCode = BankCodeEnum.getBankCode(bankName);
 		for (T1_1 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 
@@ -73,12 +72,12 @@ public class SpdbReportService {
 			log.error("T1_2 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		for (T1_2 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 	}
@@ -94,12 +93,12 @@ public class SpdbReportService {
 			log.error("T1_3 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		for (T1_3 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 	}
@@ -115,12 +114,12 @@ public class SpdbReportService {
 			log.error("T1_6 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		for (T1_6 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 	}
@@ -136,12 +135,12 @@ public class SpdbReportService {
 			log.error("T1_9 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		for (T1_9 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 	}
@@ -158,12 +157,12 @@ public class SpdbReportService {
 			log.error("T1_10 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		for (T1_10 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 	}
@@ -179,12 +178,12 @@ public class SpdbReportService {
 			log.error("T1_13 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;
 		}
-		buffer.append(result.size() + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + Constant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(result.size() + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(beginDate) + SpdbConstant.FIELD_SEPARATOR + SpdbDateUtil.getYYYYMMDD(endDate) + SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		for (T1_13 record : result) {
 			record.setBankCode(bankCode);
 			record.setNatuDate(SpdbDateUtil.getYYYYMMDD(record.getNatuDate()));
 			record.setTradeDate(tradeDate);
-			buffer.append(record.toString() + Constant.CRLF);
+			buffer.append(record.toString() + SpdbConstant.CRLF);
 		}
 		return buffer.toString();
 	}
@@ -209,13 +208,13 @@ public class SpdbReportService {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(beginDate_);
 		StringBuilder buffer = new StringBuilder();
-		buffer.append(Constant.FIELD_SEPARATOR + Constant.CRLF);
+		buffer.append(SpdbConstant.FIELD_SEPARATOR + SpdbConstant.CRLF);
 		int i = 0;
 		while (!cal.getTime().after(endDate_)) {
 			i++;
 			tdate.setDealDate(SpdbDateUtil.sf_yyyyMMdd.format(cal.getTime()));
 			cal.add(Calendar.DAY_OF_MONTH, 1);
-			buffer.append(tdate.toString() + Constant.CRLF);
+			buffer.append(tdate.toString() + SpdbConstant.CRLF);
 		}
 		return i + buffer.toString();
 

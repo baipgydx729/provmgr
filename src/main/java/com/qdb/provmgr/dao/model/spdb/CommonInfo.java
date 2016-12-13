@@ -1,7 +1,6 @@
 package com.qdb.provmgr.dao.model.spdb;
 
-import com.qdb.provmgr.constant.spdb.Constant;
-import com.qdb.provmgr.constant.spdb.TableConstant;
+import com.qdb.provmgr.report.spdb.SpdbConstant;
 
 public class CommonInfo {
 
@@ -9,7 +8,7 @@ public class CommonInfo {
 	private String bankCode;
 
 	//支付机构代码
-	private static String organizationId = TableConstant.ORGANIZATIONID;
+	private static String organizationId = SpdbConstant.ORGANIZATIONID;
 
 	//交易日期
 	private String tradeDate;
@@ -18,7 +17,7 @@ public class CommonInfo {
 	private String natuDate;
 
 	//币种
-	private static String currencyCode = Constant.ZERO_VALUE;
+	private static String currencyCode = SpdbConstant.ZERO_VALUE;
 
 	//业务类型
 	private static String businessType = "7";
