@@ -1,61 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:c="http://www.springframework.org/schema/c" xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
-       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:oxm="http://www.springframework.org/schema/oxm"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
-       xmlns:mybatis="http://mybatis.org/schema/mybatis-spring" xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:rabbit="http://www.springframework.org/schema/rabbit"
-       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
-                http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.1.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
                 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
-                http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.1.xsd
-                http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.1.xsd
-                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
-                http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-4.1.xsd
-                http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.1.xsd
-                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
-                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
-                http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-4.1.xsd
-                http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd
-                http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
-    <!--加载rabbit.properties文件 -->
-    <context:property-placeholder location="classpath:rabbit.properties" system-properties-mode="FALLBACK"
-                                  ignore-unresolvable="true"/>
+                http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd">
+    <!--&lt;!&ndash;加载rabbit.properties文件 &ndash;&gt;-->
+    <!--<context:property-placeholder location="classpath:rabbit.properties" system-properties-mode="FALLBACK"-->
+                                  <!--ignore-unresolvable="true"/>-->
 
-    <!-- 连接服务配置 -->
-    <rabbit:connection-factory id="connectionFactory" addresses="${rabbit.url}" username="${rabbit.user}"
-                               password="${rabbit.passwd}"/>
-    <rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory"/>
-    <!-- spring amqp默认的是jackson的一个插件,目的将生产者生产的数据转换为json存入消息队列，由于fastjson的速度快于jackson,这里替换为fastjson的一个实现 -->
-    <bean id="jsonMessageConverter" class="com.qdb.provmgr.mq.FastJsonMessageConverter"/>
-    <!-- 交换机 -->
-    <rabbit:template exchange="test.helloworld.exchange" id="amqpTemplate" connection-factory="connectionFactory"
-                     message-converter="jsonMessageConverter"/>
+    <!--&lt;!&ndash; 连接服务配置 &ndash;&gt;-->
+    <!--<rabbit:connection-factory id="connectionFactory" addresses="${rabbit.url}" username="${rabbit.user}"-->
+                               <!--password="${rabbit.passwd}"/>-->
+    <!--<rabbit:admin id="rabbitAdmin" connection-factory="connectionFactory"/>-->
+    <!--&lt;!&ndash; spring amqp默认的是jackson的一个插件,目的将生产者生产的数据转换为json存入消息队列，由于fastjson的速度快于jackson,这里替换为fastjson的一个实现 &ndash;&gt;-->
+    <!--<bean id="jsonMessageConverter" class="com.qdb.provmgr.mq.FastJsonMessageConverter"/>-->
+    <!--&lt;!&ndash; 交换机 &ndash;&gt;-->
+    <!--<rabbit:template exchange="test.helloworld.exchange" id="amqpTemplate" connection-factory="connectionFactory"-->
+                     <!--message-converter="jsonMessageConverter"/>-->
 
-    <!-- queue 队列声明 -->
-    <rabbit:queue id="test.helloworld.queue" durable="true"
-                  auto-delete="false" exclusive="false" name="test.helloworld.queue"/>
-    <!-- queue 队列声明 -->
-    <rabbit:queue id="test.helloworld.queue.receive" durable="true"
-                  auto-delete="false" exclusive="false" name="test.helloworld.queue.receive"/>
-    <!-- 声明路由exchange queue binging key 绑定 -->
-    <rabbit:direct-exchange name="test.helloworld.exchange"
-                            durable="true" auto-delete="false" id="test.helloworld.exchange">
-        <rabbit:bindings>
-            <rabbit:binding queue="test.helloworld.queue" key="test.helloworld.queue"/>
-            <rabbit:binding queue="test.helloworld.queue.receive" key="test.helloworld.queue.receive"/>
-        </rabbit:bindings>
-    </rabbit:direct-exchange>
+    <!--&lt;!&ndash; queue 队列声明 &ndash;&gt;-->
+    <!--<rabbit:queue id="test.helloworld.queue" durable="true"-->
+                  <!--auto-delete="false" exclusive="false" name="test.helloworld.queue"/>-->
+    <!--&lt;!&ndash; queue 队列声明 &ndash;&gt;-->
+    <!--<rabbit:queue id="test.helloworld.queue.receive" durable="true"-->
+                  <!--auto-delete="false" exclusive="false" name="test.helloworld.queue.receive"/>-->
+    <!--&lt;!&ndash; 声明路由exchange queue binging key 绑定 &ndash;&gt;-->
+    <!--<rabbit:direct-exchange name="test.helloworld.exchange"-->
+                            <!--durable="true" auto-delete="false" id="test.helloworld.exchange">-->
+        <!--<rabbit:bindings>-->
+            <!--<rabbit:binding queue="test.helloworld.queue" key="test.helloworld.queue"/>-->
+            <!--<rabbit:binding queue="test.helloworld.queue.receive" key="test.helloworld.queue.receive"/>-->
+        <!--</rabbit:bindings>-->
+    <!--</rabbit:direct-exchange>-->
 
-    <!-- queue litener  当有消息到达时会通知监听在对应的队列上的监听对象 -->
-    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">
-        <rabbit:listener queues="test.helloworld.queue.receive" ref="myMessageListener"/>
-    </rabbit:listener-container>
+    <!--&lt;!&ndash; queue litener  当有消息到达时会通知监听在对应的队列上的监听对象 &ndash;&gt;-->
+    <!--<rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">-->
+        <!--<rabbit:listener queues="test.helloworld.queue.receive" ref="myMessageListener"/>-->
+    <!--</rabbit:listener-container>-->
 
 </beans>
