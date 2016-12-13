@@ -1,6 +1,6 @@
 package com.qdb.provmgr.dao.ccb;
 
-import com.qdb.provmgr.common.CCBReportConstant.ITemplateFileNames;
+import com.qdb.provmgr.report.ccb.CCBReportConstant.ITemplateFileNames;
 import com.qdb.provmgr.dao.DBUtil;
 import com.qdb.provmgr.util.StringUtils;
 

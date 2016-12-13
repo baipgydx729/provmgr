@@ -1,4 +1,4 @@
-package com.qdb.provmgr.constant.spdb;
+package com.qdb.provmgr.report.spdb;
 
 /**
  * Created by fanjunjian on 2016/11/17.
