@@ -115,9 +115,11 @@ public class PABReportController {
             }
             String sep = System.getProperty("file.separator");
             String dateDir = null;
-            if (!StringUtils.isNotEmpty(beginDate)){
-            	message = "日期不能为空";
-            }else{
+            if (StringUtils.isEmpty(beginDate)){
+                resultMap.put("code", 400);
+                resultMap.put("message", "日期不能为空");
+                return JSONObject.toJSONString(resultMap);
+            } else {
             	dateDir = beginDate.substring(0, 7).replace("-", "");
             	String destDir = System.getProperty("java.io.tmpdir") + sep + "pab" + sep;
                 File file = new File(destDir);
@@ -156,10 +158,10 @@ public class PABReportController {
         	e.printStackTrace();
         }
         if(tableNumber == succesNumber){
-        	code = 400;
+        	code = 200;
         	message = "共记" + succesNumber + "张报表，创建成功";
         }else{
-        	code = 200;
+        	code = 400;
         	message = "共记" + succesNumber + "张报表创建成功,创建失败" + (tableNumber - succesNumber) + "张";
         }
         resultMap.put(JSONInfo.JSONConstant.CODE.getValue(), code);
@@ -182,7 +184,7 @@ public class PABReportController {
     public Map<String, Object> download(HttpServletRequest request, HttpServletResponse response, String start_day, String end_day, String report_name) {
     	int code = 400;
     	String message = "失败";
-    	 Map<String, Object> resultMap = new HashMap<String, Object>();
+        Map<String, Object> resultMap = new HashMap<String, Object>();
     	try {
 			String dateDir = start_day.substring(0, 7).replace("-", "");
 			String fileName = dateDir + "_BJ0000004_" + report_name + "_SZ_766004.xls";
@@ -221,7 +223,7 @@ public class PABReportController {
     	String dateDir = start_day.substring(0, 7).replace("-", "");
         if (StringUtils.isEmpty(start_day)) {
         	message = "日期不能为空";
-        }else{
+        } else {
         	try {
                 String ftpPath = FTP_BANK_PATH + dateDir + sep;
                 String fileName = dateDir + "_BJ0000004_SZ_766004.zip";
