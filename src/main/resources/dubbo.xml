@@ -12,17 +12,17 @@
 	location="classpath:dubbo.properties" ignore-unresolvable="true" system-properties-mode="FALLBACK" />
 
 	<!-- 提供方应用信息，用于计算依赖关系 -->
-	<!-- <dubbo:application  name="demo_project" /> -->
+	<dubbo:application  name="demo_project" />
 
 	<!-- 使用zookeeper注册中心暴露服务地址 -->
-	<!-- <dubbo:registry protocol="zookeeper" address="${dubbo.address}" check="false" /> -->
+	<dubbo:registry protocol="zookeeper" address="${dubbo.address}" check="false" />
 
 	<!-- 用dubbo协议在端口暴露服务 -->
-	<!-- <dubbo:protocol name="dubbo" port="${dubbo.port}" -->
-	<!-- dispather="all" threadpool="cached" threads="200" /> -->
+	<dubbo:protocol name="dubbo" port="${dubbo.port}"
+	dispather="all" threadpool="cached" threads="200" />
 
 	<!-- 声明需要暴露的服务接口 -->
-	<!-- <dubbo:service interface="com.qdb.provmgr.inter.IAdd" class="com.qdb.provmgr.inter.IAddImpl"  /> -->
+	<dubbo:service interface="com.qdb.provmgr.inter.IAdd" class="com.qdb.provmgr.inter.IAddImpl"  />
 
 	<!-- dubbo 引用远程服务 -->
 	<!-- <dubbo:reference id="riskService" interface="com.qdb.risk.service.api.RiskControlServiceI" />-->
