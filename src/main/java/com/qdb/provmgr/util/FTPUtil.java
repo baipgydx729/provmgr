@@ -37,6 +37,11 @@ public class FTPUtil {
     private static long count = 0;
 
     /**
+     * ftp最大目录层数为10
+     */
+    private static int FTP_LEVEL = 0;
+
+    /**
      * 用户FTP账号登录
      *
      * @param url      FTP地址
@@ -55,6 +60,7 @@ public class FTPUtil {
         conf.setServerLanguageCode("zh");
         ftp.login(username, password);
         reply = ftp.getReplyCode();
+        FTP_LEVEL = 0;
         if (!FTPReply.isPositiveCompletion(reply)) {
             ftp.disconnect();
             log.info(">>>>>>>>>>>>>>>>连接服务器失败!");
@@ -68,6 +74,7 @@ public class FTPUtil {
      * 释放FTP
      */
     public static void close(FTPClient ftp) {
+        FTP_LEVEL = 0;
         if (ftp != null) {
             if (ftp.isAvailable()) {
                 try {
@@ -101,25 +108,51 @@ public class FTPUtil {
                 if (!ftp.changeWorkingDirectory(dir)) {
                     ftp.makeDirectory(dir);
                     ftp.changeWorkingDirectory(dir);
+                    FTP_LEVEL ++;
                 }
             }
         }
         return true;
     }
 
-    private static boolean changeWorkingDirectory(FTPClient ftpClient, String dir) throws IOException {
+    private static boolean changeToChildDirectory(FTPClient ftpClient, String dir) throws IOException {
         if (StringUtils.isBlank(dir)) {
             return true;
         }
         String[] paths = dir.split(FTPUtil.FTP_FILE_SEPARATOR);
         for (String path : paths) {
             if (StringUtils.isNotEmpty(path)) {
-                if (!ftpClient.changeWorkingDirectory(path) && !ftpClient.changeWorkingDirectory(new String(path.getBytes(), SERVER_CHARSET))) {
+                if (ftpClient.changeWorkingDirectory(path) || ftpClient.changeWorkingDirectory(new String(path.getBytes(), SERVER_CHARSET))) {
+                    FTP_LEVEL++;
+                } else {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    private static boolean changeToRootDirectory(FTPClient ftpClient) throws IOException {
+        if (ftpClient != null && ftpClient.isConnected()) {
+            while (FTP_LEVEL > 0) {
+                if (ftpClient.changeToParentDirectory()) {
+                    FTP_LEVEL --;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean changeToAbsoluteDirectory(FTPClient ftpClient, String dir) {
+        try {
+            changeToRootDirectory(ftpClient);
+        } catch (Exception ignored) {}
+        try {
+            return changeToChildDirectory(ftpClient, dir);
+        } catch (IOException e) {
+            log.error("切换目录异常", e);
+        }
+        return false;
     }
 
     private static boolean isFileNameExists(FTPClient ftpClient, String remoteFileName) throws IOException {
@@ -134,45 +167,45 @@ public class FTPUtil {
         return false;
     }
 
-    private static FTPFile[] getFileListWithoutCD(FTPClient ftpClient, String remotePath) {
-        if (StringUtils.isBlank(remotePath)) {
-            return null;
-        } else {
-            FTPFile[] files = null;
-            //先切换到指定的目录，记录切换的层数
-            String[] paths = remotePath.split(FTP_FILE_SEPARATOR);
-            int count = 0;
-            for (String path : paths) {
-                if (StringUtils.isNotEmpty(path)) {
-                    try {
-                        if (ftpClient.changeWorkingDirectory(new String(path.getBytes(), SERVER_CHARSET))) {
-                            count ++;
-                        }
-                    } catch (IOException ignored) {
-                    }
-                }
-            }
-            //若没有切换目录则表示目录不存在，此时返回空
-            if (count == 0) {
-                return null;
-            }
-            try {
-                files = ftpClient.listFiles();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //按照进入层数再次切回原目录
-            while (count > 0) {
-                try {
-                    if (ftpClient.changeToParentDirectory()) {
-                        count--;
-                    }
-                } catch (IOException ignored) {
-                }
-            }
-            return files;
-        }
-    }
+//    private static FTPFile[] getFileListWithoutCD(FTPClient ftpClient, String remotePath) {
+//        if (StringUtils.isBlank(remotePath)) {
+//            return null;
+//        } else {
+//            FTPFile[] files = null;
+//            //先切换到指定的目录，记录切换的层数
+//            String[] paths = remotePath.split(FTP_FILE_SEPARATOR);
+//            int count = 0;
+//            for (String path : paths) {
+//                if (StringUtils.isNotEmpty(path)) {
+//                    try {
+//                        if (ftpClient.changeWorkingDirectory(new String(path.getBytes(), SERVER_CHARSET))) {
+//                            count ++;
+//                        }
+//                    } catch (IOException ignored) {
+//                    }
+//                }
+//            }
+//            //若没有切换目录则表示目录不存在，此时返回空
+//            if (count == 0) {
+//                return null;
+//            }
+//            try {
+//                files = ftpClient.listFiles();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            //按照进入层数再次切回原目录
+//            while (count > 0) {
+//                try {
+//                    if (ftpClient.changeToParentDirectory()) {
+//                        count--;
+//                    }
+//                } catch (IOException ignored) {
+//                }
+//            }
+//            return files;
+//        }
+//    }
 
     /**
      * 获取文件名列表
@@ -192,7 +225,7 @@ public class FTPUtil {
                 log.error("无法登录");
                 return null;
             }
-            if (changeWorkingDirectory(ftp, dir)) {
+            if (changeToChildDirectory(ftp, dir)) {
                 String[] listNames = ftp.listNames();
                 if (listNames != null && listNames.length > 0) {
                     names = new String[listNames.length];
@@ -305,8 +338,8 @@ public class FTPUtil {
 
     private static void retrieveDir(FTPClient ftp, String remotePath, String localPath, String fileSuffix) {
         try {
-
-            FTPFile[] files = getFileListWithoutCD(ftp, remotePath);
+            changeToAbsoluteDirectory(ftp, remotePath);
+            FTPFile[] files = ftp.listFiles();
             if (files != null) {
                 for (FTPFile file : files) {
                     String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
@@ -320,7 +353,7 @@ public class FTPUtil {
                         OutputStream os = null;
                         try {
                             os = new FileOutputStream(localFile);
-                            ftp.retrieveFile(fileName, os);
+                            ftp.retrieveFile(file.getName(), os);
                         } finally {
                             IOUtils.closeQuietly(os);
                         }
@@ -340,7 +373,7 @@ public class FTPUtil {
         }
         OutputStream os = null;
         try {
-            if (changeWorkingDirectory(ftp, remoteDir)) {
+            if (changeToChildDirectory(ftp, remoteDir)) {
                 FTPFile[] files = ftp.listFiles();
                 for (FTPFile ftpFile : files) {
                     String ftpFileName = new String(ftpFile.getName().getBytes(SERVER_CHARSET));
@@ -386,7 +419,7 @@ public class FTPUtil {
                 throw new IOException("无法登录");
             }
             log.info("用户登录成功，准备开始下载文件...");
-            if (!changeWorkingDirectory(ftp, remoteDir)) {
+            if (!changeToChildDirectory(ftp, remoteDir)) {
                 throw new Exception("文件不存在");
             }
             FTPFile[] ftpFiles = ftp.listFiles();
@@ -436,7 +469,7 @@ public class FTPUtil {
                 throw new Exception("无法登录");
             }
             log.info("用户登录成功，准备解析文件...");
-            boolean changeSuccess = changeWorkingDirectory(ftp, remoteDir);
+            boolean changeSuccess = changeToChildDirectory(ftp, remoteDir);
             if (!changeSuccess) {
                 return false;
             }
@@ -504,7 +537,7 @@ public class FTPUtil {
                 return false;
             }
             log.info("用户登录成功，准备开始删除文件...");
-            if (changeWorkingDirectory(ftp, remoteDir)) {
+            if (changeToChildDirectory(ftp, remoteDir)) {
                 if (!StringUtils.isBlank(remoteFileName)) {
                     return ftp.deleteFile(new String(remoteFileName.getBytes(), SERVER_CHARSET));
                 } else {
@@ -532,21 +565,27 @@ public class FTPUtil {
     }
 
     private static void countFiles(FTPClient ftpClient, String remotePath, String fileSuffix) {
-        FTPFile[] files = getFileListWithoutCD(ftpClient, remotePath);
-        if (files != null) {
-            for (FTPFile file : files) {
-                try {
-                    if (file.isDirectory()) {
-                        countFiles(ftpClient, remotePath + new String(file.getName().getBytes(SERVER_CHARSET)) + FTP_FILE_SEPARATOR, fileSuffix);
-                    } else {
-                        String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
-                        if (StringUtils.isBlank(fileSuffix) || fileName.endsWith(fileSuffix)) {
-                            count++;
+        if (changeToAbsoluteDirectory(ftpClient, remotePath)) {
+            try {
+                FTPFile[] files = ftpClient.listFiles();
+                if (files != null) {
+                    for (FTPFile file : files) {
+                        try {
+                            if (file.isDirectory()) {
+                                countFiles(ftpClient, remotePath + new String(file.getName().getBytes(SERVER_CHARSET)) + FTP_FILE_SEPARATOR, fileSuffix);
+                            } else {
+                                String fileName = new String(file.getName().getBytes(SERVER_CHARSET));
+                                if (StringUtils.isBlank(fileSuffix) || fileName.endsWith(fileSuffix)) {
+                                    count++;
+                                }
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            log.error("无法识别的文字编码", e.getMessage());
                         }
                     }
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
                 }
+            } catch (IOException e) {
+                log.error("ftp解析异常", e);
             }
         }
     }

@@ -5,7 +5,7 @@ module.exports = {
         var data = [];
 
         var url =null;
-        if (bankName=="中国建设银行"){
+        if (bankName=="中国建设银行" || bankName=="中信银行"){
             if(reportType==0){
                 url = "/report/"+commonModule.getBankAbbreviation(bankName)
                         +"/list?report_type="+reportType
@@ -88,7 +88,7 @@ module.exports = {
         var result = true;
 
         var url =null;
-        if (bankName=="中国建设银行"){
+        if (bankName=="中国建设银行" || bankName=="中信银行"){
             if(reportType==0){
                 url = "/report/"+commonModule.getBankAbbreviation(bankName)
                     +"/download?report_type="+reportType

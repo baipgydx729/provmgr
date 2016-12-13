@@ -133,17 +133,18 @@ public class ExcelUtils {
             List<String> sheetNameList = new ArrayList<>();
             createSplitDataList(dataList, splitDateList, sheetName, sheetNameList);
             workbook = transformer.transformMultipleSheetsList(is, splitDateList, sheetNameList, DATAKEY, map, 0);
+
             workbook.write(os);
             // 将写入到客户端的内存的数据刷新到磁盘
             os.flush();
         }catch (InvalidFormatException e) {
-            logger.error("**********生成报表{}出现异常, 异常信息:{}",  destExcelPath  + e.getMessage());
+            logger.error("**********生成报表{}出现异常, 异常信息:{}",  destExcelPath, e.getMessage());
             throw e;
         } catch (IOException e) {
-            logger.error("**********生成报表{}出现异常, 异常信息:{}",  destExcelPath  + e.getMessage());
+            logger.error("**********生成报表{}出现异常, 异常信息:{}",  destExcelPath, e.getMessage());
             throw e;
         } catch (Exception e){
-            logger.error("**********生成报表{}出现异常, 异常信息:{}",  destExcelPath  + e.getMessage());
+            logger.error("**********生成报表{}出现异常, 异常信息:{}",  destExcelPath, e.getMessage());
             throw e;
         }finally {
             if(os != null){
@@ -193,16 +194,16 @@ public class ExcelUtils {
             response.setHeader("Content-Disposition", "attachment;filename=" + destFileName);
 
             byte[] buffer = new byte[1024];
-            int r = 0;
+            int r;
             while ((r= is.read(buffer)) != -1){
                 os.write(buffer, 0, r);
             }
             // 将写入到客户端的内存的数据刷新到磁盘
         } catch (IOException e) {
-            logger.error("**********下载报表{}出现异常, 异常信息:{}", destFileName + e.getMessage());
+            logger.error("**********下载报表{}出现异常, 异常信息:{}", destFileName, e.getMessage());
             throw e;
         } catch (Exception e) {
-            logger.error("**********下载报表{}出现异常, 异常信息:{}", destFileName + e.getMessage());
+            logger.error("**********下载报表{}出现异常, 异常信息:{}", destFileName, e.getMessage());
             throw e;
         } finally {
             if (os != null) {
