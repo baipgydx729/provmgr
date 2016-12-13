@@ -1,4 +1,4 @@
-package com.qdb.provmgr.constant.spdb;
+package com.qdb.provmgr.report.spdb;
 
 /**
  * 备付金常量

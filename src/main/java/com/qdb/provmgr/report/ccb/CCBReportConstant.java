@@ -1,4 +1,4 @@
-package com.qdb.provmgr.common;
+package com.qdb.provmgr.report.ccb;
 
 import java.util.HashMap;
 import java.util.Map;

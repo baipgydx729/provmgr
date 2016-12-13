@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.qdb.provmgr.constant.spdb.Constant;
 import com.qdb.provmgr.dao.model.spdb.T1_1;
 import com.qdb.provmgr.dao.model.spdb.T1_10;
 import com.qdb.provmgr.dao.model.spdb.T1_13;
@@ -22,6 +21,7 @@ import com.qdb.provmgr.dao.model.spdb.TDate;
 import com.qdb.provmgr.dao.model.spdb.eum.BankCodeEnum;
 import com.qdb.provmgr.dao.model.spdb.eum.TableEnum;
 import com.qdb.provmgr.dao.spdb.SpdbQueryDao;
+import com.qdb.provmgr.report.spdb.Constant;
 import com.qdb.provmgr.util.spdb.SpdbDateUtil;
 
 

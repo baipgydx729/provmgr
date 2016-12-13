@@ -287,6 +287,7 @@ public class CiticReportController {
     @RequestMapping(value = "download-all")
     @ResponseBody
     public Map downloadAll(HttpServletRequest request, HttpServletResponse response) {
+        log.info("收到下载请求------------------");
         Map<String, Object> resultMap = new HashedMap();
         String startDateStr = request.getParameter("start_day");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

@@ -1,8 +1,8 @@
 package com.qdb.provmgr.controller.report;
 
 import com.alibaba.fastjson.JSONObject;
-import com.qdb.provmgr.common.CCBReportConstant;
-import com.qdb.provmgr.common.CCBReportConstant.IReportType;
+import com.qdb.provmgr.report.ccb.CCBReportConstant;
+import com.qdb.provmgr.report.ccb.CCBReportConstant.IReportType;
 import com.qdb.provmgr.dao.entity.report.AccountInfoEntity;
 import com.qdb.provmgr.dao.entity.report.BaseReportEntity;
 import com.qdb.provmgr.dao.entity.report.DataTable3Entity;
