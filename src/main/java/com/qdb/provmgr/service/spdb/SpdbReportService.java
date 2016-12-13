@@ -174,7 +174,7 @@ public class SpdbReportService {
 		String bankCode = BankCodeEnum.getBankCode(bankName);
 		List<T1_13> result = null;
 		try {
-			result = spdbQueryDao.query(bankName, beginDate, endDate, TableEnum.TABLE10.getDbTable(), T1_13.class);
+			result = spdbQueryDao.query(bankName, beginDate, endDate, TableEnum.TABLE13.getDbTable(), T1_13.class);
 		} catch (Exception e) {
 			log.error("T1_13 数据查询获取失败。异常信息：{}",e.getMessage());
 			return null;

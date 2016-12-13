@@ -3,7 +3,7 @@ package com.qdb.provmgr.dao.model.spdb.eum;
 public enum BankCodeEnum {
 	
 	JIANGSU("江苏银行","p"),
-	PUFA("上海浦东发展银行股份有限公司","6");
+	PUFA("上海浦东发展银行","6");
 	
 	public String getBankName() {
 		return bankName;
