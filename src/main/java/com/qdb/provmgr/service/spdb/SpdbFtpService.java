@@ -36,12 +36,12 @@ public class SpdbFtpService {
 	private String password;
 	
 	
-	@Value("${spdb.ftp.path}")
-	private String spdbFtpPath;
-	@Value("${js.ftp.path}")
-	private String jSFtpPath;
-	@Value("${spdb.temp.path}")
-	private String spdbTempPath;
+	//@Value("${spdb.ftp.path}")
+	private static String spdbFtpPath="/备付金报表/上海浦东发展银行/";
+	//@Value("${js.ftp.path}")
+	private static String jSFtpPath="/备付金报表/江苏银行/";
+	//@Value("${spdb.temp.path}")
+	private static String spdbTempPath=System.getProperty("java.io.tmpdir");
 	
 	private String ftpPath;
 	
@@ -58,9 +58,6 @@ public class SpdbFtpService {
 		return jSFtpPath;
 	}
 
-	public void setjSFtpPath(String jSFtpPath) {
-		this.jSFtpPath = jSFtpPath;
-	}
 
 	public String getIp() {
 		return ip;
